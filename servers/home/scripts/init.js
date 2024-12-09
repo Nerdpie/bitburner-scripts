@@ -9,10 +9,11 @@ import { collapseTail, CollapseState } from "servers/home/scripts/lib/tail_helpe
 
 /** Holder for settings for default scripts to launch */
 class DefaultScript {
-  /** 
+  /**
    * @param {string} script
    * @param {number} collapse
    * @param {number | RunOptions} threadOrOptions
+   * @param {string[]} args
    */
   constructor(script, collapse = CollapseState.Ignore, threadOrOptions = 1, ...args) {
     this.#script = script;
@@ -58,7 +59,6 @@ export async function main(ns) {
   const scripts = [
     new DefaultScript("/scripts/deploy.js"),
     new DefaultScript("/scripts/custom_hud.js"),
-    //new DefaultScript("/scripts/hacknet_manager.js", CollapseState.Close),
     new DefaultScript("/scripts/scan_files.js", CollapseState.Ignore, 1, "--scrape"),
     new DefaultScript("/scripts/scan_contracts.js", CollapseState.Close),
     new DefaultScript("/scripts/augments.js", CollapseState.Close),
@@ -68,28 +68,8 @@ export async function main(ns) {
 
   scripts.forEach(s => s.ensureScriptRunning(ns));
 
-  // TODO Determine a clean way to also open our default set of scripts in the editor
-
+  // We use the exposed objects enough places; may as well launch in `init`
   if (!globalThis.Terminal) {
     exposeGameInternalObjects()
   }
-
-  const DEFAULT_FILES = [
-    '/scripts/settings.js',
-    '/scripts/TODO.js',
-    '/scripts/scratchpad.js',
-    '/scripts/contract_calc.js'
-  ]
-
-  if (globalThis.Terminal.action) {
-    ns.alert("Terminal busy; cannot open default editors\nPlease try again");
-  } else if (!ns.getServer('home').isConnectedTo) {
-    ns.alert("Cannot open files while not connected to 'home'!");
-  } else {
-    // `nano` doesn't work right if we try to chain it; only opens the first one?
-    DEFAULT_FILES.map(f => 'nano ' + f).forEach(f =>
-      globalThis.Terminal.executeCommands(f)
-    )
-  }
-
 }

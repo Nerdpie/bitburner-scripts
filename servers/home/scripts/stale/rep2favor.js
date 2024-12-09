@@ -1,4 +1,4 @@
-import { repToFavor } from "servers/home/scripts/lib/favor"
+import { repToFavor } from "@/servers/home/scripts/lib/favor"
 
 /** @param {NS} ns */
 export async function main(ns) {
