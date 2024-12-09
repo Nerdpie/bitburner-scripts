@@ -2,35 +2,40 @@
 
 // FIXME Doesn't work properly if the script has already finished...
 
+import {RunningScript} from "NetscriptDefinitions";
+
 export const CollapseState = {
   Ignore: -1,
   Open: 0,
   Close: 1
 }
 
-/** @param {RunningScript} script */
-export function collapseTail(script) {
-  const doc = eval("document")
+export function collapseTail(script: RunningScript): void {
+  const doc: Document = eval("document")
 
   // Find the heading element
   let heading = doc.querySelector("h6[title='" + script.title + "']");
   let button = heading?.parentElement.querySelector("button[title='Collapse']")
 
-  if (button) { button.click(); }
+  if (button) {
+    // @ts-ignore  Yes, there is TOO a `click` function...
+    button.click();
+  }
 }
 
-/** @param {RunningScript} script */
-export function expandTail(script) {
-  const doc = eval("document")
+export function expandTail(script: RunningScript): void {
+  const doc: Document = eval("document")
 
   // Find the heading element
   let heading = doc.querySelector("h6[title='" + script.title + "']");
   let button = heading?.parentElement.querySelector("button[title='Expand']")
 
-  if (button) { button.click(); }
+  if (button) {
+    // @ts-ignore  Yes, there is TOO a `click` function...
+    button.click();
+  }
 }
 
-/** @param {NS} ns */
-export async function main(ns) {
-  
+export async function main(ns: NS): Promise<void> {
+
 }

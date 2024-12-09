@@ -1,4 +1,4 @@
-import { ScriptSettings } from "servers/home/scripts/settings"
+import { ScriptSettings } from "@/servers/home/scripts/settings"
 
 /** 
  * Basic IPvGo script derived from https://github.com/bitburner-official/bitburner-src/blob/dev/src/Documentation/doc/programming/go_algorithms.md

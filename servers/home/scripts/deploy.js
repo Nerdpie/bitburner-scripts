@@ -1,7 +1,7 @@
 // Based heavily on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 
-import { ScriptSettings, BackdoorConcat } from "servers/home/scripts/settings"
-import { getAllServers } from "servers/home/scripts/lib/scan_servers"
+import { ScriptSettings, BackdoorConcat } from "@/servers/home/scripts/settings"
+import { getAllServers } from "@/servers/home/scripts/lib/scan_servers"
 
 /** @param {NS} ns */
 function getAvailableTools(ns) {

@@ -1,19 +1,18 @@
-/*
-
-Example usage:
-
-import { ScriptSettings } from "servers/home/scripts/settings"
-
-ns.tail();
-ns.clearLog();
-
-  let config = ScriptSettings.deploy;
-  ns.moveTail(config.x, config.y);
-  ns.resizeTail(config.width, config.height);
-
+// TODO Consider moving the default `tail` config block into a utility function
+// TODO Consider creating a wrapper class to clean up the type data for `ScriptSettings`
+// TODO Consider creating enums for the different 'mode' options
+/**
+ * Central settings for my scripts
+ * @example
+ * import { ScriptSettings } from "servers/home/scripts/settings"
+ *
+ * ns.tail();
+ * ns.clearLog();
+ *
+ * let config = ScriptSettings.deploy;
+ * ns.moveTail(config.x, config.y);
+ * ns.resizeTail(config.width, config.height);
  */
-
-// Ordered by the y offsets
 export const ScriptSettings = {
   contract_calc: {
     x: 1250,
@@ -144,7 +143,7 @@ export const ServerSelections = {
   ],
 }
 
-export const BackdoorConcat =
+export const BackdoorConcat: string[] =
   ServerSelections.alwaysBackdoor.concat(
     ServerSelections.classesBackdoor,
     ServerSelections.companyBackdoor);

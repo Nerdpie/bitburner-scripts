@@ -2,8 +2,7 @@
  * Script to iterate over hosts and list discovered files
  */
 
-import { ScriptSettings } from "servers/home/scripts/settings"
-import { getAllServers } from "servers/home/scripts/lib/scan_servers"
+import { getAllServers } from "@/servers/home/scripts/lib/scan_servers"
 
 function isIgnored(file) {
 

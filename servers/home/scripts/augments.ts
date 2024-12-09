@@ -1,13 +1,12 @@
-import { exposeGameInternalObjects } from "servers/home/scripts/lib/exploits"
-import { ScriptSettings } from "servers/home/scripts/settings"
+import { exposeGameInternalObjects } from "@/servers/home/scripts/lib/exploits"
+import { ScriptSettings } from "@/servers/home/scripts/settings"
 
 // TODO Move to an extension of the prototype
-function uniqueArray(a) {
+function uniqueArray(a: any[]): any[] {
   return [...new Set(a)];
 }
 
-/** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS): Promise<void> {
 
   if (!globalThis.Player) {
     exposeGameInternalObjects();
@@ -28,7 +27,7 @@ export async function main(ns) {
       factionsWithUnboughtUniques(ns);
       break;
     default:
-      ns.print("ERROR: Unknown augment config mode: " + config.mode);
+      ns.print(`ERROR: Unknown augment config mode: ${config.mode}`);
   }
 }
 

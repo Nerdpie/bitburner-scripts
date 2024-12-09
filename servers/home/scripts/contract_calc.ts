@@ -1,8 +1,7 @@
-import { exposeGameInternalObjects } from "servers/home/scripts/lib/exploits"
-import { ScriptSettings } from "servers/home/scripts/settings"
+import {ScriptSettings} from "@/servers/home/scripts/settings"
 
 /** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS): Promise<void> {
   ns.tail();
   ns.clearLog();
 
@@ -10,11 +9,8 @@ export async function main(ns) {
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
-  //exposeGameInternalObjects();
-
-
   let input =
-        [96,45,30,147,154,34,93,72,31,33,158,2,130,195,16,118,126,147,196,95,182,21,26,52,192,6,103,191,166,182,88,186]
+    [96, 45, 30, 147, 154, 34, 93, 72, 31, 33, 158, 2, 130, 195, 16, 118, 126, 147, 196, 95, 182, 21, 26, 52, 192, 6, 103, 191, 166, 182, 88, 186]
 
   //subarrayMaxSum(ns, input);
   //mergeOverlappingPairs(ns, input);
@@ -29,13 +25,13 @@ export async function main(ns) {
 }
 
 // TODO Move these to a lib file for comparators
-/** 
+/**
  * Helper to sort pairs of numbers
  * @param {number[]} a
  * @param {number[]} b
  * @return {number} Negative if `a` is less than `b`, 0 if equal, and positive if `b` is less than `a`
  */
-function comparePairs(a, b) {
+function comparePairs(a: number[], b: number[]): number {
   if (a[0] == b[0]) {
     return a[1] - b[1]
   } else {
@@ -49,7 +45,7 @@ function comparePairs(a, b) {
  * @param {number} b
  * @return {number} Negative if `a` is less than `b`, 0 if equal, and positive if `b` is less than `a`
  */
-function compareNumbers(a, b) {
+function compareNumbers(a: number, b: number): number {
   return a - b;
 }
 
@@ -60,7 +56,7 @@ function compareNumbers(a, b) {
  * @return {Array} Unique values from the input array
  * @link https://stackoverflow.com/q/1960473 - Reference
  */
-function arrayUnique(arr) {
+function arrayUnique(arr: Array<any>): Array<any> {
   return [...new Set(arr)];
 }
 
@@ -68,29 +64,36 @@ function arrayUnique(arr) {
  * @param {NS} ns
  * @param {number[]} input
  */
-function subarrayMaxSum(ns, input) {
+function subarrayMaxSum(ns: NS, input: number[]) {
   let maxSum = 0;
 
   for (let i = 0; i < input.length; i++) {
 
     let curSum = input[i];
-    if (maxSum < curSum) { maxSum = curSum };
+    if (maxSum < curSum) {
+      maxSum = curSum
+    }
+    ;
 
     for (let j = i + 1; j < input.length; j++) {
       curSum += input[j];
 
-      if (maxSum < curSum) { maxSum = curSum };
+      if (maxSum < curSum) {
+        maxSum = curSum
+      }
+      ;
     }
-  };
+  }
+  ;
 
   ns.printf("Max sum: %d", maxSum);
 }
 
-/** 
+/**
  * @param {NS} ns
  * @param {number[][]} input
  */
-function sortIntervals(ns, input) {
+function sortIntervals(ns: NS, input: number[][]) {
   ns.print(input.sort(comparePairs));
 }
 
@@ -98,7 +101,7 @@ function sortIntervals(ns, input) {
  * @param {NS} ns
  * @param {number[][]} input
  */
-function mergeOverlappingPairs(ns, input) {
+function mergeOverlappingPairs(ns: NS, input: number[][]) {
   // Sorted in reverse because we will be using `pop`
   let sorted = input.sort(comparePairs).reverse();
   let merged = [];
@@ -144,7 +147,7 @@ function mergeOverlappingPairs(ns, input) {
 /**
  * @param {NS} ns
  */
-function overAndDown(ns) {
+function overAndDown(ns: NS) {
   let grid = [13, 7];
   let maxMoveRight = grid[0] - 1;
   let maxMoveDown = grid[1] - 1;
@@ -165,11 +168,11 @@ function overAndDown(ns) {
 // algoStockTrade1 - nested loop, find the greatest difference
 
 // algoStockTrade2 - sum all increases in value
-/** 
+/**
  * @param {NS} ns
  * @param {number[]} values
  */
-function algoStockTrade2(ns, values) {
+function algoStockTrade2(ns: NS, values: number[]) {
 
   // Using `reduce` isn't any more concise...
   let sum = 0;
@@ -183,33 +186,40 @@ function algoStockTrade2(ns, values) {
 }
 
 class StockTrade {
-  constructor(buyValue, buyIndex, sellValue, sellIndex) {
+  constructor(buyValue: number, buyIndex: number, sellValue: number, sellIndex: number) {
     this.buyValue = buyValue;
     this.buyIndex = buyIndex;
     this.sellValue = sellValue;
     this.sellIndex = sellIndex;
   }
-  buyValue = 0;
-  buyIndex = 0;
-  sellValue = 0;
-  sellIndex = 0;
-  profit() { return this.sellValue - this.buyValue }
-  toString() { return "[" + this.buyIndex + "," + this.buyValue + "] => [" + this.sellIndex + "," + this.sellValue + "] = " + this.profit() }
+
+  buyValue: number = 0;
+  buyIndex: number = 0;
+  sellValue: number = 0;
+  sellIndex: number = 0;
+
+  profit(): number {
+    return this.sellValue - this.buyValue
+  }
+
+  toString(): string {
+    return `[${this.buyIndex},${this.buyValue}] => [${this.sellIndex},${this.sellValue}] = ${this.profit()}`
+  }
 }
 
 /**
  * @param {NS} ns
  * @param {number[]} input
  */
-function algoStockTrade3(ns, input) {
+function algoStockTrade3(ns: NS, input: number[]) {
   algoStockTrade4(ns, [2, input]);
 }
 
-/** 
- * @param {NS} ns 
+/**
+ * @param {NS} ns
  * @param {Array} input
  */
-function algoStockTrade4(ns, input) {
+function algoStockTrade4(ns: NS, input: Array<any>) {
   let numTrades = input[0];
   let prices = input[1];
   let numPrices = prices.length;
@@ -252,10 +262,10 @@ function algoStockTrade4(ns, input) {
   //ns.print(prices);
 
   /** @type {StockTrade[]} */
-  let trades = [];
+  let trades: StockTrade[] = [];
 
   // Find each pair of POSSIBLE transactions
-  prices.forEach((startPrice, i, a) => {
+  prices.forEach((startPrice: number, i: number, a: any) => {
     let maxGain = 0;
     for (let j = i + 1; j < numPrices; j++) {
       // Ignore later options that have lower gain
@@ -271,7 +281,7 @@ function algoStockTrade4(ns, input) {
 
   // Scanning from the last sell price, remove any trades that have lower profit
   for (let i = numPrices - 1; i > 0; i--) {
-    let sellAtIndex = trades.filter(t => t.sellIndex == i).sort((a, b) => a.buyIndex - b.buyIndex);
+    let sellAtIndex: StockTrade[] = trades.filter(t => t.sellIndex == i).sort((a, b) => a.buyIndex - b.buyIndex);
 
     if (sellAtIndex?.length > 0) {
       let lastTradeValue = sellAtIndex.pop().profit();
@@ -312,10 +322,10 @@ function algoStockTrade4(ns, input) {
 
 // 2-coloring of a graph
 /** @param {NS} ns */
-function twoColorGraph(ns, input) {
-  let numVertices = input[0];
+function twoColorGraph(ns: NS, input): void {
+  let numVertices: number = input[0];
   let edges = input[1].sort(comparePairs);
-  let vertices = arrayUnique(edges.flat()).sort()
+  let vertices: number[] = arrayUnique(edges.flat()).sort()
 
   ns.printf('numVertices: %d', numVertices);
   ns.print(edges);
@@ -329,10 +339,13 @@ function twoColorGraph(ns, input) {
 
 }
 
-/** @param {number[][]} matrix */
-function spiralRight(ns, matrix) {
-  if (!matrix) { return [] }
-  let row = matrix.slice(0, 1)?.flat()
+/** @param ns
+ @param {number[][]} matrix */
+function spiralRight(ns: NS, matrix: number[][]): number[] {
+  if (!matrix) {
+    return []
+  }
+  let row: any[] = matrix.slice(0, 1)?.flat()
   matrix = matrix.slice(1)
 
   if (row) {
@@ -343,10 +356,11 @@ function spiralRight(ns, matrix) {
   return []
 }
 
-/** @param {number[][]} matrix */
-function spiralDown(ns, matrix) {
+/** @param ns
+ @param {number[][]} matrix */
+function spiralDown(ns: NS, matrix: number[][]): number[] {
   if (!matrix) { return [] }
-  let column = []
+  let column: any[] = []
   for (let i = 0; i < matrix.length; i++) {
     column.push(matrix[i].pop());
   }
@@ -355,10 +369,11 @@ function spiralDown(ns, matrix) {
   return column.flat()
 }
 
-/** @param {number[][]} matrix */
-function spiralLeft(ns, matrix) {
+/** @param ns
+ @param {number[][]} matrix */
+function spiralLeft(ns: NS, matrix: number[][]): number[] {
   if (!matrix) { return [] }
-  let row = matrix.pop()?.reverse()
+  let row: any[] = matrix.pop()?.reverse()
 
   if (row) {
     //ns.print(row)
@@ -368,8 +383,9 @@ function spiralLeft(ns, matrix) {
   return []
 }
 
-/** @param {number[][]} matrix */
-function spiralUp(ns, matrix) {
+/** @param ns
+ @param {number[][]} matrix */
+function spiralUp(ns: NS, matrix: number[][]): number[] {
   if (!matrix) { return [] }
   let column = []
   for (let i = matrix.length - 1; i >= 0; i--) {
@@ -405,7 +421,7 @@ function spiralizeMatrix(ns, input) {
  * @param {NS} ns
  * @param {string} input
  */
-function compression1(ns, input) {
+function compression1(ns: NS, input: string): void {
   if (!input) {
     ns.print("''");
   } else {
@@ -449,7 +465,7 @@ function compression1(ns, input) {
  * @param {NS} ns
  * @param {string} input
  */
-function sanitizeParens(ns, input) {
+function sanitizeParens(ns: NS, input: string): void {
   // (()(()(a)))))((
 
   ns.print("Input: " + input)
@@ -533,7 +549,7 @@ function sanitizeParens(ns, input) {
  * @param {NS} ns
  * @param {number[]} input
  */
-async function arrayJumpingGame(ns, input) {
+async function arrayJumpingGame(ns: NS, input: number[]) {
   if (!input) {
     throw new Error("Invalid input for arrayJumpingGame: " + input)
   }

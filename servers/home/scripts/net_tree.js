@@ -1,5 +1,5 @@
-import { scanAnalyzeInternals } from "servers/home/scripts/lib/scan_servers"
-import { ScriptSettings } from "servers/home/scripts/settings"
+import { scanAnalyzeInternals } from "@/servers/home/scripts/lib/scan_servers"
+import { ScriptSettings } from "@/servers/home/scripts/settings"
 
 /** @param {NS} ns */
 export async function main(ns) {

@@ -5,6 +5,7 @@
  * Convert files to TypeScript
  * Refine the tsconfig.json, .editorconfig
  * Define .eslintrc.cjs
+ * Evaluate making the pattern that sets up a tail window a library function
  *
  * Research script autocompletion options - https://github.com/bitburner-official/bitburner-src/blob/633da383016ad0521f9f1c17cdd99478d2701e41/src/Terminal/getTabCompletionPossibilities.ts#L290
  * Do the exploits - https://github.com/bitburner-official/bitburner-src/blob/stable/src/Exploits/Exploit.ts

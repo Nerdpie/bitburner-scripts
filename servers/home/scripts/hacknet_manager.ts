@@ -1,5 +1,5 @@
 // Copied from https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
-import { ScriptSettings } from "servers/home/scripts/settings"
+import {ScriptSettings} from "@/servers/home/scripts/settings"
 
 /**
  * This function automates the management of hacknet nodes in a game,
@@ -11,7 +11,7 @@ import { ScriptSettings } from "servers/home/scripts/settings"
  *                       functions for interacting with the game's systems.
  * @async
  */
-export async function main(ns) {
+export async function main(ns: NS): Promise<void> {
   // Log settings: Disable verbose logging for the specified function.
   const DISABLED_LOGS = ['getServerMoneyAvailable'];
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
@@ -25,15 +25,15 @@ export async function main(ns) {
   ns.resizeTail(config.width, config.height);
 
   /** Cap on the amount to spend */
-  const MAX_PRICE = config.maxPrice || Number.MAX_SAFE_INTEGER;
+  const MAX_PRICE: number = config.maxPrice || Number.MAX_SAFE_INTEGER;
 
   // LOOP_DELAY: Time in milliseconds to wait when funds are insufficient for upgrades.
   // Default value is 3000 milliseconds (3 seconds).
-  const LOOP_DELAY = config.loopDelay || 1000 * 3;
+  const LOOP_DELAY: number = config.loopDelay || 1000 * 3;
 
   // THRESHOLD: Multiplier to determine the minimum funds needed relative to the cost of the next upgrade.
   // Default value is 1000, i.e., funds must be at least 1000 times the upgrade cost.
-  const THRESHOLD = config.threshold || 1000;
+  const THRESHOLD: number = config.threshold || 1000;
 
   // CALCULATION_DELAY: Time in milliseconds to delay after executing an upgrade,
   // intended to manage load on system resources. Default value is 5 milliseconds.
@@ -50,20 +50,20 @@ export async function main(ns) {
 
   // Continuously loop to manage node upgrades or purchases.
   while (true) {
-    let owned_nodes = ns.hacknet.numNodes();  // Get the current number of owned nodes.
-    let min_cost = ns.hacknet.getPurchaseNodeCost();  // Cost of purchasing a new node.
-    let node_index = owned_nodes;  // Index for node to upgrade, initialized to the next new node.
-    let upgrade_type = -1;  // Type of upgrade to perform: -1 for purchase, 0 for level, 1 for RAM, 2 for core.
+    let owned_nodes: number = ns.hacknet.numNodes();  // Get the current number of owned nodes.
+    let min_cost: number = ns.hacknet.getPurchaseNodeCost();  // Cost of purchasing a new node.
+    let node_index: number = owned_nodes;  // Index for node to upgrade, initialized to the next new node.
+    let upgrade_type: number = -1;  // Type of upgrade to perform: -1 for purchase, 0 for level, 1 for RAM, 2 for core.
 
     // Evaluate the cost and type of the cheapest possible upgrade among existing nodes.
     for (let i = 0; i < owned_nodes; i++) {
-      let upgrades = [
+      let upgrades: number[] = [
         ns.hacknet.getLevelUpgradeCost(i, 1),
         ns.hacknet.getRamUpgradeCost(i, 1),
         ns.hacknet.getCoreUpgradeCost(i, 1)
       ];
 
-      let new_cost = Math.min.apply(Math, upgrades);
+      let new_cost: number = Math.min.apply(Math, upgrades);
       if (new_cost < min_cost) {
         min_cost = new_cost;
         node_index = i;

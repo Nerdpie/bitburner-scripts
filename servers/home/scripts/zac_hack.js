@@ -32,6 +32,7 @@ export async function main(ns) {
   let serverMoneyMax;
   let serverMoneyAvailable;
 
+  // noinspection InfiniteLoopJS - Intended design for this script
   while (true) {
     securityLevelMin = ns.getServerMinSecurityLevel(target);
     securityLevelCurrent = ns.getServerSecurityLevel(target);

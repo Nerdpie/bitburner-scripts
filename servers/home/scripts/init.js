@@ -3,8 +3,8 @@
  * 
  */
 
-import { exposeGameInternalObjects } from "servers/home/scripts/lib/exploits"
-import { collapseTail, CollapseState } from "servers/home/scripts/lib/tail_helpers"
+import { exposeGameInternalObjects } from "@/servers/home/scripts/lib/exploits"
+import { collapseTail, CollapseState } from "@/servers/home/scripts/lib/tail_helpers"
 
 
 /** Holder for settings for default scripts to launch */

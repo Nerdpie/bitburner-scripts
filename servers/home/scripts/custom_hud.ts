@@ -1,5 +1,4 @@
-/** @param {NS} ns **/
-export async function main(ns) {
+export async function main(ns: NS): Promise<void> {
 
   const DISABLED_LOGS = [
     'sleep'
@@ -18,31 +17,13 @@ export async function main(ns) {
   const doc = eval('document');
   const hook0 = doc.getElementById('overview-extra-hook-0');
   const hook1 = doc.getElementById('overview-extra-hook-1');
+  // noinspection InfiniteLoopJS - Intended design for this script
   while (true) {
     try {
       const headers = []
       const values = [];
 
-      /*
-      // FIXME Looks like the script income and exp gain functions changed?
-
-      // Add script income per second
-      headers.push("ScrInc");
-      try {
-        values.push(ns.getScriptIncome()[0].toPrecision(5) + '/sec');
-      } catch {
-        values.push('ERR/sec');
-      }
-      // Add script exp gain rate per second
-      headers.push("ScrExp");
-      try {
-        values.push(ns.getScriptExpGain().toPrecision(5) + '/sec');
-      } catch {
-        values.push('ERR/sec');
-      }
-      */
-
-      headers.push("ShrPwr");
+      headers.push("SharePower");
       values.push(ns.formatNumber(ns.getSharePower()))
 
       headers.push("Karma");
@@ -52,10 +33,10 @@ export async function main(ns) {
       values.push(ns.getPlayer().numPeopleKilled);
 
       headers.push("Time");
-      values.push(new Date().toLocaleTimeString([], { hour12: false }));
+      values.push(new Date().toLocaleTimeString([], { hour12: false, hourCycle: 'h23' }));
 
       // Now drop it into the placeholder elements
-      hook0.innerText = headers.join(" \n");
+      hook0.innerText = headers.join("\n");
       hook1.innerText = values.join("\n");
     } catch (err) { // This might come in handy later
       ns.print("ERROR: Update Skipped: " + String(err));

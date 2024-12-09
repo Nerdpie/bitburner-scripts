@@ -1,5 +1,5 @@
-import { ScriptSettings } from "servers/home/scripts/settings"
-import { exposeGameInternalObjects } from "servers/home/scripts/lib/exploits"
+import { ScriptSettings } from "@/servers/home/scripts/settings"
+import { exposeGameInternalObjects } from "@/servers/home/scripts/lib/exploits"
 
 
 /** @param {NS} ns */

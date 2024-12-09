@@ -1,5 +1,5 @@
-import { getAllServers } from "servers/home/scripts/lib/scan_servers"
-import { exposeGameInternalObjects } from "servers/home/scripts/lib/exploits"
+import { getAllServers } from "@/servers/home/scripts/lib/scan_servers"
+import { exposeGameInternalObjects } from "@/servers/home/scripts/lib/exploits"
 
 let formatNumber;
 let formatPercent;

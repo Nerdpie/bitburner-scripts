@@ -2,8 +2,8 @@
  * Script to iterate over hosts and list contracts
  */
 
-import { ScriptSettings } from "servers/home/scripts/settings"
-import { getAllServers } from "servers/home/scripts/lib/scan_servers"
+import { ScriptSettings } from "@/servers/home/scripts/settings"
+import { getAllServers } from "@/servers/home/scripts/lib/scan_servers"
 
 function isIgnored(file) {
 
