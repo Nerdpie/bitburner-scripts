@@ -139,3 +139,5 @@ build/
 
 .vscode/*
 !.vscode/launch.json
+
+.idea/

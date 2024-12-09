@@ -101,6 +101,7 @@ export const ScriptSettings = {
 
 }
 
+// noinspection SpellCheckingInspection - In-game servers have irregular names
 export const ServerSelections = {
   alwaysBackdoor: [
     // Special servers (core factions, etc.)

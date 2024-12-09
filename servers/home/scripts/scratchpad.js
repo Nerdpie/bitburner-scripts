@@ -42,9 +42,9 @@ export async function main(ns) {
     let gainPerSec = gainPerCycle.chaExp * 5
     ns.printf("expDiff: %d", expDiff)
     ns.printf("gainPerSec: %d", gainPerSec)
-    let secondsNeeed = expDiff / gainPerSec;
-    let minutesNeeded = Math.floor(secondsNeeed / 60)
-    secondsNeeed = secondsNeeed - (minutesNeeded * 60)
-    ns.printf("Level 300 requires class for %d min %d sec", minutesNeeded, secondsNeeed)
+    let secondsNeeded = expDiff / gainPerSec;
+    let minutesNeeded = Math.floor(secondsNeeded / 60)
+    secondsNeeded = secondsNeeded - (minutesNeeded * 60)
+    ns.printf("Level 300 requires class for %d min %d sec", minutesNeeded, secondsNeeded)
   */
 }

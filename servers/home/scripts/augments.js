@@ -53,6 +53,7 @@ function factionsWithUnboughtUniques(ns) {
 
 /** @param {string} name */
 function truncateAugName(name) {
+  // noinspection SpellCheckingInspection
   return name
     .replace("Embedded", "Embed")
     .replace("Module", "Mod")

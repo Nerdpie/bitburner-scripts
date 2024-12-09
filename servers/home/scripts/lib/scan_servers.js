@@ -99,7 +99,7 @@ export function scanAnalyzeInternals(ns, depth = 1, all = false) {
   const ignoreServer = (s, d) =>
     (!all && s.purchasedByPlayer && s.hostname != "home") || d > depth /*|| (!all && s instanceof HacknetServer)*/;
 
-  // MEMO Hard-coded 'home' since it was erroring...
+  // MEMO Hard-coded 'home' since it was throwing errors...
   const root = new Node('home', ns.getServer('home'));
 
   /**

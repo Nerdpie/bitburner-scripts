@@ -7,20 +7,20 @@ This is a template for using any external editor for Bitburner. This Template su
 ### Cloning this Repo
 
 1. If you dont already have it installed, install [NodeJS](https://nodejs.org) v20 or newer
-1. Clone this repository `git clone https://github.com/shyguy1412/bb-external-editor`
-1. navigate to the template inside your console `cd bb-external-editor`
-1. run `npm install` in your console to install all dependencies
-1. run `npm start` in your console to start the RemoteAPI server
-1. open Bitburner and navigate to the settings
-1. open the tab labeled 'Remote API' and enter the port '12525'
-1. press connect
+2. Clone this repository `git clone https://github.com/shyguy1412/bb-external-editor`
+3. navigate to the template inside your console `cd bb-external-editor`
+4. run `npm install` in your console to install all dependencies
+5. run `npm start` in your console to start the RemoteAPI server
+6. open Bitburner and navigate to the settings
+7. open the tab labeled 'Remote API' and enter the port '12525'
+8. press connect
 
 ### Docker
 
 1. Pull the image `docker pull shyguy1412/bb-external-editor:latest`
-1. Create a folder for your scripts `mkdir scripts`
-1. Create the container `docker create --name bb-external-editor -p 12525:12525 -v ./scripts:/bb-external-editor/servers shyguy1412/bb-external-editor:latest`
-1. Start the container `docker start bb-external-editor`
+2. Create a folder for your scripts `mkdir scripts`
+3. Create the container `docker create --name bb-external-editor -p 12525:12525 -v ./scripts:/bb-external-editor/servers shyguy1412/bb-external-editor:latest`
+4. Start the container `docker start bb-external-editor`
 
 ## File Hierarchy
 
@@ -40,7 +40,7 @@ This template uses [esbuild](https://esbuild.github.io/) to bundle your scripts.
 
 ### Using React
 
-This template allows you to use the ingame instances of `React` and `ReactDOM` simply by importing them as ESModule as you usually would.
+This template allows you to use the in-game instances of `React` and `ReactDOM` simply by importing them as ESModule as you usually would.
 
 ```jsx
 import React, {useState} from 'react';
@@ -127,7 +127,7 @@ In this example all files that are developed in 'servers/home/dist' will not onl
 
 ### Plugin Extensions
 
-You can provide plugin extensions with hooks that trigger before and after certain events. Within hooks that gurantee that the plugin is connected to the game, you also get full access to the remote file API. Using extensions would look something like this:
+You can provide plugin extensions with hooks that trigger before and after certain events. Within hooks that guarantee that the plugin is connected to the game, you also get full access to the remote file API. Using extensions would look something like this:
 
 ```js
 import { context } from 'esbuild';

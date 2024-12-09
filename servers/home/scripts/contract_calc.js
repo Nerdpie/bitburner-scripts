@@ -3,17 +3,6 @@ import { ScriptSettings } from "servers/home/scripts/settings"
 
 /** @param {NS} ns */
 export async function main(ns) {
-  // I don't know what pieces I got from where... lots of prototype tampering and dev tools...
-  /*
-  let doc = eval("document");
-
-  const unclick = doc.getElementById("unclickable");
-  const handler = Object.keys(unclick)[1];
-  unclick[handler].onClick({ target: unclick, isTrusted: true });
-
-  unclick.click();
-  */
-
   ns.tail();
   ns.clearLog();
 
@@ -37,24 +26,6 @@ export async function main(ns) {
   //compression1(ns, input);
   //sanitizeParens(ns, input);
   //arrayJumpingGame(ns, input);
-
-  /*
-  Scratchpad
-  
-()a)()()a()(a))))
-----
-()a()()a()(a)
-()a()()a((a))
-()a()(a()(a))
-()a(()a()(a))
-(a()()a()(a))
-(a)()()a()(a)
-
-
-
-  */
-
-
 }
 
 // TODO Move these to a lib file for comparators
@@ -82,7 +53,7 @@ function compareNumbers(a, b) {
   return a - b;
 }
 
-//TODO Just munge the prototype to have this by default...
+//TODO Just alter the prototype to have this by default...
 /**
  * Get the unique values in an array
  * @param {Array} arr
@@ -180,7 +151,7 @@ function overAndDown(ns) {
 
   /* Possibilities:
    * maxMoveRight, down
-   * maxMoveRIght - 1, down (1 to maxMoveDown), right, 
+   * maxMoveRight - 1, down (1 to maxMoveDown), right,
    * 
    * 
    * Recursive algorithm?  Break into subsections.
@@ -285,7 +256,6 @@ function algoStockTrade4(ns, input) {
 
   // Find each pair of POSSIBLE transactions
   prices.forEach((startPrice, i, a) => {
-    //ns.tprintf('%s [%s]', startPrice, i);
     let maxGain = 0;
     for (let j = i + 1; j < numPrices; j++) {
       // Ignore later options that have lower gain
@@ -293,7 +263,6 @@ function algoStockTrade4(ns, input) {
       if (maxGain < curGain) {
         maxGain = curGain;
         trades.push(new StockTrade(prices[i], i, prices[j], j));
-        //ns.tprintf("└ [%s] %s => %s", j, prices[j], curGain);
       }
     }
   })
