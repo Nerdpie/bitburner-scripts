@@ -70,7 +70,7 @@ export const ScriptSettings = {
     width: 400,
     height: 200,
     // Mode options are currently: purchasable, uniques
-    mode: "purchasable"
+    mode: 'uniques'
   },
   hacknet_manager: {
     x: 1500,
@@ -90,7 +90,7 @@ export const ScriptSettings = {
     mode: 'hgw',
     resetScripts: true,
     targetSelf: false,
-    targetServer: '4sigma',
+    targetServer: 'joesguns',
     ramCapacity: 1024,
     shareCount: 5,
     weakenCount: 3,
@@ -130,7 +130,7 @@ export const ServerSelections = {
   ],
   // Get a reduced rep threshold to join a company's faction (and promoted?)
   companyBackdoor: [
-    //'b-and-a',
+    'b-and-a',
     'blade',
     'clarkinc',
     'ecorp',
@@ -139,7 +139,7 @@ export const ServerSelections = {
     'kuai-gong',
     'megacorp',
     'nwo',
-    'omnitek'
+    //'omnitek'
   ],
 }
 
