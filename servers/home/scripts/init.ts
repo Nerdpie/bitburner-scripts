@@ -52,7 +52,7 @@ export async function main(ns) {
 
   // Tweak the CSS for the view so it doesn't hide behind core info as much
   /** @type {Document} */
-  const doc = eval('document');
+  const doc = globalThis['document'];
   const marginStyle = doc.body.appendChild(doc.createElement("style"));
   marginStyle.textContent = "#root > div.MuiBox-root > div.MuiBox-root { margin-right: 400px }";
 

@@ -7,13 +7,15 @@
  * Added customized logging
  */
 
+import {AutocompleteData} from "NetscriptDefinitions";
+
 /** Helper function to write the money values */
 async function logMoney(ns, target, moneyCurrent, moneyMax) {
   ns.printf('%s money: %s / %s', target, ns.formatNumber(moneyCurrent), ns.formatNumber(moneyMax));
 }
 
-/** @param {NS} ns */
-export async function main(ns) {
+
+export async function main(ns: NS):Promise<void> {
   const DISABLED_LOGS = [
     'getServerMoneyAvailable',
     'getServerMaxMoney',
@@ -26,7 +28,7 @@ export async function main(ns) {
   ns.disableLog('disableLog');
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
-  let target = ns.args[0];
+  let target: string = <string>ns.args[0];
   let securityLevelMin;
   let securityLevelCurrent;
   let serverMoneyMax;
@@ -66,6 +68,6 @@ export async function main(ns) {
   }
 }
 
-export function autocomplete(data, args) {
+export function autocomplete(data: AutocompleteData, args):string[] {
   return data.servers;
 }

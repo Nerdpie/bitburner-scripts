@@ -1,3 +1,5 @@
+import React from 'react';
+
 /**
    * Discovers all servers connected to the starting server ("home"), using a depth-first search.
    * Unique servers are recorded to ensure each is processed only once.

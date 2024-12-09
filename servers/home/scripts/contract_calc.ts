@@ -337,6 +337,9 @@ function twoColorGraph(ns: NS, input): void {
   // Check if there are any obvious conflicts, e.g. a loop of an odd number of elements
   // Can do so by checking the list of neighbors: a.neighbors.foreach(n => n.neighbors.some(b => a.neighbors.includes(b)))
 
+  // Alternatively, start by assigning the first vertex '0', then iterate neighbors.
+  // If a neighbor is already assigned, just ensure it doesn't conflict.
+
 }
 
 /** @param ns

@@ -21,5 +21,9 @@
     "@types/react-dom": "^18.3.0",
     "esbuild": "^0.23.1",
     "esbuild-bitburner-plugin": "^1.6.1"
+  },
+  "devDependencies": {
+    "sprintf-js": "^1.1.3",
+    "@types/sprintf-js": "^1.1.4"
   }
 }

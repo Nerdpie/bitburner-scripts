@@ -14,7 +14,7 @@ export async function main(ns: NS): Promise<void> {
     return;
   }
 
-  const doc = eval('document');
+  const doc = globalThis['document'];
   const hook0 = doc.getElementById('overview-extra-hook-0');
   const hook1 = doc.getElementById('overview-extra-hook-1');
   // noinspection InfiniteLoopJS - Intended design for this script

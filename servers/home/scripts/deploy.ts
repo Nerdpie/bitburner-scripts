@@ -65,7 +65,7 @@ function tryBackdoor(ns, server) {
     && !server.purchasedByPlayer
     && server.requiredHackingSkill <= ns.getHackingLevel()) {
     try {
-      con(target);
+      con(server);
       bd();
     } catch {
       // Don't have Singularity access yet
@@ -79,7 +79,7 @@ function tryBackdoor(ns, server) {
 }
 
 /** @param {NS} ns */
-function execScript(ns, server, script, targetServer) {
+function execScript(ns, server, script, targetServer?) {
   let ramCost = ns.getScriptRam(script, server);
 
   let ramAvailable = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);

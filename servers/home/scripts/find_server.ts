@@ -1,8 +1,7 @@
 // From https://github.com/bitburner-official/bitburner-scripts/blob/master/find_server.js
 
-/** @param {NS} ns */
-function recursiveScan(ns, parent, server, target, route) {
-    const children = ns.scan(server);
+function recursiveScan(ns: NS, parent, server: string, target: string, route) {
+    const children: string[] = ns.scan(server);
     for (let child of children) {
         if (parent == child) {
             continue;
@@ -21,21 +20,21 @@ function recursiveScan(ns, parent, server, target, route) {
     return false;
 }
 
-/** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS): Promise<void> {
     const args = ns.flags([["help", false]]);
     let route = [];
-    let server = args._[0];
+    let server: string = <string>args._[0];
     if (!server || args.help) {
         ns.tprint("This script helps you find a server on the network and shows you the path to get to it.");
         ns.tprint(`Usage: run ${ns.getScriptName()} SERVER`);
         ns.tprint("Example:");
+        // noinspection SpellCheckingInspection
         ns.tprint(`> run ${ns.getScriptName()} n00dles`);
         return;
     }
 
     recursiveScan(ns, '', 'home', server, route);
-    for (const i in route) {
+    for (let i = 0; i < route.length; i++) {
         await ns.sleep(500);
         const extra = i > 0 ? "└ " : "";
         ns.tprint(`${" ".repeat(i)}${extra}${route[i]}`);

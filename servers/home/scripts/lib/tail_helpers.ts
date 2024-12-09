@@ -11,7 +11,7 @@ export const CollapseState = {
 }
 
 export function collapseTail(script: RunningScript): void {
-  const doc: Document = eval("document")
+  const doc: Document = globalThis['document']
 
   // Find the heading element
   let heading = doc.querySelector("h6[title='" + script.title + "']");
@@ -24,7 +24,7 @@ export function collapseTail(script: RunningScript): void {
 }
 
 export function expandTail(script: RunningScript): void {
-  const doc: Document = eval("document")
+  const doc: Document = globalThis['document']
 
   // Find the heading element
   let heading = doc.querySelector("h6[title='" + script.title + "']");

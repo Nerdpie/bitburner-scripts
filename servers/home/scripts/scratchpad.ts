@@ -1,9 +1,11 @@
 import { ScriptSettings } from "@/servers/home/scripts/settings"
 import { exposeGameInternalObjects } from "@/servers/home/scripts/lib/exploits"
+import {Player} from "NetscriptDefinitions";
+import {sprintf} from "sprintf-js";
 
 
 /** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS): Promise<void> {
   ns.tail();
   ns.clearLog();
 
@@ -13,21 +15,21 @@ export async function main(ns) {
 
 
 
-  /** @type {Player} */
-  let me = ns.getPlayer();
+
+  let me: Player = ns.getPlayer();
 
   if (!globalThis.Companies) {
     exposeGameInternalObjects()
   }
 
-  function calcFavorAfterReset(favor, rep) {
+  function calcFavorAfterReset(favor: number, rep :number) :number {
     return ns.formulas.reputation.calculateRepToFavor(ns.formulas.reputation.calculateFavorToRep(favor) + rep);
   }
 
   globalThis.Companies.metadata.filter(c => c.playerReputation > 0 || c.favor > 8)
     .forEach(c => {
-      //ns.print(vsprintf('%-20s  Rep: %7d  Favor %4d', [c.name, c.playerReputation, c.favor]))
-      ns.print(vsprintf('%-20s  Favor %4d', [c.name, calcFavorAfterReset(c.favor, c.playerReputation)]))
+      //ns.print(sprintf('%-20s  Rep: %7d  Favor %4d', c.name, c.playerReputation, c.favor))
+      ns.print(sprintf('%-20s  Favor %4d', c.name, calcFavorAfterReset(c.favor, c.playerReputation)))
     })
 
 
