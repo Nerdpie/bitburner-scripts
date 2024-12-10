@@ -1,10 +1,9 @@
-// Based heavily on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
+// Based originally on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 
-import {ScriptSettings, BackdoorConcat} from "@/servers/home/scripts/settings"
+import {BackdoorConcat, ScriptSettings} from "@/servers/home/scripts/settings"
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
 import {Server} from "NetscriptDefinitions";
 
-/** @param {NS} ns */
 function getAvailableTools(ns: NS): ((host: string) => void)[] {
   const PROGRAMS: ({ file: string; action: (host: string) => void })[] = [
     {file: "BruteSSH.exe", action: ns.brutessh},
@@ -40,7 +39,6 @@ function pwnServer(ns: NS, target: string, tools) {
     openPorts++;
   })
 
-  //ns.printf('Open ports on %s : %s', target, openPorts);
   if (server.numOpenPortsRequired <= openPorts) {
     ns.nuke(target);
     ns.printf('Target pwned: %s', target);
@@ -69,7 +67,6 @@ function tryBackdoor(ns: NS, server: Server) {
   }
 }
 
-/** @param {NS} ns */
 function execScript(ns: NS, server: string, script: string, targetServer?: string): void {
   let ramCost = ns.getScriptRam(script, server);
 
@@ -102,19 +99,28 @@ function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number):
     let serverName = prefix + i;
     let isOwned = false;
     try {
-      ns.getServer(serverName)
+      const srv = ns.getServer(serverName)
+
+      // Check if the server's RAM is at the current target
+      if (srv.maxRam < ramCapacity) {
+        if (ns.getServerMoneyAvailable('home') < ns.getPurchasedServerUpgradeCost(srv.hostname, ramCapacity)) {
+          ns.printf("Insufficient funds to upgrade %s", srv.hostname);
+        } else {
+          ns.upgradePurchasedServer(srv.hostname, ramCapacity);
+        }
+      }
       isOwned = true;
     } catch {
       // We only care if it can be found, and getServer throws an error rather than returning `undefined`...
     }
-    if (isOwned) {
-      continue;
-    } // Already owned
-    if (ns.getServerMoneyAvailable('home') < PRICE) {
-      ns.printf("Insufficient funds to buy %s", serverName)
-      break;
+
+    if (!isOwned) {
+      if (ns.getServerMoneyAvailable('home') < PRICE) {
+        ns.printf("Insufficient funds to buy %s", serverName)
+        break;
+      }
+      ns.purchaseServer(serverName, ramCapacity);
     }
-    ns.purchaseServer(serverName, ramCapacity);
   }
 }
 
@@ -154,13 +160,8 @@ export async function main(ns: NS): Promise<void> {
       script = '/scripts/zac_hack.js';
   }
 
-  // Include additional files so we don't have to jump to `home` for some commands
-  // TODO Revisit this, since 1) we leave tail windows up, and 2) we use all the RAM on the remotes...
   let filesToCopy = [
     script,
-    '/scripts/scan_files.js',
-    '/scripts/find_server.js',
-    '/scripts/lib/scan_servers.js',
     '/scripts/weaken.js',
     '/scripts/grow.js',
     '/scripts/share.js'
@@ -220,30 +221,34 @@ export async function main(ns: NS): Promise<void> {
     }
 
     // Manage purchased servers
-    let cluster = ns.getPurchasedServers();
-    cluster.forEach(s => {
-      if (resetScripts) {
-        ns.killall(s);
-      }
-      ns.scp(filesToCopy, s);
-
-      if (targetSelf) {
-        execScript(ns, s, '/scripts/share.js', targetServer);
-      } else {
-        if (s.startsWith('weaken-')) {
-          execScript(ns, s, '/scripts/weaken.js', targetServer);
-        } else if (s.startsWith('grow-')) {
-          execScript(ns, s, '/scripts/grow.js', targetServer);
-        } else if (s.startsWith('share-')) {
-          execScript(ns, s, '/scripts/share.js');
-        } else if (s.startsWith('cluster-')) {
-          execScript(ns, s, script, targetServer);
-        } else {
-          // Leave it be, special use systems
-          // TODO Write a routine that goes through all eligible servers, and pushes them to 100% money, min sec
+    ns.getPurchasedServers()
+      .forEach(s => {
+        if (resetScripts) {
+          ns.killall(s);
         }
-      }
-    })
+        ns.scp(filesToCopy, s);
+
+        if (targetSelf) {
+          execScript(ns, s, '/scripts/share.js', targetServer);
+        } else {
+          switch (s.split('-')[0]) { // Check the hostname's prefix
+            case 'weaken':
+              execScript(ns, s, '/scripts/weaken.js', targetServer);
+              break;
+            case 'grow':
+              execScript(ns, s, '/scripts/grow.js', targetServer);
+              break;
+            case 'share':
+              execScript(ns, s, '/scripts/share.js');
+              break;
+            case 'cluster':
+              execScript(ns, s, script, targetServer);
+              break;
+            default:
+            // Leave it be, special use systems
+          }
+        }
+      })
 
     // We only need to kill scripts when restarting/changing target
     // Otherwise, we will interrupt HGW calls
@@ -264,7 +269,6 @@ export async function main(ns: NS): Promise<void> {
       }
     }
 
-    await ns.sleep(60 * 1000);
+    await ns.sleep(config.loopDelay);
   }
 }
-

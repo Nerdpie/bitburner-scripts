@@ -90,11 +90,13 @@ export const ScriptSettings = {
     mode: 'hgw',
     resetScripts: true,
     targetSelf: false,
-    targetServer: 'joesguns',
-    ramCapacity: 1024,
+    targetServer: 'omega-net',
+    loopDelay: 60 * 1000,
+    ramCapacity: 2048,
+    // Adjust per-run; previously used 5, 3, 2, 3
     shareCount: 5,
-    weakenCount: 3,
-    growCount: 2,
+    weakenCount: 5,
+    growCount: 3,
     clusterCount: 3,
   },
 
