@@ -1,19 +1,20 @@
 // Based heavily on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 
-import { ScriptSettings, BackdoorConcat } from "@/servers/home/scripts/settings"
-import { getAllServers } from "@/servers/home/scripts/lib/scan_servers"
+import {ScriptSettings, BackdoorConcat} from "@/servers/home/scripts/settings"
+import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
+import {Server} from "NetscriptDefinitions";
 
 /** @param {NS} ns */
-function getAvailableTools(ns) {
-  const PROGRAMS = [
-    { file: "BruteSSH.exe", action: ns.brutessh },
-    { file: "FTPCrack.exe", action: ns.ftpcrack },
-    { file: "RelaySMTP.exe", action: ns.relaysmtp },
-    { file: "HTTPWorm.exe", action: ns.httpworm },
-    { file: "SQLInject.exe", action: ns.sqlinject }
+function getAvailableTools(ns: NS): ((host: string) => void)[] {
+  const PROGRAMS: ({ file: string; action: (host: string) => void })[] = [
+    {file: "BruteSSH.exe", action: ns.brutessh},
+    {file: "FTPCrack.exe", action: ns.ftpcrack},
+    {file: "RelaySMTP.exe", action: ns.relaysmtp},
+    {file: "HTTPWorm.exe", action: ns.httpworm},
+    {file: "SQLInject.exe", action: ns.sqlinject}
   ];
 
-  let availableTools = [];
+  let availableTools: ((host: string) => void)[] = [];
 
   PROGRAMS.forEach(program => {
     if (ns.fileExists(program.file)) {
@@ -24,9 +25,8 @@ function getAvailableTools(ns) {
   return availableTools;
 }
 
-/** @param {NS} ns */
-function pwnServer(ns, target, tools) {
-  let server = ns.getServer(target);
+function pwnServer(ns: NS, target: string, tools) {
+  let server: Server = ns.getServer(target);
 
   // Don't waste cycles if we already own the box
   if (server.hasAdminRights) {
@@ -56,30 +56,21 @@ function pwnServer(ns, target, tools) {
  * @param {NS} ns
  * @param {Server} server
  */
-function tryBackdoor(ns, server) {
-  // FIXME This will likely error when we unlock the Singularity API...
-  const con = eval("ns.singularity.connect")
-  const bd = eval("ns.singularity.installBackdoor")
-
+function tryBackdoor(ns: NS, server: Server) {
   if (!server.backdoorInstalled
     && !server.purchasedByPlayer
     && server.requiredHackingSkill <= ns.getHackingLevel()) {
-    try {
-      con(server);
-      bd();
-    } catch {
-      // Don't have Singularity access yet
-      if (BackdoorConcat.includes(server.hostname)
-        || ScriptSettings.deploy.targetServer == server.hostname) {
-        // In our 'make sure we bd' list
-        ns.printf('Need to backdoor: %s', server.hostname);
-      }
+    // Don't have Singularity access yet
+    if (BackdoorConcat.includes(server.hostname)
+      || ScriptSettings.deploy.targetServer === server.hostname) {
+      // In our 'make sure we bd' list
+      ns.printf('Need to backdoor: %s', server.hostname);
     }
   }
 }
 
 /** @param {NS} ns */
-function execScript(ns, server, script, targetServer?) {
+function execScript(ns: NS, server: string, script: string, targetServer?: string): void {
   let ramCost = ns.getScriptRam(script, server);
 
   let ramAvailable = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
@@ -97,11 +88,7 @@ function execScript(ns, server, script, targetServer?) {
   }
 }
 
-/** 
- * @param {NS} ns
- * @param config
- */
-function buildCluster(ns, config) {
+function buildCluster(ns: NS, config) {
   const RAM_CAPACITY = config.ramCapacity
   buyServers(ns, 'cluster-', config.clusterCount, RAM_CAPACITY)
   buyServers(ns, 'weaken-', config.weakenCount, RAM_CAPACITY)
@@ -109,12 +96,7 @@ function buildCluster(ns, config) {
   buyServers(ns, 'share-', config.shareCount, RAM_CAPACITY)
 }
 
-/** 
- * @param {NS} ns
- * @param {string} prefix
- * @param {number} count
- */
-function buyServers(ns, prefix, count, ramCapacity) {
+function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number): void {
   const PRICE = ns.getPurchasedServerCost(ramCapacity);
   for (let i = 0; i < count; i++) {
     let serverName = prefix + i;
@@ -125,7 +107,9 @@ function buyServers(ns, prefix, count, ramCapacity) {
     } catch {
       // We only care if it can be found, and getServer throws an error rather than returning `undefined`...
     }
-    if (isOwned) { continue; } // Already owned
+    if (isOwned) {
+      continue;
+    } // Already owned
     if (ns.getServerMoneyAvailable('home') < PRICE) {
       ns.printf("Insufficient funds to buy %s", serverName)
       break;
@@ -135,7 +119,7 @@ function buyServers(ns, prefix, count, ramCapacity) {
 }
 
 /** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS): Promise<void> {
   // TODO Add single-instance checks
 
   ns.clearLog();
@@ -150,9 +134,9 @@ export async function main(ns) {
 
   const MAX_LOG_LINES = 25;
 
-  let servers;
-  let tools;
-  let script;
+  let servers: string[];
+  let tools: ((host: string) => void)[];
+  let script: string;
 
   let targetSelf = config.targetSelf; // Targeting self, or a specific server
   let targetServer = config.targetServer;
@@ -187,6 +171,7 @@ export async function main(ns) {
     targetSelf = true;
   }
 
+  // noinspection InfiniteLoopJS - Intended design
   while (true) {
     ns.printf('Looping at %s', new Date(Date.now()).toLocaleString());
 
@@ -198,7 +183,9 @@ export async function main(ns) {
     // Check inside the loop in case we unlock more tools
     tools = getAvailableTools(ns);
 
-    if (resetScripts) { ns.print("Killing running scripts") }
+    if (resetScripts) {
+      ns.print("Killing running scripts")
+    }
 
     servers.filter(s => (s !== 'home'))
       .filter(s => !s.startsWith('weaken-'))
@@ -207,7 +194,9 @@ export async function main(ns) {
       .filter(s => !s.startsWith('share-'))
       .filter(s => pwnServer(ns, s, tools))
       .forEach(server => {
-        if (resetScripts) { ns.killall(server); }
+        if (resetScripts) {
+          ns.killall(server);
+        }
         ns.scp(filesToCopy, server);
 
         if (targetSelf) {
@@ -233,7 +222,9 @@ export async function main(ns) {
     // Manage purchased servers
     let cluster = ns.getPurchasedServers();
     cluster.forEach(s => {
-      if (resetScripts) { ns.killall(s); }
+      if (resetScripts) {
+        ns.killall(s);
+      }
       ns.scp(filesToCopy, s);
 
       if (targetSelf) {
