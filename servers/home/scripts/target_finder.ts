@@ -85,6 +85,7 @@ export async function main(ns: NS): Promise<void> {
   ];
 
   const LEVEL_THRESHOLD = <boolean>flags.all ? 0 : 950;
+  const MINIMUM_LEVEL_REQUIRED = Math.min(LEVEL_THRESHOLD, globalThis.Player.skills.hacking * 0.4)
 
   ns.disableLog('disableLog');
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
@@ -103,7 +104,7 @@ export async function main(ns: NS): Promise<void> {
     .filter(s => s.haveBackdoor())
     .filter(s => s.canHaveMoney())
     // Aim for hosts ~1/2 your hacking level; will need adjusted for later-game
-    .filter(s => Math.min(LEVEL_THRESHOLD, globalThis.Player.skills.hacking * 0.4) <= s.levelRequired())
+    .filter(s => MINIMUM_LEVEL_REQUIRED <= s.levelRequired())
     .sort(ServerTargeting.compareServer)
     .forEach(s => {
       ns.tprintf("%s", s.toString());

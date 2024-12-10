@@ -39,6 +39,7 @@ export const ScriptSettings = {
     width: 200,
     height: 200,
     keepPlaying: true,
+    loopDelay: 100,
     /* Valid factions are: 
      * 'Netburners'     - Hacknet production
      * 'Slum Snakes'    - Crime success rate

@@ -72,6 +72,7 @@ function execScript(ns: NS, server: string, script: string, targetServer?: strin
 
   let ramAvailable = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
   if ('home' === server) {
+    // noinspection MagicNumberJS - TODO Pull this out to a config
     ramAvailable -= 128; // Leave some RAM free on `home`
   }
 
@@ -87,13 +88,22 @@ function execScript(ns: NS, server: string, script: string, targetServer?: strin
 
 function buildCluster(ns: NS, config) {
   const RAM_CAPACITY = config.ramCapacity
-  buyServers(ns, 'cluster-', config.clusterCount, RAM_CAPACITY)
-  buyServers(ns, 'weaken-', config.weakenCount, RAM_CAPACITY)
-  buyServers(ns, 'grow-', config.growCount, RAM_CAPACITY)
+  // noinspection OverlyComplexBooleanExpressionJS - Abusing boolean expression to short-circuit if low on funds
+  buyServers(ns, 'cluster-', config.clusterCount, RAM_CAPACITY) &&
+  buyServers(ns, 'weaken-', config.weakenCount, RAM_CAPACITY) &&
+  buyServers(ns, 'grow-', config.growCount, RAM_CAPACITY) &&
   buyServers(ns, 'share-', config.shareCount, RAM_CAPACITY)
 }
 
-function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number): void {
+/**
+ * Attempts to buy/upgrades servers
+ * @param ns
+ * @param prefix
+ * @param count
+ * @param ramCapacity
+ * @returns Whether all requested servers were bought/upgraded
+ */
+function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number): boolean {
   const PRICE = ns.getPurchasedServerCost(ramCapacity);
   for (let i = 0; i < count; i++) {
     let serverName = prefix + i;
@@ -105,9 +115,9 @@ function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number):
       if (srv.maxRam < ramCapacity) {
         if (ns.getServerMoneyAvailable('home') < ns.getPurchasedServerUpgradeCost(srv.hostname, ramCapacity)) {
           ns.printf("Insufficient funds to upgrade %s", srv.hostname);
-        } else {
-          ns.upgradePurchasedServer(srv.hostname, ramCapacity);
+          return false;
         }
+        ns.upgradePurchasedServer(srv.hostname, ramCapacity);
       }
       isOwned = true;
     } catch {
@@ -117,11 +127,12 @@ function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number):
     if (!isOwned) {
       if (ns.getServerMoneyAvailable('home') < PRICE) {
         ns.printf("Insufficient funds to buy %s", serverName)
-        break;
+        return false;
       }
       ns.purchaseServer(serverName, ramCapacity);
     }
   }
+  return true;
 }
 
 /** @param {NS} ns */

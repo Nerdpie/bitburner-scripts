@@ -22,7 +22,12 @@ export async function main(ns) {
   ns.disableLog('disableLog');
   DISABLED_LOGS.forEach(l => ns.disableLog(l));
 
-  let result, x, y;
+  /** Delay before processing the next move, in milliseconds */
+  const LOOP_DELAY = config.loopDelay || 200;
+
+  let result;
+  let x;
+  let y;
 
   if (ns.go.getCurrentPlayer() === 'White') {
     await ns.go.opponentNextTurn(false)
@@ -61,7 +66,7 @@ export async function main(ns) {
       // Log opponent's next move, once it happens
       await ns.go.opponentNextTurn(false);
 
-      await ns.sleep(200);
+      await ns.sleep(LOOP_DELAY);
 
       // Keep looping as long as the opponent is playing moves
     } while (result?.type !== "gameOver");

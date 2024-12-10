@@ -5,6 +5,7 @@
 
 import { exposeGameInternalObjects } from "@/servers/home/scripts/lib/exploits"
 import { collapseTail, CollapseState } from "@/servers/home/scripts/lib/tail_helpers"
+import {RunOptions} from "NetscriptDefinitions";
 
 
 /** Holder for settings for default scripts to launch */
@@ -15,17 +16,17 @@ class DefaultScript {
    * @param {number | RunOptions} threadOrOptions
    * @param {string[]} args
    */
-  constructor(script, collapse = CollapseState.Ignore, threadOrOptions = 1, ...args) {
+  constructor(script: string, collapse: CollapseState = CollapseState.Ignore, threadOrOptions: number | RunOptions = 1, ...args: string[]) {
     this.#script = script;
     this.#collapse = collapse;
     this.#threadOrOptions = threadOrOptions;
     this.#runArgs = args;
   }
 
-  #script;
-  #threadOrOptions; // Optional, number | RunOptions
-  #collapse;
-  #runArgs;
+  readonly #script: string;
+  #threadOrOptions: number | RunOptions;
+  readonly #collapse: CollapseState;
+  #runArgs: string[];
 
   // TODO Adjust this to also check for windows from killed scripts
   /** @param {NS} ns */

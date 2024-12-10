@@ -35,7 +35,7 @@ export async function main(ns: NS): Promise<void> {
 
     recursiveScan(ns, '', 'home', server, route);
     for (let i = 0; i < route.length; i++) {
-        await ns.sleep(500);
+        await ns.sleep(1);
         const extra = i > 0 ? "└ " : "";
         ns.tprint(`${" ".repeat(i)}${extra}${route[i]}`);
     }

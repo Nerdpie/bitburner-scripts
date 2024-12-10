@@ -52,6 +52,7 @@ export async function main(ns: NS):Promise<void> {
     serverMoneyMax = ns.getServerMaxMoney(target);
     await logMoney(ns, target, serverMoneyAvailable, serverMoneyMax);
 
+    // noinspection MagicNumberJS
     while (serverMoneyAvailable < (serverMoneyMax * 0.75)) {
       await ns.grow(target);
       serverMoneyAvailable = ns.getServerMoneyAvailable(target);

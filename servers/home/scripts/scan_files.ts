@@ -29,7 +29,13 @@ export async function main(ns) {
     servers = servers.filter(s => !['home'].includes(s));
   }
 
-  if (!flags.scrape) {
+  if (flags.scrape) {
+    servers.forEach(server => {
+      let files = ns.ls(server).filter(f => f.endsWith(".lit"));
+
+      ns.scp(files, 'home', server);
+    })
+  } else {
     servers.forEach(server => {
       let files = ns.ls(server).filter(f => !isIgnored(f));
 
@@ -37,12 +43,6 @@ export async function main(ns) {
         ns.tprintf('|-- %s', server);
         files.forEach(file => ns.tprintf('  - %s', file));
       }
-    })
-  } else {
-    servers.forEach(server => {
-      let files = ns.ls(server).filter(f => f.endsWith(".lit"));
-
-      ns.scp(files, 'home', server);
     })
   }
 

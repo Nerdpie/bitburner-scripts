@@ -12,12 +12,13 @@ export function comparePairs(a: number[], b: number[]): number {
   }
 }
 
+// REFINE Given how simple it is, should we even keep this?
 /**
  * Helper to compare pairs of numbers
  * @param {number} a
  * @param {number} b
  * @return {number} Negative if `a` is less than `b`, 0 if equal, and positive if `b` is less than `a`
  */
-function compareNumbers(a: number, b: number): number {
+export function compareNumbers(a: number, b: number): number {
   return a - b;
 }
