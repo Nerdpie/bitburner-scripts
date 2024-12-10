@@ -18,6 +18,7 @@ export async function main(ns: NS): Promise<void> {
 }
 
 /**
+ * Heavily modified from the internal implementation of the `scan-analyze` command
  * @param {NS} ns
  * @param {number} depth
  * @param {boolean} all
@@ -35,30 +36,32 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
      */
     constructor(parent: string, server: Server, depth: number = 1) {
       this.#server = server;
-      // noinspection ReuseOfLocalVariableJS - Feels like a false positive?
       this.hostname = server.hostname;
-      // noinspection ReuseOfLocalVariableJS - Feels like a false positive?
       this.children = ns.scan(server.hostname)
         .filter((h: string) => h !== parent)
         .map((s: string) => ns.getServer(s))
         .filter((v: Server) => !!v)
         .filter((v: Server) => !ignoreServer(v, depth))
         .map((h: Server) => new Node(server.hostname, h, depth + 1));
-      // noinspection ReuseOfLocalVariableJS - Feels like a false positive?
       this.decorator = this.statusDecorator();
+      if (this.children.length === 0) {
+        this.branchDepth = 0;
+      } else {
+        this.branchDepth = this.children.map(n => n.branchDepth).reduce((acc, bd) => Math.max(acc, bd)) + 1
+      }
     }
 
     #server: Server;
-    hostname: string = "";
-    children: Node[] = [];
-    decorator = "";
+    hostname: string;
+    children: Node[];
+    decorator: string;
+    branchDepth: number;
 
-    /** @type {boolean} */
-    canBackdoor() {
+    canBackdoor(): boolean {
       return this.#server.requiredHackingSkill <= PLAYER_HACK_LEVEL && !this.#server.purchasedByPlayer
     }
 
-    statusDecorator() {
+    statusDecorator(): string {
       let decor = ''
       if (this.#server.hasAdminRights) {
         decor = ' (+'
@@ -108,8 +111,11 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
     //ns.printf(`${infoPrefix}Pwn: ${server.hasAdminRights}` + "\n");
     //ns.printf("%sPwn: %5s BD: %5s", infoPrefix, server.hasAdminRights, server.backdoorInstalled);
 
-    node.children.forEach((n, i) =>
-      printOutput(n, [...prefix, i === node.children.length - 1 ? "  " : "┃ "], i === node.children.length - 1),
+    // Sort display by branch depth (shallowest first), then by hostname
+    node.children.sort((a,b) => a.hostname.localeCompare(b.hostname))
+      .sort((a,b) => a.branchDepth - b.branchDepth)
+      .forEach((n, i) =>
+      printOutput(n, [...prefix, i === node.children.length - 1 ? "  " : "┃ "], i === node.children.length - 1)
     );
   };
 
