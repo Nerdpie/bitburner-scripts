@@ -4,10 +4,10 @@
 
 import {RunningScript} from "NetscriptDefinitions";
 
-export const CollapseState = {
-  Ignore: -1,
-  Open: 0,
-  Close: 1
+export enum CollapseState {
+  Ignore,
+  Open,
+  Close
 }
 
 export function collapseTail(script: RunningScript): void {
