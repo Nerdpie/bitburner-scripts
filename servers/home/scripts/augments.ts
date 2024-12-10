@@ -106,8 +106,9 @@ function purchasableAugs(ns: NS): void {
     .filter(a => a.factions.some(f => playerFacs.includes(f)))
     .filter(a => !ownedAugNames.includes(a.name))
     .filter(a => !queuedAugNames.includes(a.name))
+    .filter(a => 'NeuroFlux Governor' !== a.name)
     // TODO Filter on the rep requirement, within some percent of current rep
-    .sort((a, b) => b.baseCost - a.baseCost)
+    .sort((a, b) => a.baseCost - b.baseCost)
 
   if (filteredAugs.length > 0) {
     filteredAugs.forEach(a => {

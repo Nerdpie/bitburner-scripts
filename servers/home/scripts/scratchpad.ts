@@ -1,4 +1,4 @@
-import { ScriptSettings } from "@/servers/home/scripts/settings"
+import {ScriptSettings} from "@/servers/home/scripts/settings"
 import { exposeGameInternalObjects } from "@/servers/home/scripts/lib/exploits"
 import {Player} from "NetscriptDefinitions";
 import {sprintf} from "sprintf-js";
@@ -13,25 +13,33 @@ export async function main(ns: NS): Promise<void> {
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
+  const contractNum = 161265
+  const contractGroup = ''
+  // noinspection SpellCheckingInspection - In-game servers have irregular names
+  const hostname = 'syscore'
 
+  const contractName = `contract-${contractNum}${contractGroup === '' ? '' : '-' + contractGroup}.cct`;
+  ns.print(ns.codingcontract.getData(contractName, hostname))
 
-
+  /*
   let me: Player = ns.getPlayer();
 
   if (!globalThis.Companies) {
     exposeGameInternalObjects()
   }
-if (ns.fileExists('Formulas.exe','home')) {
-  function calcFavorAfterReset(favor: number, rep: number): number {
-    return ns.formulas.reputation.calculateRepToFavor(ns.formulas.reputation.calculateFavorToRep(favor) + rep);
-  }
 
-  globalThis.Companies.metadata.filter(c => c.playerReputation > 0 || c.favor > 8)
-    .forEach(c => {
-      //ns.print(sprintf('%-20s  Rep: %7d  Favor %4d', c.name, c.playerReputation, c.favor))
-      ns.print(sprintf('%-20s  Favor %4d', c.name, calcFavorAfterReset(c.favor, c.playerReputation)))
-    })
-}
+  if (ns.fileExists('Formulas.exe', 'home')) {
+    function calcFavorAfterReset(favor: number, rep: number): number {
+      return ns.formulas.reputation.calculateRepToFavor(ns.formulas.reputation.calculateFavorToRep(favor) + rep);
+    }
+
+    globalThis.Companies.metadata.filter(c => c.playerReputation > 0 || c.favor > 8)
+      .forEach(c => {
+        //ns.print(sprintf('%-20s  Rep: %7d  Favor %4d', c.name, c.playerReputation, c.favor))
+        ns.print(sprintf('%-20s  Favor %4d', c.name, calcFavorAfterReset(c.favor, c.playerReputation)))
+      })
+  }
+   */
 
 
   /*

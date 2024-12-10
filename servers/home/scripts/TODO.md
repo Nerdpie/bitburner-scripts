@@ -8,6 +8,7 @@
 # Game general
 - Determine what BitNodes to tackle first
 - Determine what challenges to try
+- Write a routine that goes through all eligible servers, and pushes them to 100% money, min sec
 
 # Contracts to code:
 - Caesar cypher offset

@@ -29,7 +29,7 @@ class DefaultScript {
 
   // TODO Adjust this to also check for windows from killed scripts
   /** @param {NS} ns */
-  ensureScriptRunning(ns) {
+  ensureScriptRunning(ns: NS): void {
     ns.tprintf("Checking for: %s", this.#script);
     let checkArgs = [this.#script, 'home', this.#runArgs].flat();
     if (!ns.getRunningScript.apply(ns, checkArgs)) {
