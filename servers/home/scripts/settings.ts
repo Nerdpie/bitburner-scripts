@@ -139,7 +139,7 @@ export const ServerSelections = {
     'kuai-gong',
     'megacorp',
     'nwo',
-    //'omnitek'
+    'omnitek'
   ],
 }
 
