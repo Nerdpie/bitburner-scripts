@@ -21,10 +21,11 @@ export async function main(ns: NS): Promise<void> {
   //algoStockTrade3(ns, input);
   //algoStockTrade4(ns, input);
   //twoColorGraph(ns, input);
-  //spiralizeMatrix(ns, input)
+  //spiralizeMatrix(ns, input);
   //compression1(ns, input);
   //sanitizeParens(ns, input);
   //arrayJumpingGame(ns, input);
+  //minPathSumInTriangle(ns, input);
 
 }
 
@@ -286,7 +287,7 @@ function algoStockTrade4(ns: NS, input: Array<any>) {
 }
 
 // 2-coloring of a graph
-function twoColorGraph(ns: NS, input: Array<number|number[][]>): void {
+function twoColorGraph(ns: NS, input: Array<number | number[][]>): void {
   let numVertices: number = <number>input[0];
   let unsortedEdges: number[][] = <number[][]>input[1];
   let edges: number[][] = unsortedEdges.sort(comparePairs);
@@ -307,65 +308,55 @@ function twoColorGraph(ns: NS, input: Array<number|number[][]>): void {
 
 }
 
-/** @param ns
- @param {number[][]} matrix */
-function spiralRight(ns: NS, matrix: number[][]): number[] {
-  if (!matrix) {
-    return []
+function spiralRight(ns: NS, matrix: number[][], result: number[]): void {
+  if (!matrix || matrix.length === 0) {
+    return
   }
-  let row: any[] = matrix.slice(0, 1)?.flat()
-  matrix = matrix.slice(1)
 
-  if (row) {
-    row.push(spiralDown(ns, matrix))
-    //ns.print(row)
-    return row.flat()
-  }
-  return []
+  matrix[0]?.forEach(n => result.push(n))
+
+  spiralDown(ns, matrix.slice(1), result)
 }
 
-/** @param ns
- @param {number[][]} matrix */
-function spiralDown(ns: NS, matrix: number[][]): number[] {
-  if (!matrix) { return [] }
-  let column: any[] = []
+function spiralDown(ns: NS, matrix: number[][], result: number[]): void {
+  if (!matrix || matrix.length === 0) {
+    return;
+  }
   for (let i = 0; i < matrix.length; i++) {
-    column.push(matrix[i].pop());
+    const temp = matrix[i].pop();
+    if (temp) {
+      result.push(temp);
+    }
   }
-  //ns.print(column)
-  column.push(spiralLeft(ns, matrix))
-  return column.flat()
+  spiralLeft(ns, matrix, result);
 }
 
-/** @param ns
- @param {number[][]} matrix */
-function spiralLeft(ns: NS, matrix: number[][]): number[] {
-  if (!matrix) { return [] }
-  let row: any[] = matrix.pop()?.reverse()
-
-  if (row) {
-    //ns.print(row)
-    row.push(spiralUp(ns, matrix))
-    return row.flat()
+function spiralLeft(ns: NS, matrix: number[][], result: number[]): void {
+  if (!matrix || matrix.length === 0) {
+    return
   }
-  return []
-}
 
-/** @param ns
- @param {number[][]} matrix */
-function spiralUp(ns: NS, matrix: number[][]): number[] {
-  if (!matrix) { return [] }
-  let column = []
+  matrix.pop()?.reverse().forEach(n => result.push(n));
+
+  spiralUp(ns, matrix, result);
+  }
+
+function spiralUp(ns: NS, matrix: number[][], result: number[]): void {
+  if (!matrix || matrix.length === 0) {
+    return
+  }
+
   for (let i = matrix.length - 1; i >= 0; i--) {
-    column.push(matrix[i].slice(0, 1))
-    matrix[i] = matrix[i].slice(1)
+    const temp = matrix[i].shift();
+    if (temp) {
+      result.push(temp);
+    }
   }
-  //ns.print(column)
-  column.push(spiralRight(ns, matrix))
-  return column.flat()
+
+  spiralRight(ns, matrix, result)
 }
 
-/** 
+/**
  * @param {NS} ns
  * @param {number[][]} input
  */
@@ -377,12 +368,10 @@ function spiralizeMatrix(ns: NS, input: number[][]): void {
 
   //ns.print(input)
 
-  // TODO Check passing a REFERENCE to the 'result' object,
-  //    rather than having to call `flat` all the time...
-  let result = spiralRight(ns, input)
+  let result: number[] = []
+  spiralRight(ns, input, result)
 
   ns.print(result)
-
 }
 
 /**
@@ -515,7 +504,7 @@ function sanitizeParens(ns: NS, input: string): void {
   // (recurring theme in these problems: subdivide the problem space...)
 }
 
-/** 
+/**
  * @param {NS} ns
  * @param {number[]} input
  */
@@ -579,4 +568,18 @@ async function arrayJumpingGame(ns: NS, input: number[]) {
 
   ns.print('1 (true)')
   ns.print('Jumps: ' + jumps)
+}
+
+function minPathSumInTriangle(ns: NS, input: number[][]) {
+
+  function innerPathSum(input: number[][], position: number): number {
+    if (input.length === 1) {
+      return input[0][position];
+    }
+    const currentRow = input[0][position];
+    const remainder = input.slice(1);
+    return currentRow + Math.min(innerPathSum(remainder, position), innerPathSum(remainder, position + 1));
+  }
+
+  ns.print(innerPathSum(input, 0));
 }
