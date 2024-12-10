@@ -1,10 +1,6 @@
-import { exposeGameInternalObjects } from "@/servers/home/scripts/lib/exploits"
-import { ScriptSettings } from "@/servers/home/scripts/settings"
-
-// TODO Move to an extension of the prototype
-function uniqueArray(a: any[]): any[] {
-  return [...new Set(a)];
-}
+import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
+import {ScriptSettings} from "@/servers/home/scripts/settings"
+import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
 
 export async function main(ns: NS): Promise<void> {
 
@@ -31,17 +27,19 @@ export async function main(ns: NS): Promise<void> {
   }
 }
 
-function factionsWithUnboughtUniques(ns) {
+function factionsWithUnboughtUniques(ns: NS) {
   ns.print("Facs w/unique augs to buy:")
 
   // Yes, I could remove half of these variables,
   // but it becomes a giant, hard-to-read mess
   let ownedAugNames = globalThis.Player.augmentations.map(a => a.name);
-  let filteredAugs = globalThis.Augmentations.metadata.filter(aug => aug.factions.length == 1)
+  let filteredAugs = globalThis.Augmentations.metadata
+    .filter(aug => aug.factions.length === 1)
+    .filter(aug => !ownedAugNames.includes(aug.name))
+    .filter(aug => aug.factions[0] !== 'Shadows of Anarchy') // Ignore infiltration
+    .map(a => a.factions[0])
 
-  filteredAugs = filteredAugs.filter(aug => !ownedAugNames.includes(aug.name))
-
-  let augFactions = uniqueArray(filteredAugs.map(a => a.factions[0])).sort();
+  let augFactions = arrayUnique(filteredAugs).sort();
 
   if (augFactions.length > 0) {
     augFactions.forEach(fac => ns.printf("- %s", fac));
@@ -51,7 +49,7 @@ function factionsWithUnboughtUniques(ns) {
 }
 
 /** @param {string} name */
-function truncateAugName(name) {
+function truncateAugName(name: string): string {
   // noinspection SpellCheckingInspection
   return name
     .replace("Embedded", "Embed")
@@ -78,7 +76,7 @@ function truncateAugName(name) {
 }
 
 /** @param {string} name */
-function truncateFacName(name) {
+function truncateFacName(name: string): string {
   switch (name) {
     case 'Clarke Incorporated':
       return 'Clarke';
@@ -98,7 +96,7 @@ function truncateFacName(name) {
 }
 
 /** @param {NS} ns */
-function purchasableAugs(ns) {
+function purchasableAugs(ns: NS): void {
   ns.print("Purchasable augs by price:")
 
   let ownedAugNames = globalThis.Player.augmentations.map(a => a.name);
@@ -114,7 +112,7 @@ function purchasableAugs(ns) {
   if (filteredAugs.length > 0) {
     filteredAugs.forEach(a => {
       ns.printf("%-25s - $%8s", truncateAugName(a.name), ns.formatNumber(a.baseCost))
-      ns.print(a.factions.filter(f => playerFacs.includes(f)).map(f => truncateFacName(f)))
+      ns.print(a.factions.filter(f => playerFacs.includes(f)).map(truncateFacName))
     })
   } else {
     ns.print("All bought!");

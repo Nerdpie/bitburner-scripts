@@ -1,4 +1,6 @@
 import {ScriptSettings} from "@/servers/home/scripts/settings"
+import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
+import {comparePairs} from "@/servers/home/scripts/lib/comparators";
 
 /** @param {NS} ns */
 export async function main(ns: NS): Promise<void> {
@@ -9,6 +11,7 @@ export async function main(ns: NS): Promise<void> {
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
+  // noinspection MagicNumberJS - This should go away once I properly automate the contracts anyway...
   let input =
     [96, 45, 30, 147, 154, 34, 93, 72, 31, 33, 158, 2, 130, 195, 16, 118, 126, 147, 196, 95, 182, 21, 26, 52, 192, 6, 103, 191, 166, 182, 88, 186]
 
@@ -22,42 +25,7 @@ export async function main(ns: NS): Promise<void> {
   //compression1(ns, input);
   //sanitizeParens(ns, input);
   //arrayJumpingGame(ns, input);
-}
 
-// TODO Move these to a lib file for comparators
-/**
- * Helper to sort pairs of numbers
- * @param {number[]} a
- * @param {number[]} b
- * @return {number} Negative if `a` is less than `b`, 0 if equal, and positive if `b` is less than `a`
- */
-function comparePairs(a: number[], b: number[]): number {
-  if (a[0] == b[0]) {
-    return a[1] - b[1]
-  } else {
-    return a[0] - b[0]
-  }
-}
-
-/**
- * Helper to compare pairs of numbers
- * @param {number} a
- * @param {number} b
- * @return {number} Negative if `a` is less than `b`, 0 if equal, and positive if `b` is less than `a`
- */
-function compareNumbers(a: number, b: number): number {
-  return a - b;
-}
-
-//TODO Just alter the prototype to have this by default...
-/**
- * Get the unique values in an array
- * @param {Array} arr
- * @return {Array} Unique values from the input array
- * @link https://stackoverflow.com/q/1960473 - Reference
- */
-function arrayUnique(arr: Array<any>): Array<any> {
-  return [...new Set(arr)];
 }
 
 /**
@@ -73,7 +41,6 @@ function subarrayMaxSum(ns: NS, input: number[]) {
     if (maxSum < curSum) {
       maxSum = curSum
     }
-    ;
 
     for (let j = i + 1; j < input.length; j++) {
       curSum += input[j];
@@ -81,10 +48,8 @@ function subarrayMaxSum(ns: NS, input: number[]) {
       if (maxSum < curSum) {
         maxSum = curSum
       }
-      ;
     }
   }
-  ;
 
   ns.printf("Max sum: %d", maxSum);
 }
@@ -281,7 +246,7 @@ function algoStockTrade4(ns: NS, input: Array<any>) {
 
   // Scanning from the last sell price, remove any trades that have lower profit
   for (let i = numPrices - 1; i > 0; i--) {
-    let sellAtIndex: StockTrade[] = trades.filter(t => t.sellIndex == i).sort((a, b) => a.buyIndex - b.buyIndex);
+    let sellAtIndex: StockTrade[] = trades.filter(t => t.sellIndex === i).sort((a, b) => a.buyIndex - b.buyIndex);
 
     if (sellAtIndex?.length > 0) {
       let lastTradeValue = sellAtIndex.pop().profit();
@@ -317,14 +282,14 @@ function algoStockTrade4(ns: NS, input: Array<any>) {
 
   // From the tail end, ignore any trades with the upper day that have a lower profit
 
-  // Determine the set of non-overlapping transactions with highest value
+  // Determine the set of non-overlapping transactions with the highest value
 }
 
 // 2-coloring of a graph
-/** @param {NS} ns */
-function twoColorGraph(ns: NS, input): void {
-  let numVertices: number = input[0];
-  let edges = input[1].sort(comparePairs);
+function twoColorGraph(ns: NS, input: Array<number|number[][]>): void {
+  let numVertices: number = <number>input[0];
+  let unsortedEdges: number[][] = <number[][]>input[1];
+  let edges: number[][] = unsortedEdges.sort(comparePairs);
   let vertices: number[] = arrayUnique(edges.flat()).sort()
 
   ns.printf('numVertices: %d', numVertices);
@@ -404,8 +369,8 @@ function spiralUp(ns: NS, matrix: number[][]): number[] {
  * @param {NS} ns
  * @param {number[][]} input
  */
-function spiralizeMatrix(ns, input) {
-  if (input.length == 0 || input[0].length == 0) {
+function spiralizeMatrix(ns: NS, input: number[][]): void {
+  if (input.length === 0 || input[0].length === 0) {
     ns.print('[]')
     return
   }
@@ -432,12 +397,11 @@ function compression1(ns: NS, input: string): void {
     // Count how many in a row
     // If >9, subtract 9 and repeat
 
-    let processing = input;
-    let result = '';
-    /** @type {string} */
-    let char;
-    /** @type {number} */
-    let count;
+    let processing: string = input;
+    let result: string = '';
+
+    let char: string;
+    let count: number;
 
     do {
       char = processing.charAt(0);
@@ -446,6 +410,7 @@ function compression1(ns: NS, input: string): void {
         count++
       }
 
+      // Remove the characters we just counted
       if (processing.length !== count) {
         processing = processing.substring(count)
       } else {
@@ -477,10 +442,10 @@ function sanitizeParens(ns: NS, input: string): void {
   let trimmed = input;
 
   // Remove any parens that CANNOT match
-  while (trimmed.charAt(0) == ')') {
+  while (trimmed.charAt(0) === ')') {
     trimmed = trimmed.substring(1)
   }
-  while (trimmed.charAt(trimmed.length - 1) == '(') {
+  while (trimmed.charAt(trimmed.length - 1) === '(') {
     trimmed = trimmed.substring(0, trimmed.length - 1)
   }
 
@@ -493,6 +458,7 @@ function sanitizeParens(ns: NS, input: string): void {
   let temp = '';
   for (let i = 0; i < trimmed.length; i++) {
     let char = trimmed.charAt(i);
+    // noinspection FallThroughInSwitchStatementJS - We reset `countRight` for either case
     switch (char) {
       case ')':
         // Are there enough left parens
@@ -518,6 +484,7 @@ function sanitizeParens(ns: NS, input: string): void {
   temp = '';
   for (let i = trimmed.length - 1; i >= 0; i--) {
     let char = trimmed.charAt(i);
+    // noinspection FallThroughInSwitchStatementJS - We reset `countLeft` for either case
     switch (char) {
       case '(':
         // Are there enough right parens
@@ -557,7 +524,7 @@ async function arrayJumpingGame(ns: NS, input: number[]) {
     throw new Error("Invalid input for arrayJumpingGame: " + input)
   }
 
-  if (input.length == 0) {
+  if (input.length === 0) {
     throw new Error("Undefined behavior: no jumps defined")
   }
 
@@ -587,7 +554,7 @@ async function arrayJumpingGame(ns: NS, input: number[]) {
       return;
     }
 
-    if (offset == 0) {
+    if (offset === 0) {
       // We cannot pass 'go'
       ns.print('0 (false)')
       return;

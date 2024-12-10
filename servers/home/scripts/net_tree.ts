@@ -1,8 +1,10 @@
-import { scanAnalyzeInternals } from "@/servers/home/scripts/lib/scan_servers"
-import { ScriptSettings } from "@/servers/home/scripts/settings"
+import React, {ReactNode} from "react";
+import {Server} from "NetscriptDefinitions";
+import {ScriptSettings} from "@/servers/home/scripts/settings"
+import {ServerLink} from "@/servers/home/scripts/lib/ui/server_link";
 
 /** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS): Promise<void> {
   ns.tail();
   ns.clearLog();
 
@@ -12,5 +14,104 @@ export async function main(ns) {
 
   ns.disableLog('disableLog');
   ns.disableLog('scan');
-  scanAnalyzeInternals(ns, 20);
+  scanAnalyzeInternals(ns, Number.MAX_SAFE_INTEGER);
+}
+
+/**
+ * @param {NS} ns
+ * @param {number} depth
+ * @param {boolean} all
+ */
+function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): void {
+  ns.disableLog('getHackingLevel');
+  const PLAYER_HACK_LEVEL = ns.getHackingLevel();
+
+  class Node {
+    // I don't like this being a recursive constructor, but w/e...
+    /**
+     * @param {string} parent
+     * @param {Server} server
+     * @param {number} depth
+     */
+    constructor(parent: string, server: Server, depth: number = 1) {
+      this.#server = server;
+      // noinspection ReuseOfLocalVariableJS - Feels like a false positive?
+      this.hostname = server.hostname;
+      // noinspection ReuseOfLocalVariableJS - Feels like a false positive?
+      this.children = ns.scan(server.hostname)
+        .filter((h: string) => h !== parent)
+        .map((s: string) => ns.getServer(s))
+        .filter((v: Server) => !!v)
+        .filter((v: Server) => !ignoreServer(v, depth))
+        .map((h: Server) => new Node(server.hostname, h, depth + 1));
+      // noinspection ReuseOfLocalVariableJS - Feels like a false positive?
+      this.decorator = this.statusDecorator();
+    }
+
+    #server: Server;
+    hostname: string = "";
+    children: Node[] = [];
+    decorator = "";
+
+    /** @type {boolean} */
+    canBackdoor() {
+      return this.#server.requiredHackingSkill <= PLAYER_HACK_LEVEL && !this.#server.purchasedByPlayer
+    }
+
+    statusDecorator() {
+      let decor = ''
+      if (this.#server.hasAdminRights) {
+        decor = ' (+'
+        // REFINE This line is a mixed bag; it's not TOO heinous, and the equivalent if-else is messy
+        // noinspection NestedConditionalExpressionJS
+        decor += this.#server.backdoorInstalled ? '*' : this.canBackdoor() ? '!' : ''
+        decor += ')'
+      }
+      return decor
+    }
+  }
+
+  // TODO Revisit once we unlock hacknet SERVERS
+  const ignoreServer = (s: Server, d: number): boolean => {
+    // noinspection OverlyComplexBooleanExpressionJS
+    return !all && s.purchasedByPlayer && s.hostname !== "home" || d > depth; /*|| (!all && s instanceof HacknetServer)*/
+  }
+
+  // MEMO Hard-coded 'home' since it was throwing errors...
+  const root = new Node('home', ns.getServer('home'));
+
+
+  const printOutput = (node: Node, prefix: string[] = ["  "], last: boolean = true) => {
+    const titlePrefix = prefix.slice(0, prefix.length - 1).join("") + (last ? "┗ " : "┣ ");
+    // noinspection JSUnusedLocalSymbols
+    const infoPrefix = prefix.join("") + (node.children.length > 0 ? "┃   " : "    ");
+
+    const REACT_ELEMENTS = true;
+    if (REACT_ELEMENTS) {
+      const element: ReactNode = React.createElement(ServerLink, {
+        dashes: titlePrefix,
+        hostname: node.hostname,
+        decorator: node.decorator
+      })
+      // @ts-ignore It is the right type, just a placeholder definition...
+      ns.printRaw(element);
+    } else {
+      ns.print(titlePrefix + node.hostname + node.decorator + "\n");
+    }
+
+    const server = ns.getServer(node.hostname);
+    if (!server) {
+      return;
+    }
+
+    // Interpolation is fun, but it can get messy, esp. if you want alignment...
+    //ns.printf(`${infoPrefix}Pwn: ${server.hasAdminRights}` + "\n");
+    //ns.printf("%sPwn: %5s BD: %5s", infoPrefix, server.hasAdminRights, server.backdoorInstalled);
+
+    node.children.forEach((n, i) =>
+      printOutput(n, [...prefix, i === node.children.length - 1 ? "  " : "┃ "], i === node.children.length - 1),
+    );
+  };
+
+  printOutput(root);
 }
