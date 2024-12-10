@@ -1,5 +1,6 @@
 // TODO Consider moving the default `tail` config block into a utility function
 // TODO Consider creating a wrapper class to clean up the type data for `ScriptSettings`
+//    Ah, TypeScript's utility types may be just what we need!
 // TODO Consider creating enums for the different 'mode' options
 /**
  * Central settings for my scripts
@@ -70,8 +71,8 @@ export const ScriptSettings = {
     y: 545,
     width: 400,
     height: 200,
-    // Mode options are currently: purchasable, uniques
-    mode: 'uniques'
+    // Mode options are currently: purchasable, uniques, rep
+    mode: 'rep'
   },
   hacknet_manager: {
     x: 1500,
