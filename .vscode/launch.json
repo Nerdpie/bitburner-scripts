@@ -5,7 +5,7 @@
       "type": "chrome",
       "request": "attach",
       "name": "Attach to BitBurner (Steam)",
-      "port": 9222,
+      "port": 9222
     },
     {
       "type": "chrome",

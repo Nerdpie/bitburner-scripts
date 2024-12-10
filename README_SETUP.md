@@ -6,7 +6,7 @@ This is a template for using any external editor for Bitburner. This Template su
 
 ### Cloning this Repo
 
-1. If you dont already have it installed, install [NodeJS](https://nodejs.org) v20 or newer
+1. If you don't already have it installed, install [Node.js](https://nodejs.org) v20 or newer
 2. Clone this repository `git clone https://github.com/shyguy1412/bb-external-editor`
 3. navigate to the template inside your console `cd bb-external-editor`
 4. run `npm install` in your console to install all dependencies
@@ -24,8 +24,8 @@ This is a template for using any external editor for Bitburner. This Template su
 
 ## File Hierarchy
 
-The destination server of your scripts is determined by their file hierarchy. The file hierarchy consists of a basepath (default `/servers`), a server name and the script path.  
-This means a file with the path `servers/home/lib/utils.ts` will be placed on the home server, in the lib folder as utils.js while a file with the path `servers/pserv-1/hack.ts` would be placed on pserv-1 as `hack.js`.  
+The destination server of your scripts is determined by their file hierarchy. The file hierarchy consists of a base path (default `/servers`), a server name and the script path.  
+This means a file with the path `servers/home/lib/utils.ts` will be placed on the home server, in the lib folder as utils.js while a file with the path `servers/pserv-1/hack.ts` would be placed on `pserv-1` as `hack.js`.  
 If a server does not exist a warning will be printed to the console.
 
 Now any changes made to scripts inside the server folders will automatically be uploaded to Bitburner.

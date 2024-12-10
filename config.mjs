@@ -1,3 +1,5 @@
+// noinspection SpellCheckingInspection
+
 import { context } from 'esbuild';
 import { BitburnerPlugin } from 'esbuild-bitburner-plugin';
 
@@ -27,4 +29,5 @@ const createContext = async () => await context({
 });
 
 const ctx = await createContext();
+// noinspection JSIgnoredPromiseFromCall
 ctx.watch();

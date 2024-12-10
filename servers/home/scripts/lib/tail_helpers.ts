@@ -35,7 +35,3 @@ export function expandTail(script: RunningScript): void {
     button.click();
   }
 }
-
-export async function main(ns: NS): Promise<void> {
-
-}

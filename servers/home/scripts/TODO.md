@@ -3,11 +3,11 @@
 - Refine the tsconfig.json, .editorconfig
 - Define .eslintrc.cjs
 - Review the rest of the settings/definition files, e.g. `package.json`
+- Determine why some inspections get stuck so badly
 
 # Game general
-- Do the exploits - https://github.com/bitburner-official/bitburner-src/blob/stable/src/Exploits/Exploit.ts
-  - [New Tokyo Noodle Bar](https://github.com/bitburner-official/bitburner-src/blob/dev/src/Locations/ui/SpecialLocation.tsx#L96)
-  - [New Tokyo Arcade](https://github.com/bitburner-official/bitburner-src/blob/dev/src/Arcade/ui/BBCabinet.tsx#L18)
+- Determine what BitNodes to tackle first
+- Determine what challenges to try
 
 # Contracts to code:
 - Caesar cypher offset

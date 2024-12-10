@@ -21,8 +21,8 @@ export async function main(ns: NS): Promise<void> {
   if (!globalThis.Companies) {
     exposeGameInternalObjects()
   }
-
-  function calcFavorAfterReset(favor: number, rep :number) :number {
+if (ns.fileExists('Formulas.exe','home')) {
+  function calcFavorAfterReset(favor: number, rep: number): number {
     return ns.formulas.reputation.calculateRepToFavor(ns.formulas.reputation.calculateFavorToRep(favor) + rep);
   }
 
@@ -31,6 +31,7 @@ export async function main(ns: NS): Promise<void> {
       //ns.print(sprintf('%-20s  Rep: %7d  Favor %4d', c.name, c.playerReputation, c.favor))
       ns.print(sprintf('%-20s  Favor %4d', c.name, calcFavorAfterReset(c.favor, c.playerReputation)))
     })
+}
 
 
   /*

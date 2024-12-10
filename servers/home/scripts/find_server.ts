@@ -3,10 +3,10 @@
 function recursiveScan(ns: NS, parent, server: string, target: string, route) {
     const children: string[] = ns.scan(server);
     for (let child of children) {
-        if (parent == child) {
+        if (parent === child) {
             continue;
         }
-        if (child == target) {
+        if (child === target) {
             route.unshift(child);
             route.unshift(server);
             return true;

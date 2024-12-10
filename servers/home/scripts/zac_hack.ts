@@ -10,7 +10,7 @@
 import {AutocompleteData} from "NetscriptDefinitions";
 
 /** Helper function to write the money values */
-async function logMoney(ns, target, moneyCurrent, moneyMax) {
+async function logMoney(ns: NS, target: string, moneyCurrent: number, moneyMax: number): Promise<void> {
   ns.printf('%s money: %s / %s', target, ns.formatNumber(moneyCurrent), ns.formatNumber(moneyMax));
 }
 

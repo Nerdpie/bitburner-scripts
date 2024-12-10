@@ -24,12 +24,12 @@ export async function main(ns) {
 
   let result, x, y;
 
-  if (ns.go.getCurrentPlayer() == 'White') {
+  if (ns.go.getCurrentPlayer() === 'White') {
     await ns.go.opponentNextTurn(false)
   }
 
   // Have to fetch again, to determine if we need a new board
-  if (ns.go.getCurrentPlayer() == 'None') {
+  if (ns.go.getCurrentPlayer() === 'None') {
     if (config.keepPlaying) {
       ns.go.resetBoardState(config.faction, config.boardSize)
     } else {

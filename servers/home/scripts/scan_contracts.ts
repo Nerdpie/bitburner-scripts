@@ -5,17 +5,14 @@
 import { ScriptSettings } from "@/servers/home/scripts/settings"
 import { getAllServers } from "@/servers/home/scripts/lib/scan_servers"
 
-function isIgnored(file) {
-
+function isIgnored(file: string) {
   const IGNORE_PATTERNS = [
     'scripts/'
   ]
-
   return IGNORE_PATTERNS.some(pat => file.match(pat))
 }
 
-/** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS): Promise<void> {
   const DISABLED_LOGS = [
     'scan'
   ];
@@ -33,9 +30,9 @@ export async function main(ns) {
   ns.resizeTail(config.width, config.height);
 
   servers.forEach(server => {
-    let files = ns.ls(server).filter(f => !isIgnored(f));
-
-    files = files.filter(f => f.endsWith('.cct'));
+    let files = ns.ls(server)
+      .filter(f => !isIgnored(f))
+      .filter(f => f.endsWith('.cct'));
 
     if (files.length > 0) {
       ns.printf('|-- %s', server);

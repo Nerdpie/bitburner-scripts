@@ -48,10 +48,10 @@ class ServerTargeting {
    */
   static compareServer(a, b) {
     // Sort by security, then money
-    if (a.levelRequired() == b.levelRequired()) {
-      if (a.securityMin() == b.securityMin()) {
-        if (a.securityLevel() == b.securityLevel()) {
-          if (a.moneyMax() == b.moneyMax()) {
+    if (a.levelRequired() === b.levelRequired()) {
+      if (a.securityMin() === b.securityMin()) {
+        if (a.securityLevel() === b.securityLevel()) {
+          if (a.moneyMax() === b.moneyMax()) {
             return b.moneyAvailable() - a.moneyAvailable();
           } else {
             return b.moneyMax() - a.moneyMax();
