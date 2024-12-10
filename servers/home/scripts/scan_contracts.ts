@@ -2,15 +2,10 @@
  * Script to iterate over hosts and list contracts
  */
 
-import { ScriptSettings } from "@/servers/home/scripts/settings"
-import { getAllServers } from "@/servers/home/scripts/lib/scan_servers"
-
-function isIgnored(file: string) {
-  const IGNORE_PATTERNS = [
-    'scripts/'
-  ]
-  return IGNORE_PATTERNS.some(pat => file.match(pat))
-}
+import {ScriptSettings} from "@/servers/home/scripts/settings"
+import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
+import React, {ReactNode} from "react";
+import {ServerLink} from "@/servers/home/scripts/lib/ui/server_link";
 
 export async function main(ns: NS): Promise<void> {
   const DISABLED_LOGS = [
@@ -21,7 +16,6 @@ export async function main(ns: NS): Promise<void> {
 
   let servers = getAllServers(ns);
 
-  // We want to have contracts in a `tail` window for reference
   ns.clearLog();
   ns.tail();
 
@@ -31,12 +25,22 @@ export async function main(ns: NS): Promise<void> {
 
   servers.forEach(server => {
     let files = ns.ls(server)
-      .filter(f => !isIgnored(f))
       .filter(f => f.endsWith('.cct'));
 
     if (files.length > 0) {
-      ns.printf('|-- %s', server);
-      files.forEach(file => ns.printf('  - %s', file));
+      const element: ReactNode = React.createElement(ServerLink, {
+        hostname: server
+      });
+      // @ts-ignore It is the right type, just a placeholder definition...
+      ns.printRaw(element);
+
+      for (let i = 0; i < files.length; i++) {
+        if (i < files.length - 1) {
+          ns.print("┣ " + files[i]);
+        } else {
+          ns.print("┗ " + files[i]);
+        }
+      }
     }
   })
 }

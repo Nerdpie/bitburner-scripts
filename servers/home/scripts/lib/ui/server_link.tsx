@@ -1,7 +1,7 @@
 import React from "react";
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
 
-export function ServerLink({dashes, hostname, decorator}): React.ReactElement {
+export function ServerLink({dashes = '', hostname, decorator = ''}): React.ReactElement {
   if (!globalThis.Terminal) {
     exposeGameInternalObjects();
   }
