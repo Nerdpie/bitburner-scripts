@@ -4,10 +4,10 @@ import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
 
 // TODO Write the two-color graph solver
 export function twoColorGraph(ns: NS, input: Array<number | number[][]>): void {
-  let numVertices: number = <number>input[0];
-  let unsortedEdges: number[][] = <number[][]>input[1];
-  let edges: number[][] = unsortedEdges.sort(comparePairs);
-  let vertices: number[] = arrayUnique(edges.flat()).sort()
+  const numVertices: number = <number>input[0];
+  const unsortedEdges: number[][] = <number[][]>input[1];
+  const edges: number[][] = unsortedEdges.sort(comparePairs);
+  const vertices: number[] = arrayUnique(edges.flat()).sort();
 
   ns.printf('numVertices: %d', numVertices);
   ns.print(edges);

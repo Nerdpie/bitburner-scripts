@@ -7,8 +7,8 @@ import {comparePairs} from "@/servers/home/scripts/lib/comparators";
 export function mergeOverlappingPairs(ns: NS, input: number[][]) {
   // TODO Evaluate use of `shift` so we don't have to reverse it
   // Sorted in reverse because we will be using `pop`
-  let sorted = input.sort(comparePairs).reverse();
-  let merged = [];
+  const sorted = input.sort(comparePairs).reverse();
+  const merged = [];
 
   let temp = sorted.pop();
   let lower = temp[0];

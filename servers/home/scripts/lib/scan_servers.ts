@@ -5,10 +5,10 @@
    * @returns {string[]} An array of unique server names.
    */
 export function getAllServers(ns: NS): string[] {
-  let oldLogStatus = ns.isLogEnabled('scan');
+  const oldLogStatus = ns.isLogEnabled('scan');
   ns.disableLog('scan');
-  let servers: string[] = [];
-  let stack = ["home"];
+  const servers: string[] = [];
+  const stack = ["home"];
 
   while (stack.length > 0) {
     const CURRENT = stack.pop();

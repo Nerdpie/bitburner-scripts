@@ -20,7 +20,7 @@ export async function main(ns: NS): Promise<void> {
   ns.tail();
   ns.clearLog();
 
-  let config = ScriptSettings.hacknet_manager;
+  const config = ScriptSettings.hacknet_manager;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
@@ -50,20 +50,20 @@ export async function main(ns: NS): Promise<void> {
 
   // Continuously loop to manage node upgrades or purchases.
   while (true) {
-    let owned_nodes: number = ns.hacknet.numNodes();  // Get the current number of owned nodes.
+    const owned_nodes: number = ns.hacknet.numNodes();  // Get the current number of owned nodes.
     let min_cost: number = ns.hacknet.getPurchaseNodeCost();  // Cost of purchasing a new node.
     let node_index: number = owned_nodes;  // Index for node to upgrade, initialized to the next new node.
     let upgrade_type: number = -1;  // Type of upgrade to perform: -1 for purchase, 0 for level, 1 for RAM, 2 for core.
 
     // Evaluate the cost and type of the cheapest possible upgrade among existing nodes.
     for (let i = 0; i < owned_nodes; i++) {
-      let upgrades: number[] = [
+      const upgrades: number[] = [
         ns.hacknet.getLevelUpgradeCost(i, 1),
         ns.hacknet.getRamUpgradeCost(i, 1),
         ns.hacknet.getCoreUpgradeCost(i, 1)
       ];
 
-      let new_cost: number = Math.min.apply(Math, upgrades);
+      const new_cost: number = Math.min.apply(Math, upgrades);
       if (new_cost < min_cost) {
         min_cost = new_cost;
         node_index = i;

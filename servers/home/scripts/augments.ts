@@ -11,7 +11,7 @@ export async function main(ns: NS): Promise<void> {
   ns.tail();
   ns.clearLog();
 
-  let config = ScriptSettings.augments;
+  const config = ScriptSettings.augments;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
@@ -35,14 +35,14 @@ function factionsWithUnboughtUniques(ns: NS) {
 
   // Yes, I could remove half of these variables,
   // but it becomes a giant, hard-to-read mess
-  let ownedAugNames = globalThis.Player.augmentations.map(a => a.name);
-  let filteredAugs = globalThis.Augmentations.metadata
+  const ownedAugNames = globalThis.Player.augmentations.map(a => a.name);
+  const filteredAugs = globalThis.Augmentations.metadata
     .filter(aug => aug.factions.length === 1)
     .filter(aug => !ownedAugNames.includes(aug.name))
     .filter(aug => aug.factions[0] !== 'Shadows of Anarchy') // Ignore infiltration
-    .map(a => a.factions[0])
+    .map(a => a.factions[0]);
 
-  let augFactions = arrayUnique(filteredAugs).sort();
+  const augFactions = arrayUnique(filteredAugs).sort();
 
   if (augFactions.length > 0) {
     augFactions.forEach(fac => ns.printf("- %s", fac));
@@ -99,9 +99,9 @@ function truncateFacName(name: string): string {
 }
 
 function getPurchasableAugs() {
-  let ownedAugNames = globalThis.Player.augmentations.map(a => a.name);
-  let queuedAugNames = globalThis.Player.queuedAugmentations.map(a => a.name);
-  let playerFacs = globalThis.Player.factions;
+  const ownedAugNames = globalThis.Player.augmentations.map(a => a.name);
+  const queuedAugNames = globalThis.Player.queuedAugmentations.map(a => a.name);
+  const playerFacs = globalThis.Player.factions;
   return globalThis.Augmentations.metadata
     .filter(a => a.factions.some(f => playerFacs.includes(f)))
     .filter(a => !ownedAugNames.includes(a.name))
@@ -113,11 +113,11 @@ function getPurchasableAugs() {
 function showPurchasableAugs(ns: NS): void {
   ns.print("Purchasable augs by price:")
 
-  let playerFacs = globalThis.Player.factions;
+  const playerFacs = globalThis.Player.factions;
 
-  let purchasableAugs = getPurchasableAugs()
+  const purchasableAugs = getPurchasableAugs()
     // TODO Filter on the rep requirement, within some percent of current rep
-    .sort((a, b) => a.baseCost - b.baseCost)
+    .sort((a, b) => a.baseCost - b.baseCost);
 
   if (purchasableAugs.length > 0) {
     purchasableAugs.forEach(a => {
@@ -130,8 +130,8 @@ function showPurchasableAugs(ns: NS): void {
 }
 
 function factionRepNeeded(ns: NS): void {
-  let playerFacs = globalThis.Player.factions;
-  let purchasableAugs = getPurchasableAugs();
+  const playerFacs = globalThis.Player.factions;
+  const purchasableAugs = getPurchasableAugs();
 
   ns.print('Rep needed to buy augs:')
 

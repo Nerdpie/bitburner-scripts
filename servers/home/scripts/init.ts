@@ -32,14 +32,14 @@ class DefaultScript {
   /** @param {NS} ns */
   ensureScriptRunning(ns: NS): void {
     ns.tprintf("Checking for: %s", this.#script);
-    let checkArgs = [this.#script, 'home', this.#runArgs].flat();
+    const checkArgs = [this.#script, 'home', this.#runArgs].flat();
     if (!ns.getRunningScript.apply(ns, checkArgs)) {
       ns.tprintf("Not running: %s", this.#script);
-      let argArray = [this.#script, this.#threadOrOptions, this.#runArgs].flat();
-      let pid = ns.run.apply(ns, argArray)
+      const argArray = [this.#script, this.#threadOrOptions, this.#runArgs].flat();
+      const pid = ns.run.apply(ns, argArray);
 
       if (this.#collapse === CollapseState.Close) {
-        let scriptRef = ns.getRunningScript(pid);
+        const scriptRef = ns.getRunningScript(pid);
         // TODO Handle the script already having finished running...
         collapseTail(scriptRef);
       }

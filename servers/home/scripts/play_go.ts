@@ -8,7 +8,7 @@ export async function main(ns) {
   ns.tail();
   ns.clearLog();
 
-  let config = ScriptSettings.go;
+  const config = ScriptSettings.go;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 

@@ -8,7 +8,7 @@ export async function main(ns: NS): Promise<void> {
   ns.tail();
   ns.clearLog();
 
-  let config = ScriptSettings.net_tree;
+  const config = ScriptSettings.net_tree;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 

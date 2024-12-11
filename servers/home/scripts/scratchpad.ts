@@ -9,7 +9,7 @@ export async function main(ns: NS): Promise<void> {
   ns.tail();
   ns.clearLog();
 
-  let config = ScriptSettings.scratchpad;
+  const config = ScriptSettings.scratchpad;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
@@ -47,20 +47,20 @@ export async function main(ns: NS): Promise<void> {
   } else if (HUSH_IM_BUSY === 3) {
     const SECONDS_PER_MINUTE = 60;
 
-    let me: Player = ns.getPlayer();
+    const me: Player = ns.getPlayer();
 
-    let chaLvl = me.skills.charisma;
-    let chaExp = me.exp.charisma;
-    let chaLvlMult = me.mults.charisma;
-    let chaExpMult = me.mults.charisma_exp;
-    let expForLevel300 = ns.formulas.skills.calculateExp(300, chaLvlMult);
-    let expDiff = expForLevel300 - chaExp
-    let gainPerCycle = ns.formulas.work.universityGains(me, "Leadership", "Rothman University")
-    let gainPerSec = gainPerCycle.chaExp * 5
+    const chaLvl = me.skills.charisma;
+    const chaExp = me.exp.charisma;
+    const chaLvlMult = me.mults.charisma;
+    const chaExpMult = me.mults.charisma_exp;
+    const expForLevel300 = ns.formulas.skills.calculateExp(300, chaLvlMult);
+    const expDiff = expForLevel300 - chaExp;
+    const gainPerCycle = ns.formulas.work.universityGains(me, "Leadership", "Rothman University");
+    const gainPerSec = gainPerCycle.chaExp * 5;
     ns.printf("expDiff: %d", expDiff)
     ns.printf("gainPerSec: %d", gainPerSec)
     let secondsNeeded = expDiff / gainPerSec;
-    let minutesNeeded = Math.floor(secondsNeeded / SECONDS_PER_MINUTE)
+    const minutesNeeded = Math.floor(secondsNeeded / SECONDS_PER_MINUTE);
     secondsNeeded -= (minutesNeeded * SECONDS_PER_MINUTE)
     ns.printf("Level 300 requires class for %d min %d sec", minutesNeeded, secondsNeeded)
   }

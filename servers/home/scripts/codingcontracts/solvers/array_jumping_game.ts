@@ -50,7 +50,7 @@ export async function arrayJumpingGame2(ns: NS, input: number[]) {
     nextIndex = index;
     for (let i = index + 1; i < index + offset; i++) {
       // FIXME I suspect that this line is our off-by-one bug
-      let curTravel = i - index + input[i];
+      const curTravel = i - index + input[i];
       if (maxTravel < curTravel) {
         maxTravel = curTravel;
         nextIndex = i

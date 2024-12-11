@@ -14,17 +14,17 @@ export async function main(ns: NS): Promise<void> {
 
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
-  let servers = getAllServers(ns);
+  const servers = getAllServers(ns);
 
   ns.clearLog();
   ns.tail();
 
-  let config = ScriptSettings.contracts;
+  const config = ScriptSettings.contracts;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
   servers.forEach(server => {
-    let files = ns.ls(server)
+    const files = ns.ls(server)
       .filter(f => f.endsWith('.cct'));
 
     if (files.length > 0) {

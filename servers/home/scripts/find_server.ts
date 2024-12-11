@@ -2,7 +2,7 @@
 
 function recursiveScan(ns: NS, parent, server: string, target: string, route) {
     const children: string[] = ns.scan(server);
-    for (let child of children) {
+    for (const child of children) {
         if (parent === child) {
             continue;
         }
@@ -22,9 +22,9 @@ function recursiveScan(ns: NS, parent, server: string, target: string, route) {
 
 export async function main(ns: NS): Promise<void> {
     const args = ns.flags([["help", false]]);
-    let route = [];
-    let server: string = <string>args._[0];
-    if (!server || args.help) {
+  const route = [];
+  const server: string = <string>args._[0];
+  if (!server || args.help) {
         ns.tprint("This script helps you find a server on the network and shows you the path to get to it.");
         ns.tprint(`Usage: run ${ns.getScriptName()} SERVER`);
         ns.tprint("Example:");

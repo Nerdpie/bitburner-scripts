@@ -61,8 +61,8 @@ export function algoStockTrade3(ns: NS, input: number[]) {
  * @param {Array} input
  */
 export function algoStockTrade4(ns: NS, input: Array<any>) {
-  let numTrades = input[0];
-  let prices = input[1];
+  const numTrades = input[0];
+  const prices = input[1];
   let numPrices = prices.length;
 
 
@@ -110,7 +110,7 @@ export function algoStockTrade4(ns: NS, input: Array<any>) {
     let maxGain = 0;
     for (let j = i + 1; j < numPrices; j++) {
       // Ignore later options that have lower gain
-      let curGain = Math.max(0, prices[j] - startPrice)
+      const curGain = Math.max(0, prices[j] - startPrice);
       if (maxGain < curGain) {
         maxGain = curGain;
         trades.push(new StockTrade(prices[i], i, prices[j], j));
@@ -122,7 +122,7 @@ export function algoStockTrade4(ns: NS, input: Array<any>) {
 
   // Scanning from the last sell price, remove any trades that have lower profit
   for (let i = numPrices - 1; i > 0; i--) {
-    let sellAtIndex: StockTrade[] = trades.filter(t => t.sellIndex === i).sort((a, b) => a.buyIndex - b.buyIndex);
+    const sellAtIndex: StockTrade[] = trades.filter(t => t.sellIndex === i).sort((a, b) => a.buyIndex - b.buyIndex);
 
     if (sellAtIndex?.length > 0) {
       let lastTradeValue = sellAtIndex.pop().profit();

@@ -21,7 +21,7 @@ export async function main(ns) {
 
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
-  let flags = ns.flags([['includeHome', false], ['scrape', false]]);
+  const flags = ns.flags([['includeHome', false], ['scrape', false]]);
 
   let servers = getAllServers(ns);
 
@@ -31,13 +31,13 @@ export async function main(ns) {
 
   if (flags.scrape) {
     servers.forEach(server => {
-      let files = ns.ls(server).filter(f => f.endsWith(".lit"));
+      const files = ns.ls(server).filter(f => f.endsWith(".lit"));
 
       ns.scp(files, 'home', server);
     })
   } else {
     servers.forEach(server => {
-      let files = ns.ls(server).filter(f => !isIgnored(f));
+      const files = ns.ls(server).filter(f => !isIgnored(f));
 
       if (files.length > 0) {
         ns.tprintf('|-- %s', server);

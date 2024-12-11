@@ -13,7 +13,7 @@ function getAvailableTools(ns: NS): ((host: string) => void)[] {
     {file: "SQLInject.exe", action: ns.sqlinject}
   ];
 
-  let availableTools: ((host: string) => void)[] = [];
+  const availableTools: ((host: string) => void)[] = [];
 
   PROGRAMS.forEach(program => {
     if (ns.fileExists(program.file)) {
@@ -25,7 +25,7 @@ function getAvailableTools(ns: NS): ((host: string) => void)[] {
 }
 
 function pwnServer(ns: NS, target: string, tools) {
-  let server: Server = ns.getServer(target);
+  const server: Server = ns.getServer(target);
 
   // Don't waste cycles if we already own the box
   if (server.hasAdminRights) {
@@ -68,7 +68,7 @@ function tryBackdoor(ns: NS, server: Server) {
 }
 
 function execScript(ns: NS, server: string, script: string, targetServer?: string): void {
-  let ramCost = ns.getScriptRam(script, server);
+  const ramCost = ns.getScriptRam(script, server);
 
   let ramAvailable = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
   if ('home' === server) {
@@ -76,7 +76,7 @@ function execScript(ns: NS, server: string, script: string, targetServer?: strin
     ramAvailable -= 128; // Leave some RAM free on `home`
   }
 
-  let numThreads = Math.floor(ramAvailable / ramCost);
+  const numThreads = Math.floor(ramAvailable / ramCost);
   if (numThreads > 0) {
     if (targetServer) {
       ns.exec(script, server, numThreads, targetServer);
@@ -106,7 +106,7 @@ function buildCluster(ns: NS, config) {
 function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number): boolean {
   const PRICE = ns.getPurchasedServerCost(ramCapacity);
   for (let i = 0; i < count; i++) {
-    let serverName = prefix + i;
+    const serverName = prefix + i;
     let isOwned = false;
     try {
       const srv = ns.getServer(serverName)
@@ -142,7 +142,7 @@ export async function main(ns: NS): Promise<void> {
   ns.clearLog();
   ns.tail();
 
-  let config = ScriptSettings.deploy;
+  const config = ScriptSettings.deploy;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
@@ -156,6 +156,7 @@ export async function main(ns: NS): Promise<void> {
   let script: string;
 
   let targetSelf = config.targetSelf; // Targeting self, or a specific server
+  // noinspection ES6ConvertLetToConst - Need to rework this to be dynamic ANYWAY...
   let targetServer = config.targetServer;
   let resetScripts = config.resetScripts;
 
@@ -171,12 +172,12 @@ export async function main(ns: NS): Promise<void> {
       script = '/scripts/zac_hack.js';
   }
 
-  let filesToCopy = [
+  const filesToCopy = [
     script,
     '/scripts/weaken.js',
     '/scripts/grow.js',
     '/scripts/share.js'
-  ]
+  ];
 
   if (!targetSelf && !ns.getServer(targetServer).backdoorInstalled) {
     ns.printf('Target server not yet pwned - %s', targetServer);
@@ -265,7 +266,7 @@ export async function main(ns: NS): Promise<void> {
     // Otherwise, we will interrupt HGW calls
     resetScripts = false;
 
-    let logs = ns.getScriptLogs();
+    const logs = ns.getScriptLogs();
 
     if (logs.length > MAX_LOG_LINES) {
       while (logs.length > MAX_LOG_LINES) {

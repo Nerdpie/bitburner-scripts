@@ -58,7 +58,7 @@ export function spiralizeMatrix(ns: NS, input: number[][]): void {
 
   //ns.print(input)
 
-  let result: number[] = []
+  const result: number[] = [];
   spiralRight(ns, input, result)
 
   ns.print(result)

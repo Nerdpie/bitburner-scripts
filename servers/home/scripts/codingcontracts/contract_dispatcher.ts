@@ -6,7 +6,7 @@ function getAllContracts(ns: NS): ContractWrapper[] {
   const contracts: ContractWrapper[] = [];
 
   servers.forEach(server => {
-    ns.ls(server,'.cct').forEach((c) => {
+    ns.ls(server, '.cct').forEach((c) => {
       contracts.push(new ContractWrapper(ns, server, c));
     })
   });
@@ -16,9 +16,11 @@ function getAllContracts(ns: NS): ContractWrapper[] {
 
 export async function main(ns: NS): Promise<void> {
 
+  ns.setTitle("Contract Dispatcher");
+
   // TODO Add logic to track what contracts have been attempted and failed
   getAllContracts(ns).filter(c => c.solver.finished)
-    .forEach((c) => c.attemptToSolve(ns))
+    .forEach((c) => c.attemptToSolve(ns));
 
   // TODO Check the assumptions and bounds for all contracts
   //    For instance, can the max sum of a subarray be negative?

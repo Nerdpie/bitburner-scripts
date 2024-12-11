@@ -28,7 +28,7 @@ export async function main(ns: NS):Promise<void> {
   ns.disableLog('disableLog');
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
-  let target: string = <string>ns.args[0];
+  const target: string = <string>ns.args[0];
   let securityLevelMin;
   let securityLevelCurrent;
   let serverMoneyMax;

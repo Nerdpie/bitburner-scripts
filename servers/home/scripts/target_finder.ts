@@ -97,7 +97,7 @@ export async function main(ns: NS): Promise<void> {
   formatNumber = globalThis.NSNumbers.formatNumber;
   formatPercent = globalThis.NSNumbers.formatPercent;
 
-  let servers = getAllServers(ns);
+  const servers = getAllServers(ns);
 
   servers.map(s => new ServerTargeting(ns.getServer(s)))
     .filter(s => s.haveAdmin())

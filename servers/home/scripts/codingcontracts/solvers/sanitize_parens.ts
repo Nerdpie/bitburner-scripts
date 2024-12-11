@@ -26,7 +26,7 @@ export function sanitizeParens(ns: NS, input: string): void {
   let countRight = 0;
   let temp = '';
   for (let i = 0; i < trimmed.length; i++) {
-    let char = trimmed.charAt(i);
+    const char = trimmed.charAt(i);
     // noinspection FallThroughInSwitchStatementJS - We reset `countRight` for either case
     switch (char) {
       case ')':
@@ -52,7 +52,7 @@ export function sanitizeParens(ns: NS, input: string): void {
   countRight = 0;
   temp = '';
   for (let i = trimmed.length - 1; i >= 0; i--) {
-    let char = trimmed.charAt(i);
+    const char = trimmed.charAt(i);
     // noinspection FallThroughInSwitchStatementJS - We reset `countLeft` for either case
     switch (char) {
       case '(':
