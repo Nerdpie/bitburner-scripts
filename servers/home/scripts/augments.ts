@@ -117,7 +117,7 @@ function showPurchasableAugs(ns: NS): void {
 
   const purchasableAugs = getPurchasableAugs()
     // TODO Filter on the rep requirement, within some percent of current rep
-    .sort((a, b) => a.baseCost - b.baseCost);
+    .sort((a, b) => b.baseCost - a.baseCost);
 
   if (purchasableAugs.length > 0) {
     purchasableAugs.forEach(a => {
