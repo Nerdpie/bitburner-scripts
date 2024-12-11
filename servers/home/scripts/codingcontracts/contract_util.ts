@@ -63,7 +63,7 @@ export interface SolverInfo {
 export const ContractSolvers: Record<CodingContractTypes, Required<SolverInfo>> = {
   "Algorithmic Stock Trader I": {
     function: algoStockTrade1,
-    finished: false
+    finished: true
   },
   "Algorithmic Stock Trader II": {
     function: algoStockTrade2,
@@ -127,11 +127,11 @@ export const ContractSolvers: Record<CodingContractTypes, Required<SolverInfo>> 
   },
   "Merge Overlapping Intervals": {
     function: mergeOverlappingPairs,
-    finished: false
+    finished: true
   },
   "Minimum Path Sum in a Triangle": {
     function: minPathSumInTriangle,
-    finished: false
+    finished: true
   },
   "Proper 2-Coloring of a Graph": {
     function: twoColorGraph,
@@ -147,7 +147,7 @@ export const ContractSolvers: Record<CodingContractTypes, Required<SolverInfo>> 
   },
   "Spiralize Matrix": {
     function: spiralizeMatrix,
-    finished: false
+    finished: true
   },
   "Square Root": {
     function: bigIntSquareRoot,

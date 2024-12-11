@@ -1,4 +1,4 @@
-export function minPathSumInTriangle(ns: NS, input: number[][]) {
+export function minPathSumInTriangle(_ns: NS, input: number[][]): number {
 
   function innerPathSum(input: number[][], position: number): number {
     if (input.length === 1) {
@@ -9,5 +9,5 @@ export function minPathSumInTriangle(ns: NS, input: number[][]) {
     return currentRow + Math.min(innerPathSum(remainder, position), innerPathSum(remainder, position + 1));
   }
 
-  ns.print(innerPathSum(input, 0));
+  return (innerPathSum(input, 0));
 }

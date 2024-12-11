@@ -2,6 +2,7 @@ import {ScriptSettings} from "@/servers/home/scripts/settings"
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
 import {Player} from "NetscriptDefinitions";
 import {sprintf} from "sprintf-js";
+import {CodingContractTypes} from "@/servers/home/scripts/codingcontracts/contract_util";
 
 
 /** @param {NS} ns */
@@ -13,7 +14,7 @@ export async function main(ns: NS): Promise<void> {
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
-
+  ns.codingcontract.createDummyContract(CodingContractTypes["Algorithmic Stock Trader IV"])
 
   // Lame way to avoid having code purged from the scratchpad, but not executed
   const HUSH_IM_BUSY: number = -1

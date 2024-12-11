@@ -39,6 +39,7 @@ export async function main(ns: NS): Promise<void> {
       }
     } else {
       ns.print('Contract type: ' + contractData.type);
+      ns.print('Contract description:\n' + contractData.description);
       ns.print('Contract data:\n' + contractData.data);
     }
     ns.print('Calculated solution is:\n' + contractData.getSolution(ns));

@@ -50,16 +50,14 @@ function spiralUp(ns: NS, matrix: number[][], result: number[]): void {
  * @param {NS} ns
  * @param {number[][]} input
  */
-export function spiralizeMatrix(ns: NS, input: number[][]): void {
+export function spiralizeMatrix(ns: NS, input: number[][]): number[] {
   if (input.length === 0 || input[0].length === 0) {
-    ns.print('[]')
-    return
+    return [];
   }
 
-  //ns.print(input)
 
   const result: number[] = [];
   spiralRight(ns, input, result)
 
-  ns.print(result)
+  return result;
 }

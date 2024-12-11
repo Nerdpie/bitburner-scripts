@@ -1,4 +1,4 @@
-export function algoStockTrade1(ns: NS, input: number[]): number {
+export function algoStockTrade1(_ns: NS, input: number[]): number {
   let maxProfit = 0;
 
   for (let i = 0; i < input.length; i++) {
@@ -12,10 +12,10 @@ export function algoStockTrade1(ns: NS, input: number[]): number {
 
 // algoStockTrade2 - sum all increases in value
 /**
- * @param {NS} ns
+ * @param {NS} _ns
  * @param {number[]} input
  */
-export function algoStockTrade2(ns: NS, input: number[]) {
+export function algoStockTrade2(_ns: NS, input: number[]): number {
   // Using `reduce` isn't any more concise...
   let sum = 0;
 
@@ -52,17 +52,17 @@ class StockTrade {
  * @param {NS} ns
  * @param {number[]} input
  */
-export function algoStockTrade3(ns: NS, input: number[]) {
-  algoStockTrade4(ns, [2, input]);
+export function algoStockTrade3(ns: NS, input: number[]): number {
+  return algoStockTrade4(ns, [2, input]);
 }
 
 /**
  * @param {NS} ns
  * @param {Array} input
  */
-export function algoStockTrade4(ns: NS, input: Array<any>) {
-  const numTrades = input[0];
-  const prices = input[1];
+export function algoStockTrade4(ns: NS, input: Array<any>): number {
+  const numTrades: number = input[0];
+  const prices: number[] = input[1];
   let numPrices = prices.length;
 
 
@@ -97,7 +97,7 @@ export function algoStockTrade4(ns: NS, input: Array<any>) {
 
   if (numPrices <= 1) {
     ns.print('All lose money');
-    return;
+    return 0;
   }
 
   //ns.print(prices);
