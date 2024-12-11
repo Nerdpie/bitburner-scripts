@@ -24,7 +24,7 @@ function getAvailableTools(ns: NS): ((host: string) => void)[] {
   return availableTools;
 }
 
-function pwnServer(ns: NS, target: string, tools) {
+function pwnServer(ns: NS, target: string, tools: ((host: string) => void)[]) {
   const server: Server = ns.getServer(target);
 
   // Don't waste cycles if we already own the box
@@ -107,24 +107,16 @@ function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number):
   const PRICE = ns.getPurchasedServerCost(ramCapacity);
   for (let i = 0; i < count; i++) {
     const serverName = prefix + i;
-    let isOwned = false;
-    try {
-      const srv = ns.getServer(serverName)
-
+    if (ns.serverExists(serverName)) {
       // Check if the server's RAM is at the current target
-      if (srv.maxRam < ramCapacity) {
-        if (ns.getServerMoneyAvailable('home') < ns.getPurchasedServerUpgradeCost(srv.hostname, ramCapacity)) {
-          ns.printf("Insufficient funds to upgrade %s", srv.hostname);
+      if (ns.getServerMaxRam(serverName) < ramCapacity) {
+        if (ns.getServerMoneyAvailable('home') < ns.getPurchasedServerUpgradeCost(serverName, ramCapacity)) {
+          ns.printf("Insufficient funds to upgrade %s", serverName);
           return false;
         }
-        ns.upgradePurchasedServer(srv.hostname, ramCapacity);
+        ns.upgradePurchasedServer(serverName, ramCapacity);
       }
-      isOwned = true;
-    } catch {
-      // We only care if it can be found, and getServer throws an error rather than returning `undefined`...
-    }
-
-    if (!isOwned) {
+    } else {
       if (ns.getServerMoneyAvailable('home') < PRICE) {
         ns.printf("Insufficient funds to buy %s", serverName)
         return false;
