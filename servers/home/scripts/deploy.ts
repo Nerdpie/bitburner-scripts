@@ -73,7 +73,7 @@ function execScript(ns: NS, server: string, script: string, targetServer?: strin
   let ramAvailable = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
   if ('home' === server) {
     // noinspection MagicNumberJS - TODO Pull this out to a config
-    ramAvailable -= 128; // Leave some RAM free on `home`
+    ramAvailable -= 64; // Leave some RAM free on `home`
   }
 
   const numThreads = Math.floor(ramAvailable / ramCost);
@@ -200,11 +200,9 @@ export async function main(ns: NS): Promise<void> {
       ns.print("Killing running scripts")
     }
 
+    const purchasedServers = ns.getPurchasedServers();
     servers.filter(s => (s !== 'home'))
-      .filter(s => !s.startsWith('weaken-'))
-      .filter(s => !s.startsWith('cluster-'))
-      .filter(s => !s.startsWith('grow-'))
-      .filter(s => !s.startsWith('share-'))
+      .filter(s => !purchasedServers.includes(s))
       .filter(s => pwnServer(ns, s, tools))
       .forEach(server => {
         if (resetScripts) {
