@@ -1,41 +1,27 @@
-export async function main(ns: NS): Promise<void>  {
-  // noinspection JSUnusedLocalSymbols - Give me a minute...
-  const types = [
-    "Find Largest Prime Factor",
-    "Subarray with Maximum Sum",
-    "Total Ways to Sum",
-    "Total Ways to Sum II",
-    "Spiralize Matrix",
-    "Array Jumping Game",
-    "Array Jumping Game II",
-    "Merge Overlapping Intervals",
-    "Generate IP Addresses",
-    "Algorithmic Stock Trader I",
-    "Algorithmic Stock Trader II",
-    "Algorithmic Stock Trader III",
-    "Algorithmic Stock Trader IV",
-    "Minimum Path Sum in a Triangle",
-    "Unique Paths in a Grid I",
-    "Unique Paths in a Grid II",
-    "Shortest Path in a Grid",
-    "Sanitize Parentheses in Expression",
-    "Find All Valid Math Expressions",
-    "HammingCodes: Integer to Encoded Binary",
-    "HammingCodes: Encoded Binary to Integer",
-    "Proper 2-Coloring of a Graph",
-    "Compression I: RLE Compression",
-    "Compression II: LZ Decompression",
-    "Compression III: LZ Compression",
-    "Encryption I: Caesar Cipher",
-    "Encryption II: Vigenère Cipher"
-  ]
+import {getAllServers} from "@/servers/home/scripts/lib/scan_servers";
+import {ContractWrapper} from "@/servers/home/scripts/codingcontracts/contract_util";
 
-  // TODO Map the contract types to file names
-  /*
-  Could use file path to determine if it's finished or not,
-  but then we would need to pass data to a separate script,
-  probably using the ports...
-   */
+function getAllContracts(ns: NS): ContractWrapper[] {
+  const servers = getAllServers(ns);
+  const contracts: ContractWrapper[] = [];
+
+  servers.forEach(server => {
+    ns.ls(server,'.cct').forEach((c) => {
+      contracts.push(new ContractWrapper(ns, server, c));
+    })
+  });
+
+  return contracts;
+}
+
+export async function main(ns: NS): Promise<void> {
+
+  // TODO Add logic to track what contracts have been attempted and failed
+  getAllContracts(ns).filter(c => c.solver.finished)
+    .forEach((c) => c.attemptToSolve(ns))
+
+  // TODO Check the assumptions and bounds for all contracts
+  //    For instance, can the max sum of a subarray be negative?
 
   /*
   This script will replace parts of `scan_contracts.ts` and `contract_calc.ts`
