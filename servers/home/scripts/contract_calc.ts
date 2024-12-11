@@ -35,13 +35,13 @@ export async function main(ns: NS): Promise<void> {
     if (contractData.solver.finished) {
       const autoSolve = <boolean>await ns.prompt("Solver finished; complete automatically?", {type: "boolean"})
       if (autoSolve) {
-        contractData.attemptToSolve(ns);
+        await contractData.attemptToSolve(ns);
       }
     } else {
       ns.print('Contract type: ' + contractData.type);
       ns.print('Contract description:\n' + contractData.description);
       ns.print('Contract data:\n' + contractData.data);
     }
-    ns.print('Calculated solution is:\n' + contractData.getSolution(ns));
+    ns.print('Calculated solution is:\n' + await contractData.getSolution(ns));
   }
 }

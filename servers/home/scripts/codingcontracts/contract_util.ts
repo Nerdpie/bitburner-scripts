@@ -194,17 +194,31 @@ export class ContractWrapper {
   data;
   solver: SolverInfo;
 
+  #isSolverAsync() {
+    return this.solver.function.constructor.name === 'AsyncFunction'
+  }
+
   attemptsRemaining(ns: NS): number {
     return ns.codingcontract.getNumTriesRemaining(this.filename, this.host);
   }
 
-  attemptToSolve(ns: NS): string {
-    const solution = this.solver.function(ns, this.data);
+  async attemptToSolve(ns: NS): Promise<string> {
+    let solution: any;
+
+    if (this.#isSolverAsync()) {
+      solution = await this.solver.function(ns, this.data);
+    } else {
+      solution = this.solver.function(ns, this.data);
+    }
 
     return ns.codingcontract.attempt(solution, this.filename, this.host);
   }
 
-  getSolution(ns: NS) {
+  async getSolution(ns: NS): Promise<any> {
+    if (this.#isSolverAsync()) {
+      return await this.solver.function(ns, this.data);
+    }
+
     return this.solver.function(ns, this.data);
   }
 }
