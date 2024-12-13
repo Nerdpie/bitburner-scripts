@@ -1,9 +1,32 @@
+function rotN(char: string, offset: number): string {
+  const ASCII_LETTER_A: number = 65;
+  const ASCII_LETTER_Z: number = 90;
+  const ALPHABET_SIZE: number = ASCII_LETTER_Z - ASCII_LETTER_A + 1;
+
+  // Only shifting A-Z
+  const charPoint = char.charCodeAt(0);
+  if ( charPoint < ASCII_LETTER_A || charPoint > ASCII_LETTER_Z ) {
+    return char;
+  }
+
+  let shiftedPoint = charPoint - offset;
+
+  // Wrap around
+  if (shiftedPoint < ASCII_LETTER_A) {
+    shiftedPoint += ALPHABET_SIZE;
+  } else if (shiftedPoint > ASCII_LETTER_Z) {
+    shiftedPoint -= ALPHABET_SIZE;
+  }
+
+  return String.fromCodePoint(shiftedPoint);
+}
+
 /**
  * Encryption I: Caesar Cipher
  * @param {string} input
  * @param {NS} ns
  */
-export function encryption1(input: string, ns: NS): void {
+export function encryption1(input: [string, number], ns: NS): string {
   /* Sample description
   Encryption I: Caesar Cipher
 You are attempting to solve a Coding Contract. You have 10 tries remaining, after which the contract will self-destruct.
@@ -21,6 +44,21 @@ The first element is the plaintext, the second element is the left shift value.
 
 Return the ciphertext as uppercase string. Spaces remains the same.
    */
+
+  // ASCII codepoints for uppercase characters are from 65 (A) to 90 (Z)
+  // Codepoint 32 (space) remains the same
+  const plaintext: string = input[0];
+  const offset: number = input[1];
+
+  ns.print(plaintext)
+  ns.print(offset)
+
+  let result = '';
+  for (let i = 0; i < plaintext.length; i++) {
+    result += rotN(plaintext[i], offset);
+  }
+
+  return result;
 }
 
 /**

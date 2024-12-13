@@ -42,6 +42,6 @@ export async function main(ns: NS): Promise<void> {
       ns.print('Contract description:\n' + contractData.description);
       ns.print('Contract data:\n' + contractData.data);
     }
-    ns.print('Calculated solution is:\n' + await contractData.getSolution(ns));
+    ns.print('Calculated solution is:\n' + JSON.stringify( await contractData.getSolution(ns)));
   }
 }

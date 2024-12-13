@@ -2,8 +2,42 @@
 import {comparePairs} from "@/servers/home/scripts/lib/comparators";
 import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
 
-// TODO Write the two-color graph solver
-export function twoColorGraph(input: [number , number[][]], ns: NS): void {
+class Vertex {
+  constructor(public id: number) {
+    this.#color = -1;
+    this.neighbors = new Set<Vertex>();
+  }
+
+  #color: -1 | 0 | 1;
+  neighbors: Set<Vertex>;
+
+  get color() {
+    return this.#color;
+  }
+
+  setColor(c: 0 | 1) {
+    if (this.#color !== -1 && this.#color !== c) {
+      throw new Error('Could not set a conflicting color!');
+    }
+
+    this.#color = c;
+  }
+
+  colorNeighbors() {
+    const neighborColor = this.#color === 0 ? 1 : 0;
+    this.neighbors.forEach(v => {
+      const origColor = v.color;
+      v.setColor(neighborColor)
+
+      // Avoid looping
+      if (origColor === -1) {
+        v.colorNeighbors();
+      }
+    });
+  }
+}
+
+export function twoColorGraph(input: [number, [[number, number]]]): number[] {
   /* Sample description:
   You are given the following data, representing a graph:
  [10,[[0,8],[0,6],[1,6],[4,9],[0,3],[1,8],[4,5],[0,2]]]
@@ -31,21 +65,43 @@ export function twoColorGraph(input: [number , number[][]], ns: NS): void {
  Output: []
    */
   const numVertices: number = input[0];
-  const unsortedEdges: number[][] = input[1];
-  const edges: number[][] = unsortedEdges.sort(comparePairs);
-  const vertices: number[] = arrayUnique(edges.flat()).sort();
+  const unsortedEdges: [[number, number]] = input[1];
+  const edges: [[number, number]] = unsortedEdges.sort(comparePairs);
 
-  ns.printf('numVertices: %d', numVertices);
-  ns.print(edges);
-  ns.print(vertices);
+  // Yes, this could be done with a set of multi-dim arrays to track the neighbors
+  // The classes help me follow the flow more easily, and add in safeties
+  const vertices = new Map<number, Vertex>();
+  arrayUnique(edges.flat()).sort().forEach(v => {
+    vertices.set(v, new Vertex(v))
+  });
 
-  // Get a bit of text we can dump into a DOT-compatible graph env
-  edges.forEach(a => ns.print('  ' + a[0] + '-->' + a[1] + ';'))
+  // Populate the list of neighbors
+  edges.forEach(edge => {
+    const vertA = vertices.get(edge[0]);
+    const vertB = vertices.get(edge[1]);
+    vertA.neighbors.add(vertB);
+    vertB.neighbors.add(vertA);
+  });
 
-  // Check if there are any obvious conflicts, e.g. a loop of an odd number of elements
-  // Can do so by checking the list of neighbors: a.neighbors.foreach(n => n.neighbors.some(b => a.neighbors.includes(b)))
+  // Our result will need to have a space for each POSSIBLE vertex
+  const result: number[] = Array<number>(numVertices).fill(null)
 
-  // Alternatively, start by assigning the first vertex '0', then iterate neighbors.
-  // If a neighbor is already assigned, just ensure it doesn't conflict.
+  // REFINE Adjust this to NOT rely on exceptions for code flow...
+  try {
+    // Since we aren't guaranteed that any given vertex will be present, find the first one
+    const firstVert = Array.from(vertices.keys()).reduce((acc, val) => Math.min(acc, val), 0);
+    vertices.get(firstVert).setColor(0);
+    vertices.get(firstVert).colorNeighbors();
 
+    // REFINE We MIGHT get a case where there are isolated sub-graphs?
+  } catch (error) {
+    console.log('Two Color Graph error: ' + error);
+    return [];
+  }
+
+  vertices.forEach((v) => {
+    result[v.id] = v.color;
+  })
+
+  return result;
 }
