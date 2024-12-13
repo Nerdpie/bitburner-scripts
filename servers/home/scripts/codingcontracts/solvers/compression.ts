@@ -1,9 +1,8 @@
 /**
  * Compression I: RLE Compression
- * @param {NS} _ns
  * @param {string} input
  */
-export function compression1(_ns: NS, input: string): string {
+export function compression1(input: string): string {
   if (!input || input.length === 0) {
     throw new Error('Invalid input for RLE Compression');
   }
@@ -47,10 +46,10 @@ export function compression1(_ns: NS, input: string): string {
 
 /**
  * Compression II: LZ Decompression
- * @param {NS} ns
  * @param {string} input
+ * @param {NS} ns
  */
-export function compression2(ns: NS, input: string): void {
+export function compression2(input: string, ns: NS): void {
   /* Sample description:
   Lempel-Ziv (LZ) compression is a data compression technique which encodes data using references to earlier parts of the data. In this variant of LZ, data is encoded in two types of chunk. Each chunk begins with a length L, encoded as a single ASCII digit from 1 to 9, followed by the chunk data, which is either:
 
@@ -75,10 +74,10 @@ export function compression2(ns: NS, input: string): void {
 
 /**
  * Compression III: LZ Compression
- * @param {NS} ns
  * @param {string} input
+ * @param {NS} ns
  */
-export function compression3(ns: NS, input: string): void {
+export function compression3(input: string, ns: NS): void {
   /* Sample description:
   Lempel-Ziv (LZ) compression is a data compression technique which encodes data using references to earlier parts of the data. In this variant of LZ, data is encoded in two types of chunk. Each chunk begins with a length L, encoded as a single ASCII digit from 1 to 9, followed by the chunk data, which is either:
 

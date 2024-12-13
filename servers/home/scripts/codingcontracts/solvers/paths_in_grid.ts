@@ -1,5 +1,5 @@
 // TODO Write the path solvers
-export function shortestPath(ns: NS, input: number[]) {
+export function shortestPath(input: number[], ns: NS) {
 
 
   /*
@@ -11,7 +11,7 @@ export function shortestPath(ns: NS, input: number[]) {
 }
 
 
-export function uniquePaths1(ns: NS, input: number[]) {
+export function uniquePaths1(input: [number, number], ns: NS) {
   /* Sample description:
   You are in a grid with 14 rows and 7 columns,
   and you are positioned in the top-left corner of that grid.
@@ -41,7 +41,7 @@ export function uniquePaths1(ns: NS, input: number[]) {
    */
 }
 
-export function uniquePaths2(ns: NS, input: number[][]) {
+export function uniquePaths2(input: number[][], ns: NS) {
   /* Sample description
   You are located in the top-left corner of the following grid:
 

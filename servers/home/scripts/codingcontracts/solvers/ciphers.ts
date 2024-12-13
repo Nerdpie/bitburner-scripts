@@ -1,18 +1,34 @@
 /**
  * Encryption I: Caesar Cipher
- * @param {NS} ns
  * @param {string} input
+ * @param {NS} ns
  */
-export function encryption1(ns: NS, input: string): void {
+export function encryption1(input: string, ns: NS): void {
+  /* Sample description
+  Encryption I: Caesar Cipher
+You are attempting to solve a Coding Contract. You have 10 tries remaining, after which the contract will self-destruct.
 
+
+Caesar cipher is one of the simplest encryption technique.
+It is a type of substitution cipher in which each letter in the plaintext
+is replaced by a letter some fixed number of positions down the alphabet.
+For example, with a left shift of 3, D would be replaced by A,
+E would become B, and A would become X (because of rotation).
+
+You are given an array with two elements:
+  ["TRASH SHIFT EMAIL PASTE SHELL", 14]
+The first element is the plaintext, the second element is the left shift value.
+
+Return the ciphertext as uppercase string. Spaces remains the same.
+   */
 }
 
 /**
  * Encryption II: Vigenère Cipher
- * @param {NS} ns
  * @param {string} input
+ * @param {NS} ns
  */
-export function encryption2(ns: NS, input: string): void {
+export function encryption2(input: string, ns: NS): void {
   /* Sample descriptions
   You are attempting to solve a Coding Contract. You have 10 tries remaining, after which the contract will self-destruct.
 

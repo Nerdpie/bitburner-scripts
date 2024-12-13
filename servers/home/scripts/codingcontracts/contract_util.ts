@@ -55,7 +55,7 @@ export enum CodingContractTypes {
 }
 
 export interface SolverInfo {
-  function: ((ns: NS, input: any) => any);
+  function: ((input: any, ns: NS) => any);
   finished: boolean;
 }
 
@@ -206,9 +206,9 @@ export class ContractWrapper {
     let solution: any;
 
     if (this.#isSolverAsync) {
-      solution = await this.solver.function(ns, this.data);
+      solution = await this.solver.function(this.data, ns);
     } else {
-      solution = this.solver.function(ns, this.data);
+      solution = this.solver.function(this.data, ns);
     }
 
     return ns.codingcontract.attempt(solution, this.filename, this.host);
@@ -216,9 +216,9 @@ export class ContractWrapper {
 
   async getSolution(ns: NS): Promise<any> {
     if (this.#isSolverAsync) {
-      return await this.solver.function(ns, this.data);
+      return await this.solver.function(this.data, ns);
     }
 
-    return this.solver.function(ns, this.data);
+    return this.solver.function(this.data, ns);
   }
 }

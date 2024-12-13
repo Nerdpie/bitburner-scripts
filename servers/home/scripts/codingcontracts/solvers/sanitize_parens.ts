@@ -1,10 +1,10 @@
 // REFINE Remove this suppression once the algo is done
 // noinspection GrazieInspection - Grammar in sample description
 /**
- * @param {NS} ns
  * @param {string} input
+ * @param {NS} ns
  */
-export function sanitizeParens(ns: NS, input: string): void {
+export function sanitizeParens(input: string, ns: NS): void {
   /* Sample description:
   Given the following string:
 

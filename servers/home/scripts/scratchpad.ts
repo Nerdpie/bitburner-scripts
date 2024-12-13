@@ -50,10 +50,10 @@ export async function main(ns: NS): Promise<void> {
 
     const me: Player = ns.getPlayer();
 
-    const chaLvl = me.skills.charisma;
+    //const chaLvl = me.skills.charisma;
     const chaExp = me.exp.charisma;
     const chaLvlMult = me.mults.charisma;
-    const chaExpMult = me.mults.charisma_exp;
+    //const chaExpMult = me.mults.charisma_exp;
     const expForLevel300 = ns.formulas.skills.calculateExp(300, chaLvlMult);
     const expDiff = expForLevel300 - chaExp;
     const gainPerCycle = ns.formulas.work.universityGains(me, "Leadership", "Rothman University");

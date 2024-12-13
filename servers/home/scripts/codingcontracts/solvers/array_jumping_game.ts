@@ -1,5 +1,5 @@
 // TODO Write solvers for the array jumping game types
-export async function arrayJumpingGame(ns: NS, input: number[]) {
+export async function arrayJumpingGame(input: number[], ns: NS) {
   /* Sample description:
   You are given the following array of integers:
 
@@ -17,14 +17,14 @@ determine whether you are able to reach the last index.
 
   // arrayJumpingGame2 returns the minimum number of jumps to complete, or 0 on failure,
   // so we just need to clamp it to a max of 1.
-  return Math.min(1, await arrayJumpingGame2(ns, input));
+  return Math.min(1, await arrayJumpingGame2(input, ns));
 }
 
 /**
- * @param {NS} ns
  * @param {number[]} input
+ * @param {NS} ns
  */
-export async function arrayJumpingGame2(ns: NS, input: number[]) {
+export async function arrayJumpingGame2(input: number[], ns: NS) {
   if (!input) {
     throw new Error("Invalid input for arrayJumpingGame: " + input)
   }

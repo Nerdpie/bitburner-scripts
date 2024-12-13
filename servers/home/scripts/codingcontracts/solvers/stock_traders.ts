@@ -1,4 +1,4 @@
-export function algoStockTrade1(_ns: NS, input: number[]): number {
+export function algoStockTrade1(input: number[]): number {
   let maxProfit = 0;
 
   for (let i = 0; i < input.length; i++) {
@@ -12,10 +12,9 @@ export function algoStockTrade1(_ns: NS, input: number[]): number {
 
 // algoStockTrade2 - sum all increases in value
 /**
- * @param {NS} _ns
  * @param {number[]} input
  */
-export function algoStockTrade2(_ns: NS, input: number[]): number {
+export function algoStockTrade2(input: number[]): number {
   // Using `reduce` isn't any more concise...
   let sum = 0;
 
@@ -49,18 +48,18 @@ class StockTrade {
 }
 
 /**
- * @param {NS} ns
  * @param {number[]} input
+ * @param {NS} ns
  */
-export function algoStockTrade3(ns: NS, input: number[]): number {
-  return algoStockTrade4(ns, [2, input]);
+export function algoStockTrade3(input: number[], ns: NS): number {
+  return algoStockTrade4([2, input], ns);
 }
 
 /**
+ * @param {[number, number[]]} input
  * @param {NS} ns
- * @param {Array} input
  */
-export function algoStockTrade4(ns: NS, input: Array<any>): number {
+export function algoStockTrade4(input: [number, number[]], ns: NS): number {
   const numTrades: number = input[0];
   const prices: number[] = input[1];
   let numPrices = prices.length;
@@ -106,7 +105,7 @@ export function algoStockTrade4(ns: NS, input: Array<any>): number {
   let trades: StockTrade[] = [];
 
   // Find each pair of POSSIBLE transactions
-  prices.forEach((startPrice: number, i: number, a: any) => {
+  prices.forEach((startPrice: number, i: number) => {
     let maxGain = 0;
     for (let j = i + 1; j < numPrices; j++) {
       // Ignore later options that have lower gain

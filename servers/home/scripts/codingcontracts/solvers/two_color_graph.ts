@@ -3,7 +3,7 @@ import {comparePairs} from "@/servers/home/scripts/lib/comparators";
 import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
 
 // TODO Write the two-color graph solver
-export function twoColorGraph(ns: NS, input: Array<number | number[][]>): void {
+export function twoColorGraph(input: [number , number[][]], ns: NS): void {
   /* Sample description:
   You are given the following data, representing a graph:
  [10,[[0,8],[0,6],[1,6],[4,9],[0,3],[1,8],[4,5],[0,2]]]
@@ -30,8 +30,8 @@ export function twoColorGraph(ns: NS, input: Array<number | number[][]>): void {
  Input: [3, [[0, 1], [0, 2], [1, 2]]]
  Output: []
    */
-  const numVertices: number = <number>input[0];
-  const unsortedEdges: number[][] = <number[][]>input[1];
+  const numVertices: number = input[0];
+  const unsortedEdges: number[][] = input[1];
   const edges: number[][] = unsortedEdges.sort(comparePairs);
   const vertices: number[] = arrayUnique(edges.flat()).sort();
 

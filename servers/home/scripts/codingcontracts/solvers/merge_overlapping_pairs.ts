@@ -1,10 +1,9 @@
 import {comparePairs} from "@/servers/home/scripts/lib/comparators";
 
 /**
- * @param {NS} _ns
  * @param {number[][]} input
  */
-export function mergeOverlappingPairs(_ns: NS, input: number[][]): number[][] {
+export function mergeOverlappingPairs(input: number[][]): number[][] {
   // REFINE Evaluate use of `shift` so we don't have to reverse it
   // Leaving for now since it seems to be working fine.
 

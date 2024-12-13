@@ -1,8 +1,7 @@
 /**
- * @param {NS} _ns
  * @param {number[]} input
  */
-export function subarrayMaxSum(_ns: NS, input: number[]): number {
+export function subarrayMaxSum(input: number[]): number {
   let maxSum = 0;
 
   for (let i = 0; i < input.length; i++) {
@@ -21,5 +20,5 @@ export function subarrayMaxSum(_ns: NS, input: number[]): number {
     }
   }
 
-  return  maxSum;
+  return maxSum;
 }

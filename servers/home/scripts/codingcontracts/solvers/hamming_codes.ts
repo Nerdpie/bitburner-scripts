@@ -1,6 +1,6 @@
 // noinspection GrazieInspection - TODO File a bug report; 'least significant bits' doesn't need a preceding `the`
 // TODO Write the Hamming code solvers
-export function decodeHammingBinary(ns: NS, input ) {
+export function decodeHammingBinary(input, ns: NS ) {
   /* Sample description:
   You are given the following encoded binary string:
  '0110010010010000'
@@ -28,6 +28,6 @@ export function decodeHammingBinary(ns: NS, input ) {
    */
 }
 
-export function encodeIntegerHamming(ns: NS, input: number) {
+export function encodeIntegerHamming(input: number, ns: NS) {
 
 }

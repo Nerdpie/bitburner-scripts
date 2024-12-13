@@ -1,5 +1,5 @@
 // TODO Write the 'valid math expression' and 'IP address' solvers
-export function findValidMathExpression(ns: NS, input: Array<string|number>): string[] {
+export function findValidMathExpression(input: [string, number], ns: NS): string[] {
   /* Sample description:
   You are given the following string which contains only digits between 0 and 9:
 
@@ -45,7 +45,7 @@ Evaluate the resulting expressions to see if they equal `target`
 }
 
 
-export function generateIPAddresses(ns: NS, input) {
+export function generateIPAddresses(input: string, ns: NS) {
   /* Sample description:
   Given the following string containing only digits,
   return an array with all possible valid IP address

@@ -1,9 +1,9 @@
 // TODO Write the prime factor and square root solvers
-export function largestPrimeFactor(ns: NS, input: number): number {
+export function largestPrimeFactor(input: number, ns: NS): number {
 
   return Number.NaN;
 }
 
-export function bigIntSquareRoot(ns: NS, input) {
+export function bigIntSquareRoot(input, ns: NS) {
 
 }

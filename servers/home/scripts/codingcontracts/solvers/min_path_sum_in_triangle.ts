@@ -1,4 +1,4 @@
-export function minPathSumInTriangle(_ns: NS, input: number[][]): number {
+export function minPathSumInTriangle(input: number[][]): number {
 
   function innerPathSum(input: number[][], position: number): number {
     if (input.length === 1) {
