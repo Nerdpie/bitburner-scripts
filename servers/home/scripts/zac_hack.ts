@@ -29,10 +29,10 @@ export async function main(ns: NS):Promise<void> {
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
   const target: string = <string>ns.args[0];
-  let securityLevelMin;
-  let securityLevelCurrent;
-  let serverMoneyMax;
-  let serverMoneyAvailable;
+  let securityLevelMin: number;
+  let securityLevelCurrent: number;
+  let serverMoneyMax: number;
+  let serverMoneyAvailable: number;
 
   // noinspection InfiniteLoopJS - Intended design for this script
   while (true) {
@@ -69,6 +69,6 @@ export async function main(ns: NS):Promise<void> {
   }
 }
 
-export function autocomplete(data: AutocompleteData, args):string[] {
+export function autocomplete(data: AutocompleteData, _args: string[]):string[] {
   return data.servers;
 }

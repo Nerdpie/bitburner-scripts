@@ -43,6 +43,6 @@ export async function main(ns: NS): Promise<void> {
   }
 }
 
-export function autocomplete(data: AutocompleteData, args: string[]): string[] {
+export function autocomplete(data: AutocompleteData, _args: string[]): string[] {
   return data.servers;
 }
