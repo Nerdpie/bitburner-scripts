@@ -3,24 +3,24 @@ import {
   algoStockTrade2,
   algoStockTrade3,
   algoStockTrade4
-} from "@/servers/home/scripts/codingcontracts/solvers/stock_traders";
-import {arrayJumpingGame, arrayJumpingGame2} from "@/servers/home/scripts/codingcontracts/solvers/array_jumping_game";
-import {compression1, compression2, compression3} from "@/servers/home/scripts/codingcontracts/solvers/compression";
-import {encryption1, encryption2} from "@/servers/home/scripts/codingcontracts/solvers/ciphers";
+} from "@/servers/home/scripts/coding_contracts/solvers/stock_traders";
+import {arrayJumpingGame, arrayJumpingGame2} from "@/servers/home/scripts/coding_contracts/solvers/array_jumping_game";
+import {compression1, compression2, compression3} from "@/servers/home/scripts/coding_contracts/solvers/compression";
+import {encryption1, encryption2} from "@/servers/home/scripts/coding_contracts/solvers/ciphers";
 import {
   findValidMathExpression,
   generateIPAddresses
-} from "@/servers/home/scripts/codingcontracts/solvers/valid_expressions";
-import {bigIntSquareRoot, largestPrimeFactor} from "@/servers/home/scripts/codingcontracts/solvers/number_logic";
-import {decodeHammingBinary, encodeIntegerHamming} from "@/servers/home/scripts/codingcontracts/solvers/hamming_codes";
-import {mergeOverlappingPairs} from "@/servers/home/scripts/codingcontracts/solvers/merge_overlapping_pairs";
-import {minPathSumInTriangle} from "@/servers/home/scripts/codingcontracts/solvers/min_path_sum_in_triangle";
-import {twoColorGraph} from "@/servers/home/scripts/codingcontracts/solvers/two_color_graph";
-import {sanitizeParens} from "@/servers/home/scripts/codingcontracts/solvers/sanitize_parens";
-import {shortestPath, uniquePaths1, uniquePaths2} from "@/servers/home/scripts/codingcontracts/solvers/paths_in_grid";
-import {spiralizeMatrix} from "@/servers/home/scripts/codingcontracts/solvers/spiralize_matrix";
-import {subarrayMaxSum} from "@/servers/home/scripts/codingcontracts/solvers/subarray_max_sum";
-import {waysToSum1, waysToSum2} from "@/servers/home/scripts/codingcontracts/solvers/ways_to_sum";
+} from "@/servers/home/scripts/coding_contracts/solvers/valid_expressions";
+import {bigIntSquareRoot, largestPrimeFactor} from "@/servers/home/scripts/coding_contracts/solvers/number_logic";
+import {decodeHammingBinary, encodeIntegerHamming} from "@/servers/home/scripts/coding_contracts/solvers/hamming_codes";
+import {mergeOverlappingPairs} from "@/servers/home/scripts/coding_contracts/solvers/merge_overlapping_pairs";
+import {minPathSumInTriangle} from "@/servers/home/scripts/coding_contracts/solvers/min_path_sum_in_triangle";
+import {twoColorGraph} from "@/servers/home/scripts/coding_contracts/solvers/two_color_graph";
+import {sanitizeParens} from "@/servers/home/scripts/coding_contracts/solvers/sanitize_parens";
+import {shortestPath, uniquePaths1, uniquePaths2} from "@/servers/home/scripts/coding_contracts/solvers/paths_in_grid";
+import {spiralizeMatrix} from "@/servers/home/scripts/coding_contracts/solvers/spiralize_matrix";
+import {subarrayMaxSum} from "@/servers/home/scripts/coding_contracts/solvers/subarray_max_sum";
+import {waysToSum1, waysToSum2} from "@/servers/home/scripts/coding_contracts/solvers/ways_to_sum";
 
 export enum CodingContractTypes {
   // noinspection JSNonASCIINames - These MUST match the names from in-game

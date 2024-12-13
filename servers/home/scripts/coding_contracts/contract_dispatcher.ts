@@ -1,5 +1,5 @@
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers";
-import {ContractWrapper} from "@/servers/home/scripts/codingcontracts/contract_util";
+import {ContractWrapper} from "@/servers/home/scripts/coding_contracts/contract_util";
 import {ContractDispatcher} from "@/servers/home/scripts/settings";
 
 function getAllContracts(ns: NS): ContractWrapper[] {

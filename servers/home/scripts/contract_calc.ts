@@ -1,7 +1,7 @@
 import {ContractCalc} from "@/servers/home/scripts/settings"
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
 
-import {ContractWrapper} from "@/servers/home/scripts/codingcontracts/contract_util";
+import {ContractWrapper} from "@/servers/home/scripts/coding_contracts/contract_util";
 
 /** @param {NS} ns */
 export async function main(ns: NS): Promise<void> {

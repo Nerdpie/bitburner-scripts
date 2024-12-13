@@ -61,7 +61,7 @@ export async function main(ns: NS): Promise<void> {
     new DefaultScript("/scripts/deploy.js", CollapseState.Open),
     new DefaultScript("/scripts/custom_hud.js", CollapseState.Ignore),
     new DefaultScript("/scripts/scan_files.js", CollapseState.Ignore, 1, "--scrape"),
-    new DefaultScript("/scripts/codingcontracts/contract_dispatcher.js", CollapseState.Ignore),
+    new DefaultScript("/scripts/coding_contracts/contract_dispatcher.js", CollapseState.Ignore),
     new DefaultScript("/scripts/scan_contracts.js", CollapseState.Close),
     new DefaultScript("/scripts/augments.js", CollapseState.Close),
     new DefaultScript("/scripts/net_tree.js", CollapseState.Close),

@@ -2,7 +2,7 @@ import {Scratchpad} from "@/servers/home/scripts/settings"
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
 import {Player} from "NetscriptDefinitions";
 import {sprintf} from "sprintf-js";
-import {CodingContractTypes} from "@/servers/home/scripts/codingcontracts/contract_util";
+import {CodingContractTypes} from "@/servers/home/scripts/coding_contracts/contract_util";
 
 
 /** @param {NS} ns */
