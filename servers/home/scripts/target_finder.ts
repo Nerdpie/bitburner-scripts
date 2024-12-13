@@ -19,37 +19,38 @@ class ServerTargeting {
 
   #server: Server;
 
-  hostname(): string { return this.#server.hostname }
+  get hostname(): string { return this.#server.hostname }
 
-  haveAdmin(): boolean { return this.#server.hasAdminRights }
-  haveBackdoor(): boolean { return this.#server.backdoorInstalled || this.#server.requiredHackingSkill <= globalThis.Player.skills.hacking }
-  securityLevel(): number { return this.#server.hackDifficulty }
-  securityMin(): number { return this.#server.minDifficulty }
+  get haveAdmin(): boolean { return this.#server.hasAdminRights }
+  get haveBackdoor(): boolean { return this.#server.backdoorInstalled }
+  get canBackdoor(): boolean { return this.#server.backdoorInstalled || this.#server.requiredHackingSkill <= globalThis.Player.skills.hacking }
+  get securityLevel(): number { return this.#server.hackDifficulty }
+  get securityMin(): number { return this.#server.minDifficulty }
 
-  levelRequired(): number { return this.#server.requiredHackingSkill ?? 0 }
+  get levelRequired(): number { return this.#server.requiredHackingSkill ?? 0 }
 
-  moneyAvailable(): number { return this.#server.moneyAvailable }
-  moneyMax(): number { return this.#server.moneyMax }
-  canHaveMoney(): boolean { return this.#server.moneyMax > 0 }
+  get moneyAvailable(): number { return this.#server.moneyAvailable }
+  get moneyMax(): number { return this.#server.moneyMax }
+  get canHaveMoney(): boolean { return this.#server.moneyMax > 0 }
 
   static compareServer(a: ServerTargeting, b: ServerTargeting): number {
     // Sort by security, then money
-    if (a.levelRequired() === b.levelRequired()) {
-      if (a.securityMin() === b.securityMin()) {
-        if (a.securityLevel() === b.securityLevel()) {
-          if (a.moneyMax() === b.moneyMax()) {
-            return b.moneyAvailable() - a.moneyAvailable();
+    if (a.levelRequired === b.levelRequired) {
+      if (a.securityMin === b.securityMin) {
+        if (a.securityLevel === b.securityLevel) {
+          if (a.moneyMax === b.moneyMax) {
+            return b.moneyAvailable - a.moneyAvailable;
           } else {
-            return b.moneyMax() - a.moneyMax();
+            return b.moneyMax - a.moneyMax;
           }
         } else {
-          return a.securityLevel() - b.securityLevel();
+          return a.securityLevel - b.securityLevel;
         }
       } else {
-        return a.securityMin() - b.securityMin();
+        return a.securityMin - b.securityMin;
       }
     } else {
-      return a.levelRequired() - b.levelRequired()
+      return a.levelRequired - b.levelRequired
     }
   }
 
@@ -57,7 +58,7 @@ class ServerTargeting {
     return sprintf('%-18s HackLvl %4d BD %s MinSec %2s CurSec %6.3f  Value %8s / %8s ( %6s )',
       this.#server.hostname,
       this.#server.requiredHackingSkill ?? 0,
-      this.haveBackdoor() ? 'Y' : 'N',
+      this.haveBackdoor ? 'Y' : 'N',
       this.#server.minDifficulty,
       this.#server.hackDifficulty,
       formatNumber(this.#server.moneyAvailable),
@@ -100,11 +101,11 @@ export async function main(ns: NS): Promise<void> {
   const servers = getAllServers(ns);
 
   servers.map(s => new ServerTargeting(ns.getServer(s)))
-    .filter(s => s.haveAdmin())
-    .filter(s => s.haveBackdoor())
-    .filter(s => s.canHaveMoney())
+    .filter(s => s.haveAdmin)
+    .filter(s => s.canBackdoor)
+    .filter(s => s.canHaveMoney)
     // Aim for hosts ~1/2 your hacking level; will need adjusted for later-game
-    .filter(s => MINIMUM_LEVEL_REQUIRED <= s.levelRequired())
+    .filter(s => MINIMUM_LEVEL_REQUIRED <= s.levelRequired)
     .sort(ServerTargeting.compareServer)
     .forEach(s => {
       ns.tprintf("%s", s.toString());

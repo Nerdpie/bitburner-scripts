@@ -1,6 +1,6 @@
 // Based originally on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 
-import {BackdoorConcat, ScriptSettings} from "@/servers/home/scripts/settings"
+import {BackdoorConcat, Deploy} from "@/servers/home/scripts/settings"
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
 import {Server} from "NetscriptDefinitions";
 
@@ -60,7 +60,7 @@ function tryBackdoor(ns: NS, server: Server) {
     && server.requiredHackingSkill <= ns.getHackingLevel()) {
     // Don't have Singularity access yet
     if (BackdoorConcat.includes(server.hostname)
-      || ScriptSettings.deploy.targetServer === server.hostname) {
+      || Deploy.targetServer === server.hostname) {
       // In our 'make sure we bd' list
       ns.printf('Need to backdoor: %s', server.hostname);
     }
@@ -134,7 +134,7 @@ export async function main(ns: NS): Promise<void> {
   ns.clearLog();
   ns.tail();
 
-  const config = ScriptSettings.deploy;
+  const config = Deploy;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
@@ -231,6 +231,10 @@ export async function main(ns: NS): Promise<void> {
         ns.scp(filesToCopy, s);
 
         if (targetSelf) {
+          // TODO Modify this to function as a 'prepper'
+          //  Iterating servers and min-maxing grow-weaken
+          // Will want to use a proper port-based manager technique so
+          //  target can change w/o having to reset the scripts
           execScript(ns, s, '/scripts/share.js', targetServer);
         } else {
           switch (s.split('-')[0]) { // Check the hostname's prefix

@@ -1,5 +1,5 @@
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
-import {ScriptSettings} from "@/servers/home/scripts/settings"
+import {Augments} from "@/servers/home/scripts/settings"
 import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
 
 export async function main(ns: NS): Promise<void> {
@@ -11,7 +11,7 @@ export async function main(ns: NS): Promise<void> {
   ns.tail();
   ns.clearLog();
 
-  const config = ScriptSettings.augments;
+  const config = Augments;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
@@ -98,7 +98,7 @@ function truncateFacName(name: string): string {
   }
 }
 
-function getPurchasableAugs() {
+function getPurchasableAugs(): any[] {
   const ownedAugNames = globalThis.Player.augmentations.map(a => a.name);
   const queuedAugNames = globalThis.Player.queuedAugmentations.map(a => a.name);
   const playerFacs = globalThis.Player.factions;
@@ -113,9 +113,9 @@ function getPurchasableAugs() {
 function showPurchasableAugs(ns: NS): void {
   ns.print("Purchasable augs by price:")
 
-  const playerFacs = globalThis.Player.factions;
+  const playerFacs: string[] = globalThis.Player.factions;
 
-  const purchasableAugs = getPurchasableAugs()
+  const purchasableAugs: any[] = getPurchasableAugs()
     // TODO Filter on the rep requirement, within some percent of current rep
     .sort((a, b) => b.baseCost - a.baseCost);
 
@@ -143,9 +143,10 @@ function factionRepNeeded(ns: NS): void {
   function maxRepRequirementForFaction(faction: string): number {
     return purchasableAugs.filter(a => a.factions.includes(faction))
       .map(a => a.baseRepRequirement)
-      .reduce((acc, rep) => Math.max(acc, rep))
+      .reduce((acc, rep) => Math.max(acc, rep), 0)
   }
 
+  // REFINE Filter out those that don't have any left to buy...
   // TODO Revisit once we unlock Singularity, or manage to expose the internals
   //  Until then, we can only show the totals
   playerFacs.sort().forEach(f => ns.printf('%-15s - %4s', f, ns.formatNumber(maxRepRequirementForFaction(f), 0)))

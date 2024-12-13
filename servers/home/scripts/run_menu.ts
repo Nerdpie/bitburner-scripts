@@ -1,10 +1,10 @@
-import {ScriptSettings} from "@/servers/home/scripts/settings"
+import {Run} from "@/servers/home/scripts/settings"
 
 export async function main(ns: NS): Promise<void> {
   ns.tail();
   ns.clearLog();
 
-  const config = ScriptSettings.run;
+  const config = Run;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
   ns.setTitle("Run Menu")

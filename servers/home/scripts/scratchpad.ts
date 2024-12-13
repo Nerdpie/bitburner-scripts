@@ -1,4 +1,4 @@
-import {ScriptSettings} from "@/servers/home/scripts/settings"
+import {Scratchpad} from "@/servers/home/scripts/settings"
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
 import {Player} from "NetscriptDefinitions";
 import {sprintf} from "sprintf-js";
@@ -10,7 +10,7 @@ export async function main(ns: NS): Promise<void> {
   ns.tail();
   ns.clearLog();
 
-  const config = ScriptSettings.scratchpad;
+  const config = Scratchpad;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 

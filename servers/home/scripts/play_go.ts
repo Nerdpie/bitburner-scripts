@@ -1,14 +1,14 @@
-import { ScriptSettings } from "@/servers/home/scripts/settings"
+import {Go} from "@/servers/home/scripts/settings"
 
-/** 
+/**
  * Basic IPvGo script derived from https://github.com/bitburner-official/bitburner-src/blob/dev/src/Documentation/doc/programming/go_algorithms.md
- * @param {NS} ns 
+ * @param {NS} ns
  */
 export async function main(ns) {
   ns.tail();
   ns.clearLog();
 
-  const config = ScriptSettings.go;
+  const config = Go;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 

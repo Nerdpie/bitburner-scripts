@@ -1,5 +1,5 @@
 // Copied from https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
-import {ScriptSettings} from "@/servers/home/scripts/settings"
+import {HacknetManager} from "@/servers/home/scripts/settings"
 
 /**
  * This function automates the management of hacknet nodes in a game,
@@ -20,7 +20,7 @@ export async function main(ns: NS): Promise<void> {
   ns.tail();
   ns.clearLog();
 
-  const config = ScriptSettings.hacknet_manager;
+  const config = HacknetManager;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 

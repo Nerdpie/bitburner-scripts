@@ -1,4 +1,4 @@
-// noinspection SpellCheckingInspection
+// noinspection SpellCheckingInspection - Specifically for `outbase` and `outir`...
 
 import { context } from 'esbuild';
 import { BitburnerPlugin } from 'esbuild-bitburner-plugin';
@@ -16,6 +16,7 @@ const createContext = async () => await context({
     BitburnerPlugin({
       port: 12525,
       types: 'NetscriptDefinitions.d.ts',
+      remoteDebugging: false,
       mirror: {
       },
       distribute: {

@@ -1,4 +1,4 @@
-import {ScriptSettings} from "@/servers/home/scripts/settings"
+import {ContractCalc} from "@/servers/home/scripts/settings"
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
 
 import {ContractWrapper} from "@/servers/home/scripts/codingcontracts/contract_util";
@@ -8,7 +8,7 @@ export async function main(ns: NS): Promise<void> {
   ns.tail();
   ns.clearLog();
 
-  const config = ScriptSettings.contract_calc;
+  const config = ContractCalc;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 

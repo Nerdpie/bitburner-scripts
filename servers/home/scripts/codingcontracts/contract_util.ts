@@ -194,7 +194,7 @@ export class ContractWrapper {
   data;
   solver: SolverInfo;
 
-  #isSolverAsync() {
+  get #isSolverAsync(): boolean {
     return this.solver.function.constructor.name === 'AsyncFunction'
   }
 
@@ -205,7 +205,7 @@ export class ContractWrapper {
   async attemptToSolve(ns: NS): Promise<string> {
     let solution: any;
 
-    if (this.#isSolverAsync()) {
+    if (this.#isSolverAsync) {
       solution = await this.solver.function(ns, this.data);
     } else {
       solution = this.solver.function(ns, this.data);
@@ -215,7 +215,7 @@ export class ContractWrapper {
   }
 
   async getSolution(ns: NS): Promise<any> {
-    if (this.#isSolverAsync()) {
+    if (this.#isSolverAsync) {
       return await this.solver.function(ns, this.data);
     }
 

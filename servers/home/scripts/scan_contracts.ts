@@ -2,7 +2,7 @@
  * Script to iterate over hosts and list contracts
  */
 
-import {ScriptSettings} from "@/servers/home/scripts/settings"
+import {Contracts} from "@/servers/home/scripts/settings"
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
 import React, {ReactNode} from "react";
 import {ServerLink} from "@/servers/home/scripts/lib/ui/server_link";
@@ -19,7 +19,7 @@ export async function main(ns: NS): Promise<void> {
   ns.clearLog();
   ns.tail();
 
-  const config = ScriptSettings.contracts;
+  const config = Contracts;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 

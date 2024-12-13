@@ -39,12 +39,12 @@ class StockTrade {
   sellValue: number = 0;
   sellIndex: number = 0;
 
-  profit(): number {
+  get profit(): number {
     return this.sellValue - this.buyValue
   }
 
   toString(): string {
-    return `[${this.buyIndex},${this.buyValue}] => [${this.sellIndex},${this.sellValue}] = ${this.profit()}`
+    return `[${this.buyIndex},${this.buyValue}] => [${this.sellIndex},${this.sellValue}] = ${this.profit}`
   }
 }
 
@@ -125,15 +125,15 @@ export function algoStockTrade4(ns: NS, input: Array<any>): number {
     const sellAtIndex: StockTrade[] = trades.filter(t => t.sellIndex === i).sort((a, b) => a.buyIndex - b.buyIndex);
 
     if (sellAtIndex?.length > 0) {
-      let lastTradeValue = sellAtIndex.pop().profit();
+      let lastTradeValue = sellAtIndex.pop().profit;
 
       let tempTrade = sellAtIndex.pop();
       while (tempTrade) {
-        if (tempTrade.profit() <= lastTradeValue) {
+        if (tempTrade.profit <= lastTradeValue) {
           // Spans more days, for no better profit; remove
           trades = trades.filter(t => t !== tempTrade);
         } else {
-          lastTradeValue = tempTrade.profit();
+          lastTradeValue = tempTrade.profit;
         }
 
         tempTrade = sellAtIndex.pop()

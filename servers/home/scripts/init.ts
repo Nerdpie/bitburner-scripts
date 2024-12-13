@@ -3,8 +3,8 @@
  * 
  */
 
-import { exposeGameInternalObjects } from "@/servers/home/scripts/lib/exploits"
-import { collapseTail, CollapseState } from "@/servers/home/scripts/lib/tail_helpers"
+import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
+import {CollapseState, collapseTail} from "@/servers/home/scripts/lib/tail_helpers"
 import {RunOptions} from "NetscriptDefinitions";
 
 
@@ -48,19 +48,20 @@ class DefaultScript {
 }
 
 /** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS): Promise<void> {
   // TODO Kill all scripts (other than ourself!) on the local host
 
   // Tweak the CSS for the view so it doesn't hide behind core info as much
   /** @type {Document} */
-  const doc = globalThis['document'];
+  const doc: Document = globalThis['document'];
   const marginStyle = doc.body.appendChild(doc.createElement("style"));
   marginStyle.textContent = "#root > div.MuiBox-root > div.MuiBox-root { margin-right: 400px }";
 
   const scripts = [
-    new DefaultScript("/scripts/deploy.js"),
-    new DefaultScript("/scripts/custom_hud.js"),
+    new DefaultScript("/scripts/deploy.js", CollapseState.Open),
+    new DefaultScript("/scripts/custom_hud.js", CollapseState.Ignore),
     new DefaultScript("/scripts/scan_files.js", CollapseState.Ignore, 1, "--scrape"),
+    new DefaultScript("/scripts/codingcontracts/contract_dispatcher.js", CollapseState.Ignore),
     new DefaultScript("/scripts/scan_contracts.js", CollapseState.Close),
     new DefaultScript("/scripts/augments.js", CollapseState.Close),
     new DefaultScript("/scripts/net_tree.js", CollapseState.Close),

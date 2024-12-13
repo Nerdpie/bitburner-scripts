@@ -1,3 +1,4 @@
+// noinspection GrazieInspection - TODO File a bug report; 'least significant bits' doesn't need a preceding `the`
 // TODO Write the Hamming code solvers
 export function decodeHammingBinary(ns: NS, input ) {
   /* Sample description:

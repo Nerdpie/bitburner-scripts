@@ -1,6 +1,6 @@
 import React, {ReactNode} from "react";
 import {Server} from "NetscriptDefinitions";
-import {ScriptSettings} from "@/servers/home/scripts/settings"
+import {NetTree} from "@/servers/home/scripts/settings"
 import {ServerLink} from "@/servers/home/scripts/lib/ui/server_link";
 
 /** @param {NS} ns */
@@ -8,7 +8,7 @@ export async function main(ns: NS): Promise<void> {
   ns.tail();
   ns.clearLog();
 
-  const config = ScriptSettings.net_tree;
+  const config = NetTree;
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
@@ -57,7 +57,7 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
     decorator: string;
     branchDepth: number;
 
-    canBackdoor(): boolean {
+    get #canBackdoor(): boolean {
       return this.#server.requiredHackingSkill <= PLAYER_HACK_LEVEL && !this.#server.purchasedByPlayer
     }
 
@@ -67,7 +67,7 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
         decor = ' (+'
         // REFINE This line is a mixed bag; it's not TOO heinous, and the equivalent if-else is messy
         // noinspection NestedConditionalExpressionJS
-        decor += this.#server.backdoorInstalled ? '*' : this.canBackdoor() ? '!' : ''
+        decor += this.#server.backdoorInstalled ? '*' : this.#canBackdoor ? '!' : ''
         decor += ')'
       }
       return decor
@@ -86,8 +86,6 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
 
   const printOutput = (node: Node, prefix: string[] = ["  "], last: boolean = true) => {
     const titlePrefix = prefix.slice(0, prefix.length - 1).join("") + (last ? "┗ " : "┣ ");
-    // noinspection JSUnusedLocalSymbols
-    const infoPrefix = prefix.join("") + (node.children.length > 0 ? "┃   " : "    ");
 
     const REACT_ELEMENTS = true;
     if (REACT_ELEMENTS) {
@@ -107,16 +105,12 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
       return;
     }
 
-    // Interpolation is fun, but it can get messy, esp. if you want alignment...
-    //ns.printf(`${infoPrefix}Pwn: ${server.hasAdminRights}` + "\n");
-    //ns.printf("%sPwn: %5s BD: %5s", infoPrefix, server.hasAdminRights, server.backdoorInstalled);
-
     // Sort display by branch depth (shallowest first), then by hostname
-    node.children.sort((a,b) => a.hostname.localeCompare(b.hostname))
-      .sort((a,b) => a.branchDepth - b.branchDepth)
+    node.children.sort((a, b) => a.hostname.localeCompare(b.hostname))
+      .sort((a, b) => a.branchDepth - b.branchDepth)
       .forEach((n, i) =>
-      printOutput(n, [...prefix, i === node.children.length - 1 ? "  " : "┃ "], i === node.children.length - 1)
-    );
+        printOutput(n, [...prefix, i === node.children.length - 1 ? "  " : "┃ "], i === node.children.length - 1)
+      );
   };
 
   printOutput(root);
