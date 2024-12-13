@@ -1,5 +1,6 @@
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers";
 import {ContractWrapper} from "@/servers/home/scripts/codingcontracts/contract_util";
+import {ContractDispatcher} from "@/servers/home/scripts/settings";
 
 function getAllContracts(ns: NS): ContractWrapper[] {
   const servers = getAllServers(ns);
@@ -18,7 +19,13 @@ export async function main(ns: NS): Promise<void> {
   ns.disableLog('disableLog')
   ns.disableLog('scan')
 
+  ns.tail();
+  ns.clearLog();
+
   ns.setTitle("Contract Dispatcher");
+  const config = ContractDispatcher;
+  ns.moveTail(config.x, config.y);
+  ns.resizeTail(config.width, config.height);
 
   // noinspection InfiniteLoopJS - Intended design
   while (true) {

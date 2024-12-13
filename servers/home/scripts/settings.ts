@@ -25,24 +25,30 @@ import {BuiltinServers} from "@/servers/home/scripts/lib/builtin_servers";
 export const ContractCalc: SettingsData = {
   x: 1250,
   y: 50,
-  width: 500,
+  width: 450,
   height: 300
 }
 export const Scratchpad: SettingsData = {
   x: 1250,
   y: 85,
-  width: 500,
+  width: 450,
+  height: 200
+}
+export const ContractDispatcher: SettingsData = {
+  x: 1250,
+  y: 120,
+  width: 450,
   height: 200
 }
 export const Run: SettingsData = {
   x: 1500,
-  y: 120,
+  y: 155,
   width: 200,
   height: 200
 }
 export const Go: GoSettings = {
   x: 1500,
-  y: 155,
+  y: 190,
   width: 200,
   height: 200,
   keepPlaying: true,
@@ -80,6 +86,7 @@ export const HacknetManager: HacknetSettings = {
   loopDelay: 10 * 1000,
   threshold: undefined
 }
+// noinspection SpellCheckingInspection - In-game servers trigger this inspection...
 export const Deploy: DeploySettings = {
   x: 1500,
   y: 780,
