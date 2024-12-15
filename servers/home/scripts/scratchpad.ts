@@ -14,7 +14,7 @@ export async function main(ns: NS): Promise<void> {
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
-  ns.codingcontract.createDummyContract(CodingContractTypes["Algorithmic Stock Trader IV"])
+  //ns.codingcontract.createDummyContract(CodingContractTypes["Algorithmic Stock Trader IV"])
 
   // Lame way to avoid having code purged from the scratchpad, but not executed
   const HUSH_IM_BUSY: number = -1
@@ -54,15 +54,15 @@ export async function main(ns: NS): Promise<void> {
     const chaExp = me.exp.charisma;
     const chaLvlMult = me.mults.charisma;
     //const chaExpMult = me.mults.charisma_exp;
-    const expForLevel300 = ns.formulas.skills.calculateExp(300, chaLvlMult);
-    const expDiff = expForLevel300 - chaExp;
-    const gainPerCycle = ns.formulas.work.universityGains(me, "Leadership", "Rothman University");
-    const gainPerSec = gainPerCycle.chaExp * 5;
+    const TARGET_LEVEL = 725;
+    const expForTargetLevel = ns.formulas.skills.calculateExp(TARGET_LEVEL, chaLvlMult);
+    const expDiff = expForTargetLevel - chaExp;
+    const gainPerCycle = ns.formulas.work.universityGains(me, "Leadership", "ZB Institute of Technology");
+    const gainPerMillisecond = gainPerCycle.chaExp / 200;
     ns.printf("expDiff: %d", expDiff)
-    ns.printf("gainPerSec: %d", gainPerSec)
-    let secondsNeeded = expDiff / gainPerSec;
-    const minutesNeeded = Math.floor(secondsNeeded / SECONDS_PER_MINUTE);
-    secondsNeeded -= (minutesNeeded * SECONDS_PER_MINUTE)
-    ns.printf("Level 300 requires class for %d min %d sec", minutesNeeded, secondsNeeded)
+    ns.printf("gainPerSec: %d", gainPerMillisecond * 1000)
+    const millisecondsNeeded = expDiff / gainPerMillisecond;
+
+    ns.printf("Level %d requires class for %s", TARGET_LEVEL, ns.tFormat(millisecondsNeeded))
   }
 }
