@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/bitburner-scripts.iml" filepath="$PROJECT_DIR$/.idea/bitburner-scripts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../bitburner-src/.idea/bitburner-src.iml" filepath="$PROJECT_DIR$/../bitburner-src/.idea/bitburner-src.iml" />
     </modules>
   </component>
 </project>
