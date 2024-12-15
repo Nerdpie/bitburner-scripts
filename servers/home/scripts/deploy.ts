@@ -3,6 +3,7 @@
 import {BackdoorConcat, Deploy} from "@/servers/home/scripts/settings"
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
 import {Server} from "NetscriptDefinitions";
+import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
 
 function getAvailableTools(ns: NS): ((host: string) => void)[] {
   const PROGRAMS: ({ file: string; action: (host: string) => void })[] = [
@@ -55,14 +56,26 @@ function pwnServer(ns: NS, target: string, tools: ((host: string) => void)[]) {
  * @param {Server} server
  */
 function tryBackdoor(ns: NS, server: Server) {
+  // REFINE Revisit when we have Singularity access ... or not
   if (!server.backdoorInstalled
     && !server.purchasedByPlayer
     && server.requiredHackingSkill <= ns.getHackingLevel()) {
-    // Don't have Singularity access yet
-    if (BackdoorConcat.includes(server.hostname)
-      || Deploy.targetServer === server.hostname) {
-      // In our 'make sure we bd' list
-      ns.printf('Need to backdoor: %s', server.hostname);
+    try {
+      // Make sure the Terminal isn't busy with another action
+      if (globalThis.Terminal.action === null) {
+        globalThis.Terminal.connectToServer(server.hostname);
+        globalThis.Terminal.executeCommands('backdoor');
+      } else if (BackdoorConcat.includes(server.hostname)
+        || Deploy.targetServer === server.hostname) {
+        // In our 'make sure we bd' list
+        ns.printf('Need to backdoor: %s', server.hostname);
+      }
+    } catch {
+      if (BackdoorConcat.includes(server.hostname)
+        || Deploy.targetServer === server.hostname) {
+        // In our 'make sure we bd' list
+        ns.printf('Need to backdoor: %s', server.hostname);
+      }
     }
   }
 }
@@ -127,6 +140,21 @@ function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number):
   return true;
 }
 
+function sortBackdoorPriority(a: string, b: string): number {
+  const backdoorSoonA = BackdoorConcat.includes(a) || Deploy.targetServer === a;
+  const backdoorSoonB = BackdoorConcat.includes(b) || Deploy.targetServer === b;
+
+  if (backdoorSoonA === backdoorSoonB) {
+    return 0;
+  }
+
+  // They are NOT the same priority; if `a` has priority, return -1 (first in sort order)
+  if (backdoorSoonA) {
+    return -1;
+  }
+  return 1;
+}
+
 /** @param {NS} ns */
 export async function main(ns: NS): Promise<void> {
   // TODO Add single-instance checks
@@ -176,6 +204,10 @@ export async function main(ns: NS): Promise<void> {
     targetSelf = true;
   }
 
+  if (!globalThis.Terminal) {
+    exposeGameInternalObjects();
+  }
+
   // noinspection InfiniteLoopJS - Intended design
   while (true) {
     ns.printf('Looping at %s', new Date(Date.now()).toLocaleString());
@@ -195,6 +227,7 @@ export async function main(ns: NS): Promise<void> {
     const purchasedServers = ns.getPurchasedServers();
     servers.filter(s => (s !== 'home'))
       .filter(s => !purchasedServers.includes(s))
+      .sort(sortBackdoorPriority)
       .filter(s => pwnServer(ns, s, tools))
       .forEach(server => {
         if (resetScripts) {
