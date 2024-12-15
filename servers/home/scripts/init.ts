@@ -1,6 +1,6 @@
 /**
  * Init script to reset Nerdpie's sessions
- * 
+ *
  */
 
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
@@ -47,21 +47,41 @@ class DefaultScript {
   }
 }
 
-/** @param {NS} ns */
+function setCustomStyle() {
+
+  const doc: Document = globalThis['document'];
+  const styleId = 'nerdpie-css';
+  let customStyle = doc.getElementById(styleId);
+
+  // Ensure the style element is generated; if it already exists, we'll just reset the contents
+  if (!customStyle) {
+    customStyle = doc.body.appendChild(doc.createElement("style"));
+    customStyle.id = "nerdpie-css";
+  }
+  // noinspection CssUnusedSymbol,SpellCheckingInspection
+  customStyle.textContent = `
+/* Tweak the CSS for the view so it doesn't hide behind core info as much */
+#root > div.MuiBox-root > div.MuiBox-root { 
+  margin-right: 400px; 
+}
+
+/* Hide the NiteSec ASCII art; it's cool, but it disrupts the flow from other menus */
+#root > div.MuiBox-root > div.MuiBox-root > p.MuiTypography-root.MuiTypography-body1[class$='noformat']:not(:has(div,p)) {
+  display: none;
+}
+`;
+}
+
 export async function main(ns: NS): Promise<void> {
   // TODO Kill all scripts (other than ourself!) on the local host
 
-  // Tweak the CSS for the view so it doesn't hide behind core info as much
-  /** @type {Document} */
-  const doc: Document = globalThis['document'];
-  const marginStyle = doc.body.appendChild(doc.createElement("style"));
-  marginStyle.textContent = "#root > div.MuiBox-root > div.MuiBox-root { margin-right: 400px }";
+  setCustomStyle();
 
   const scripts = [
     new DefaultScript("/scripts/deploy.js", CollapseState.Open),
     new DefaultScript("/scripts/custom_hud.js", CollapseState.Ignore),
     new DefaultScript("/scripts/scan_files.js", CollapseState.Ignore, 1, "--scrape"),
-    new DefaultScript("/scripts/coding_contracts/contract_dispatcher.js", CollapseState.Ignore),
+    new DefaultScript("/scripts/coding_contracts/contract_dispatcher.js", CollapseState.Close),
     new DefaultScript("/scripts/scan_contracts.js", CollapseState.Close),
     new DefaultScript("/scripts/augments.js", CollapseState.Close),
     new DefaultScript("/scripts/net_tree.js", CollapseState.Close),
