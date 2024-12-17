@@ -2,26 +2,22 @@
  * Script to iterate over hosts and list contracts
  */
 
-import {Contracts} from "@/servers/home/scripts/settings"
+import {Contracts, setTailWindow} from "@/servers/home/scripts/settings"
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
 import React, {ReactNode} from "react";
 import {ServerLink} from "@/servers/home/scripts/lib/ui/server_link";
 
 export async function main(ns: NS): Promise<void> {
+  setTailWindow(ns, Contracts);
+
   const DISABLED_LOGS = [
     'scan'
   ];
-
+  ns.disableLog('disableLog');
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
   const servers = getAllServers(ns);
 
-  ns.clearLog();
-  ns.tail();
-
-  const config = Contracts;
-  ns.moveTail(config.x, config.y);
-  ns.resizeTail(config.width, config.height);
 
   servers.forEach(server => {
     const files = ns.ls(server)

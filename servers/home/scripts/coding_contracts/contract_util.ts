@@ -99,7 +99,7 @@ export const ContractSolvers: Record<CodingContractTypes, Required<SolverInfo>> 
   },
   "Encryption I: Caesar Cipher": {
     function: encryption1,
-    finished: false
+    finished: true
   },
   "Encryption II: Vigenère Cipher": {
     function: encryption2,
@@ -135,7 +135,7 @@ export const ContractSolvers: Record<CodingContractTypes, Required<SolverInfo>> 
   },
   "Proper 2-Coloring of a Graph": {
     function: twoColorGraph,
-    finished: false
+    finished: true
   },
   "Sanitize Parentheses in Expression": {
     function: sanitizeParens,
@@ -167,11 +167,11 @@ export const ContractSolvers: Record<CodingContractTypes, Required<SolverInfo>> 
   },
   "Unique Paths in a Grid I": {
     function: uniquePaths1,
-    finished: false
+    finished: true
   },
   "Unique Paths in a Grid II": {
     function: uniquePaths2,
-    finished: false
+    finished: true
   },
 }
 

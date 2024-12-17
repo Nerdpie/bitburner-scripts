@@ -1,4 +1,4 @@
-import {Scratchpad} from "@/servers/home/scripts/settings"
+import {Scratchpad, setTailWindow} from "@/servers/home/scripts/settings"
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
 import {Player} from "NetscriptDefinitions";
 import {sprintf} from "sprintf-js";
@@ -7,12 +7,7 @@ import {CodingContractTypes} from "@/servers/home/scripts/coding_contracts/contr
 
 /** @param {NS} ns */
 export async function main(ns: NS): Promise<void> {
-  ns.tail();
-  ns.clearLog();
-
-  const config = Scratchpad;
-  ns.moveTail(config.x, config.y);
-  ns.resizeTail(config.width, config.height);
+  setTailWindow(ns, Scratchpad);
 
   //ns.codingcontract.createDummyContract(CodingContractTypes["Algorithmic Stock Trader IV"])
 

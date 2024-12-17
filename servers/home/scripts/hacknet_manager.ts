@@ -1,5 +1,5 @@
 // Copied from https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
-import {HacknetManager} from "@/servers/home/scripts/settings"
+import {HacknetManager, setTailWindow} from "@/servers/home/scripts/settings"
 
 /**
  * This function automates the management of hacknet nodes in a game,
@@ -16,13 +16,8 @@ export async function main(ns: NS): Promise<void> {
   const DISABLED_LOGS = ['getServerMoneyAvailable'];
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
-  // Opens a tail window in the game to display log outputs.
-  ns.tail();
-  ns.clearLog();
-
   const config = HacknetManager;
-  ns.moveTail(config.x, config.y);
-  ns.resizeTail(config.width, config.height);
+  setTailWindow(ns, config);
 
   /** Cap on the amount to spend */
   const MAX_PRICE: number = config.maxPrice || Number.MAX_SAFE_INTEGER;

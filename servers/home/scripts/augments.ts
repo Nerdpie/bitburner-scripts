@@ -1,5 +1,5 @@
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
-import {Augments} from "@/servers/home/scripts/settings"
+import {Augments, setTailWindow} from "@/servers/home/scripts/settings"
 import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
 
 export async function main(ns: NS): Promise<void> {
@@ -8,12 +8,8 @@ export async function main(ns: NS): Promise<void> {
     exposeGameInternalObjects();
   }
 
-  ns.tail();
-  ns.clearLog();
-
   const config = Augments;
-  ns.moveTail(config.x, config.y);
-  ns.resizeTail(config.width, config.height);
+  setTailWindow(ns, config);
 
   switch (config.mode) {
     case 'purchasable':

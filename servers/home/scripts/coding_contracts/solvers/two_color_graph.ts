@@ -3,13 +3,15 @@ import {comparePairs} from "@/servers/home/scripts/lib/comparators";
 import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
 
 class Vertex {
-  constructor(public id: number) {
+  id: number;
+  #color: -1 | 0 | 1;
+  neighbors: Set<Vertex>;
+
+  constructor(id: number) {
+    this.id = id;
     this.#color = -1;
     this.neighbors = new Set<Vertex>();
   }
-
-  #color: -1 | 0 | 1;
-  neighbors: Set<Vertex>;
 
   get color() {
     return this.#color;

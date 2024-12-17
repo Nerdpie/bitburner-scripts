@@ -1,7 +1,7 @@
 // TODO Write the path solvers
-import {OneOrZero} from "@/servers/home/scripts/lib/limiter_definitions";
+import {ZeroOrOne} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
 
-export function shortestPath(input: OneOrZero[][], ns: NS) {
+export function shortestPath(input: ZeroOrOne[][], ns: NS) {
   /* Sample description
   Contract type: Shortest Path in a Grid
 Contract description:
@@ -44,7 +44,7 @@ You are located in the top-left corner of the following grid:
    */
 }
 
-function findPath(grid: OneOrZero[][], visited: boolean[][], row: number, col: number) {
+function findPath(grid: ZeroOrOne[][], visited: boolean[][], row: number, col: number) {
   // Re-use some of the logic from countBranches
   // However, this time, we are concatenating the path, based on which branch has a shorter distance
 
@@ -84,10 +84,10 @@ export function uniquePaths1(input: [number, number]): number {
   // Build a grid of zeroes
   const row: number[] = Array(input[1]).fill(0);
   const grid: number[][] = Array<number[]>(input[0]).fill(row);
-  return uniquePaths2(<OneOrZero[][]>grid);
+  return uniquePaths2(<ZeroOrOne[][]>grid);
 }
 
-export function uniquePaths2(input: OneOrZero[][]): number {
+export function uniquePaths2(input: ZeroOrOne[][]): number {
   /* Sample description
   You are located in the top-left corner of the following grid:
 
@@ -110,7 +110,7 @@ export function uniquePaths2(input: OneOrZero[][]): number {
   return 1 + countBranches(input, 0, 0);
 }
 
-function countBranches(grid: OneOrZero[][], row: number, column: number) {
+function countBranches(grid: ZeroOrOne[][], row: number, column: number) {
 
   // Bound for the edges
   // We're at the end; only 'blocked' case that doesn't subtract a branch

@@ -1,18 +1,13 @@
-import {Go} from "@/servers/home/scripts/settings"
+import {Go, setTailWindow} from "@/servers/home/scripts/settings"
+import {GoOpponent} from "NetscriptDefinitions";
 
 /**
  * Basic IPvGo script derived from https://github.com/bitburner-official/bitburner-src/blob/dev/src/Documentation/doc/programming/go_algorithms.md
  * @param {NS} ns
  */
-export async function main(ns) {
-  ns.tail();
-  ns.clearLog();
-
+export async function main(ns: NS): Promise<void> {
   const config = Go;
-  ns.moveTail(config.x, config.y);
-  ns.resizeTail(config.width, config.height);
-
-  ns.setTitle("IPvGo AI")
+  setTailWindow(ns, config)
 
   const DISABLED_LOGS = [
     'sleep',
@@ -36,7 +31,7 @@ export async function main(ns) {
   // Have to fetch again, to determine if we need a new board
   if (ns.go.getCurrentPlayer() === 'None') {
     if (config.keepPlaying) {
-      ns.go.resetBoardState(config.faction, config.boardSize)
+      ns.go.resetBoardState(<GoOpponent>config.faction, config.boardSize)
     } else {
       ns.print("Game needs reset")
     }
@@ -71,7 +66,7 @@ export async function main(ns) {
       // Keep looping as long as the opponent is playing moves
     } while (result?.type !== "gameOver");
 
-    ns.go.resetBoardState(config.faction, config.boardSize)
+    ns.go.resetBoardState(<GoOpponent>config.faction, config.boardSize)
   } while (config.keepPlaying)
 }
 

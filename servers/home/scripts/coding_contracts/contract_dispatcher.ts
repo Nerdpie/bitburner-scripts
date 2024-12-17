@@ -1,6 +1,6 @@
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers";
 import {ContractWrapper} from "@/servers/home/scripts/coding_contracts/contract_util";
-import {ContractDispatcher} from "@/servers/home/scripts/settings";
+import {ContractDispatcher, setTailWindow} from "@/servers/home/scripts/settings";
 
 function getAllContracts(ns: NS): ContractWrapper[] {
   const servers = getAllServers(ns);
@@ -16,21 +16,21 @@ function getAllContracts(ns: NS): ContractWrapper[] {
 }
 
 export async function main(ns: NS): Promise<void> {
+  const DISABLED_LOGS = [
+    'scan',
+    'sleep',
+  ]
   ns.disableLog('disableLog')
-  ns.disableLog('scan')
+  DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
-  ns.tail();
-  ns.clearLog();
-
-  ns.setTitle("Contract Dispatcher");
-  const config = ContractDispatcher;
-  ns.moveTail(config.x, config.y);
-  ns.resizeTail(config.width, config.height);
+  setTailWindow(ns, ContractDispatcher, false);
+  ns.print(`Dispatcher started at ${new Date().toLocaleTimeString([], {hourCycle: "h23"})}`);
 
   // noinspection InfiniteLoopJS - Intended design
   while (true) {
     // TODO Add logic to track what contracts have been attempted and failed
     for (const c1 of getAllContracts(ns).filter(c => c.solver.finished)) {
+      ns.print(new Date().toLocaleTimeString([], {hourCycle: "h23"}));
       await c1.attemptToSolve(ns)
     }
 

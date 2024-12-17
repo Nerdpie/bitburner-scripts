@@ -1,16 +1,11 @@
-import {ContractCalc} from "@/servers/home/scripts/settings"
+import {ContractCalc, setTailWindow} from "@/servers/home/scripts/settings"
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
 
 import {ContractWrapper} from "@/servers/home/scripts/coding_contracts/contract_util";
 
 /** @param {NS} ns */
 export async function main(ns: NS): Promise<void> {
-  ns.tail();
-  ns.clearLog();
-
-  const config = ContractCalc;
-  ns.moveTail(config.x, config.y);
-  ns.resizeTail(config.width, config.height);
+  setTailWindow(ns, ContractCalc);
 
   if (!globalThis.Player) {
     exposeGameInternalObjects()

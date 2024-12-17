@@ -1,16 +1,11 @@
 import React, {ReactNode} from "react";
 import {Server} from "NetscriptDefinitions";
-import {NetTree} from "@/servers/home/scripts/settings"
+import {NetTree, setTailWindow} from "@/servers/home/scripts/settings"
 import {ServerLink} from "@/servers/home/scripts/lib/ui/server_link";
 
 /** @param {NS} ns */
 export async function main(ns: NS): Promise<void> {
-  ns.tail();
-  ns.clearLog();
-
-  const config = NetTree;
-  ns.moveTail(config.x, config.y);
-  ns.resizeTail(config.width, config.height);
+  setTailWindow(ns, NetTree);
 
   ns.disableLog('disableLog');
   ns.disableLog('scan');

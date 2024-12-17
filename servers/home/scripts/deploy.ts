@@ -1,6 +1,6 @@
 // Based originally on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 
-import {BackdoorConcat, Deploy} from "@/servers/home/scripts/settings"
+import {BackdoorConcat, Deploy, setTailWindow} from "@/servers/home/scripts/settings"
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
 import {Server} from "NetscriptDefinitions";
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
@@ -163,16 +163,19 @@ function sortBackdoorPriority(a: string, b: string): number {
   return 1;
 }
 
+function isAnotherInstanceRunning(ns: NS): boolean {
+  const self = ns.self();
+  return ns.ps().some(v => v.pid !== self.pid && v.filename === self.filename)
+}
+
 /** @param {NS} ns */
 export async function main(ns: NS): Promise<void> {
-  // TODO Add single-instance checks
-
-  ns.clearLog();
-  ns.tail();
+  if (isAnotherInstanceRunning(ns)) {
+    return;
+  }
 
   const config = Deploy;
-  ns.moveTail(config.x, config.y);
-  ns.resizeTail(config.width, config.height);
+  setTailWindow(ns, config);
 
   ns.disableLog('disableLog'); // Ironic, no?
   ns.disableLog('ALL');

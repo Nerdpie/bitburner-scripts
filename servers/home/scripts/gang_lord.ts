@@ -4,11 +4,13 @@ import {
   GangEarning,
   GangEquipment,
   GangMisc,
-  GangTask, GangTraining,
+  GangTask,
+  GangTraining,
   GangVehicle,
   GangWeapon
 } from "@/servers/home/scripts/gangs/gang_enums";
 import {GangGenInfo} from "NetscriptDefinitions";
+import {GangLord, setTailWindow} from "@/servers/home/scripts/settings";
 
 export async function main(ns: NS): Promise<void> {
   /*
@@ -32,7 +34,12 @@ export async function main(ns: NS): Promise<void> {
     'gang.recruitMember',
   ];
   ns.disableLog('disableLog');
-  DISABLED_LOGS.forEach(log => {ns.disableLog(log)});
+  DISABLED_LOGS.forEach(log => {
+    ns.disableLog(log)
+  });
+
+  const config = GangLord;
+  setTailWindow(ns, config);
 
   // TODO Need logic to synchronize to the territory tick, and assign EVERYONE to Territory Warfare that tick for growth
   //  UNLESS clashes are enabled; then, check the stats before assigning
@@ -84,16 +91,20 @@ function assignAll(ns: NS) {
   const members = ns.gang.getMemberNames();
   const gangInfo = ns.gang.getGangInformation()
   const wantedLevelPenalty = gangInfo.wantedPenalty;
-  const PENALTY_THRESHOLD = -0.01;
+  const PENALTY_THRESHOLD = 0.95;
 
   // REFINE Ideally, we would only assign enough to pull back the gain rate
-  if ( PENALTY_THRESHOLD > wantedLevelPenalty ) {
-    members.forEach(member => {ns.gang.setMemberTask(member, GangMisc["Vigilante Justice"])})
-  } else {
-
-
+  if (PENALTY_THRESHOLD > wantedLevelPenalty) {
     members.forEach(member => {
-      ns.gang.setMemberTask(member, bestTaskForMember(ns, gangInfo, member));
+      if (ns.gang.getMemberInformation(member).task !== GangMisc["Territory Warfare"]) {
+        ns.gang.setMemberTask(member, GangMisc["Vigilante Justice"])
+      }
+    })
+  } else {
+    members.forEach(member => {
+      if (ns.gang.getMemberInformation(member).task !== GangMisc["Territory Warfare"]) {
+        ns.gang.setMemberTask(member, bestTaskForMember(ns, gangInfo, member));
+      }
     })
   }
 }
@@ -104,9 +115,9 @@ function bestTaskForMember(ns: NS, gangInfo: GangGenInfo, member: string): GangT
   if (ns.fileExists('Formulas.exe', 'home')) {
     for (const task in GangEarning) {
       const taskStats = ns.gang.getTaskStats(task);
-      const gain = ns.formulas.gang.respectGain(gangInfo,memberInfo,taskStats);
+      const gain = ns.formulas.gang.respectGain(gangInfo, memberInfo, taskStats);
 
-      if ( gain > bestTask[1]) {
+      if (gain > bestTask[1]) {
         bestTask = [GangEarning[task], gain];
       }
     }

@@ -1,97 +1,95 @@
-// TODO Consider moving the default `tail` config block into a utility function
-import {
-  AugmentsSettings,
-  DeploySettings,
-  GoFaction,
-  GoSettings,
-  HacknetSettings,
-  SettingsData
-} from '@/servers/home/scripts/lib/settings_classes'
+import * as SettingsClasses from '@/servers/home/scripts/lib/settings_classes'
 import {BuiltinServers} from "@/servers/home/scripts/lib/builtin_servers";
+import {GoFaction} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
 
-/*
- * Central settings for my scripts
- * @example
- * import { Deploy } from "servers/home/scripts/settings"
- *
- * ns.tail();
- * ns.clearLog();
- *
- * let config = Deploy;
- * ns.moveTail(config.x, config.y);
- * ns.resizeTail(config.width, config.height);
- */
-
-export const ContractCalc: SettingsData = {
+export const ContractCalc: SettingsClasses.SettingsData = {
   x: 1250,
   y: 50,
   width: 450,
-  height: 300
+  height: 300,
+  tailTitle: 'Contract Calc'
 }
-export const Scratchpad: SettingsData = {
+export const Scratchpad: SettingsClasses.SettingsData = {
   x: 1250,
   y: 85,
   width: 450,
-  height: 200
+  height: 200,
+  tailTitle: 'Scratchpad'
 }
-export const ContractDispatcher: SettingsData = {
+export const ContractDispatcher: SettingsClasses.SettingsData = {
   x: 1250,
   y: 120,
   width: 450,
-  height: 200
+  height: 200,
+  tailTitle: 'Contract Dispatcher'
 }
-export const Run: SettingsData = {
+export const Run: SettingsClasses.RunSettings = {
   x: 1500,
   y: 155,
   width: 200,
-  height: 200
+  height: 200,
+  tailTitle: 'Run Menu',
+  exclusionPattern: '(solvers|lib|Temp)/'
 }
-export const Go: GoSettings = {
+export const Go: SettingsClasses.GoSettings = {
   x: 1500,
   y: 190,
   width: 200,
   height: 200,
+  tailTitle: 'IPvGo AI',
   keepPlaying: true,
   loopDelay: 100,
   faction: GoFaction.Daedalus,
   boardSize: 7
 }
-export const NetTree: SettingsData = {
+export const GangLord: SettingsClasses.GangSettings = {
+  // Stealing the spot from `Go` since we're using the script from Insight's repo
+  x: 1500,
+  y: 190,
+  width: 200,
+  height: 200,
+  tailTitle: 'Gang Lord'
+}
+export const NetTree: SettingsClasses.SettingsData = {
   x: 1375,
   y: 475,
   width: 525,
-  height: 400
+  height: 400,
+  tailTitle: 'Net Tree'
 }
-export const Contracts: SettingsData = {
+export const Contracts: SettingsClasses.SettingsData = {
   x: 1500,
   y: 510,
   width: 400,
-  height: 200
+  height: 200,
+  tailTitle: 'Contract Scanner'
 }
-export const Augments: AugmentsSettings = {
+export const Augments: SettingsClasses.AugmentsSettings = {
   x: 1500,
   y: 545,
   width: 400,
   height: 200,
-  // Mode options are currently: purchasable, uniques, rep
+  tailTitle: 'Augments',
   mode: "uniques"
 }
 // noinspection ConfusingFloatingPointLiteralJS - How, exactly, is 1e9 confusing?
-export const HacknetManager: HacknetSettings = {
+export const HacknetManager: SettingsClasses.HacknetSettings = {
   x: 1500,
   y: 750,
   width: 400,
   height: 200,
+  tailTitle: 'Hacknet Manager',
   maxPrice: 1e9,
   loopDelay: 10 * 1000,
   threshold: undefined
 }
 // noinspection SpellCheckingInspection - In-game servers trigger this inspection...
-export const Deploy: DeploySettings = {
+export const Deploy: SettingsClasses.DeploySettings = {
   x: 1500,
   y: 780,
   width: 400,
   height: 200,
+  tailTitle: 'Deploy Orchestrator',
   mode: 'hgw',
   resetScripts: true,
   targetSelf: true,
@@ -153,3 +151,20 @@ export const BackdoorConcat: string[] =
   ServerSelections.alwaysBackdoor.concat(
     ServerSelections.classesBackdoor,
     ServerSelections.companyBackdoor);
+
+// This should be fine, since ESBuild includes imported code into the output file
+export function setTailWindow(ns: NS, config: SettingsClasses.SettingsData, clearLog: boolean = true): void {
+  ns.tail();
+
+  if (clearLog) {
+    ns.clearLog();
+  }
+
+  ns.moveTail(config.x, config.y);
+  ns.resizeTail(config.width, config.height);
+
+  if (config.tailTitle && config.tailTitle.length !== 0
+  ) {
+    ns.setTitle(config.tailTitle);
+  }
+}
