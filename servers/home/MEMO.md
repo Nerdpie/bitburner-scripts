@@ -15,7 +15,7 @@ alias init=home; cd /scripts; run /scripts/init.js
 alias ba=buy BruteSSH.exe; buy FTPCrack.exe; buy relaySMTP.exe; buy HTTPWorm.exe; buy SQLInject.exe; buy ServerProfiler.exe; buy DeepscanV1.exe; buy DeepscanV2.exe; buy AutoLink.exe; buy Formulas.exe
 alias tf=home; cd /scripts; run /scripts/target_finder.js
 alias tfa=home; cd /scripts; run /scripts/target_finder.js --all
-alias casino=run /z_from_others/insight/casino.js --kill-all-scripts --on-completion-script /scripts/init.js
+alias casino=run /z_from_others/insight/casino.js --kill-all-scripts
 alias sf=run /scripts/scan_files.js
 alias zhack=run /scripts/zac_hack.js
 ```

@@ -4,6 +4,7 @@
 - Define .eslintrc.mjs
 - Review the rest of the settings/definition files, e.g. `package.json`
 - Determine why some inspections get stuck so badly
+- Determine the code style, such as the order of class members (fields, constructors, etc.)
 
 # Game general
 - Determine what BitNodes to tackle first
@@ -24,4 +25,3 @@
 - Tweak `find_server` to show ALL servers in hierarchy, annotate pwned hosts
 - Write script to show servers with contracts in a hierarchy
 - Check the different array functions, such as `unshift`
-- Adjust `contract_dispatcher` to have a tail window by default.

@@ -78,14 +78,16 @@ export async function main(ns: NS): Promise<void> {
   setCustomStyle();
 
   const scripts = [
-    new DefaultScript("/scripts/deploy.js", CollapseState.Open),
     new DefaultScript("/scripts/custom_hud.js", CollapseState.Ignore),
     new DefaultScript("/scripts/scan_files.js", CollapseState.Ignore, 1, "--scrape"),
     new DefaultScript("/scripts/coding_contracts/contract_dispatcher.js", CollapseState.Close),
     new DefaultScript("/scripts/scan_contracts.js", CollapseState.Close),
     new DefaultScript("/scripts/augments.js", CollapseState.Close),
     new DefaultScript("/scripts/net_tree.js", CollapseState.Close),
-    new DefaultScript("/scripts/run_menu.js", CollapseState.Close)
+    new DefaultScript("/scripts/run_menu.js", CollapseState.Close),
+    new DefaultScript("/z_from_others/insight/go.js", CollapseState.Ignore),
+    new DefaultScript("/scripts/gang_lord.js", CollapseState.Close),
+    new DefaultScript("/scripts/deploy.js", CollapseState.Open),
   ]
 
   scripts.forEach(s => s.ensureScriptRunning(ns));
