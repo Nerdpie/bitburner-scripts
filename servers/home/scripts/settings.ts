@@ -115,7 +115,7 @@ export const ServerSelections = {
     'run4theh111z', // BitRunners
     '.',            // The Dark Army
     'The-Cave',     // Daedalus
-    'w0r1d_d43m0n',
+    // 'w0r1d_d43m0n', // May not want to backdoor right away...
     // Good targets
     'n00dles',      // Stupid easy early-game target for basic cash
     'joesguns',     // Apparently can be `grow`-farmed for exp?

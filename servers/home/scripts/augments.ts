@@ -149,5 +149,5 @@ function factionRepNeeded(ns: NS): void {
   // REFINE Filter out those that don't have any left to buy...
   // TODO Revisit once we unlock Singularity, or manage to expose the internals
   //  Until then, we can only show the totals
-  playerFacs.sort().forEach(f => ns.printf('%-15s - %4s', f, ns.formatNumber(maxRepRequirementForFaction(f), 0)))
+  playerFacs.sort().forEach(f => ns.printf('%-16s - %6s', f, ns.formatNumber(maxRepRequirementForFaction(f), 1)))
 }

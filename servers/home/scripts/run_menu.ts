@@ -11,7 +11,7 @@ export async function main(ns: NS): Promise<void> {
 
   // Exclude our contract solvers and library files
   const filteredFiles = ns.ls('home', '.js')
-    .filter(file => !file.match('/(solvers|lib)/'));
+    .filter(file => !file.match('(solvers|lib|Temp)/'));
 
   const script: string = <string>await ns.prompt("Script path", {type: "select", choices: filteredFiles});
 

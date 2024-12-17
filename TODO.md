@@ -1,7 +1,7 @@
 # Repo general
 - Convert files to TypeScript 
 - Refine the tsconfig.json, .editorconfig
-- Define .eslintrc.cjs
+- Define .eslintrc.mjs
 - Review the rest of the settings/definition files, e.g. `package.json`
 - Determine why some inspections get stuck so badly
 
@@ -9,12 +9,12 @@
 - Determine what BitNodes to tackle first
 - Determine what challenges to try
 - Write a routine that goes through all eligible servers, and pushes them to 100% money, min sec
+- Create a settings daemon - scripts check in with it, then it notifies if settings change.
+    Basically, make it so that I can change settings on the fly, without relaunching programs.
 
 # Contracts to code:
-- Caesar cypher offset
 - Hamming codes
 - Overlapping sets
-- Number of paths
 - Shortest path
 - Matching parentheses
 
