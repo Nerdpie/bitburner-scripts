@@ -141,9 +141,17 @@ function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number):
 }
 
 function sortBackdoorPriority(a: string, b: string): number {
-  const backdoorSoonA = BackdoorConcat.includes(a) || Deploy.targetServer === a;
-  const backdoorSoonB = BackdoorConcat.includes(b) || Deploy.targetServer === b;
+  // Make sure we hit out target server FIRST
+  if (Deploy.targetServer === a) {
+    return -1;
+  } else if (Deploy.targetServer === b) {
+    return 1;
+  }
 
+  const backdoorSoonA = BackdoorConcat.includes(a);
+  const backdoorSoonB = BackdoorConcat.includes(b);
+
+  // REFINE If they both are in the 'make sure we backdoor' list, hit the lower security one first (faster)
   if (backdoorSoonA === backdoorSoonB) {
     return 0;
   }
