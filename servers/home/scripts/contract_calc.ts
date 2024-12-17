@@ -40,8 +40,8 @@ export async function main(ns: NS): Promise<void> {
     } else {
       ns.print('Contract type: ' + contractData.type);
       ns.print('Contract description:\n' + contractData.description);
-      ns.print('Contract data:\n' + contractData.data);
+      ns.print('Contract data:\n' + typeof contractData.data + ': ' + contractData.data);
     }
-    ns.print('Calculated solution is:\n' + JSON.stringify( await contractData.getSolution(ns)));
+    ns.print('Calculated solution is:\n' +  await contractData.getSolution(ns));
   }
 }
