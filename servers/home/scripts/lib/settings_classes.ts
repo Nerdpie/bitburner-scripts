@@ -1,42 +1,37 @@
 import {TailProperties} from "NetscriptDefinitions";
 import {BuiltinServers} from "@/servers/home/scripts/lib/builtin_servers";
-
-// FIXME Determine the proper utility types, declaration (e.g. type, interface, class)
-//  to expose the required and extended fields
+import {
+  AugmentsModes, DeployMode,
+  GoBoardSizes,
+  GoFaction,
+  ValidRamCapacity
+} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
 
 export interface SettingsData extends TailProperties {
-  // Yes, I could just use `TailProperties` directly...
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  tailTitle?: string;
 }
 
-export enum GoFaction {
-  /** Hacknet production bonus */
-    "Netburners" = "Netburners",
-  /** Crime success rate */
-    'Slum Snakes' = "Slum Snakes",
-  /** Hacking money */
-    'The Black Hands' = "The Black Hands",
-  /** Combat levels */
-    'Tetrads' = "Tetrads",
-  /** Reputation gain */
-    'Daedalus' = "Daedalus",
-  /** Faster hack/grow/weaken */
-    'Illuminati' = "Illuminati",
-  /** Hacking level */
-    '????????????' = '????????????',
-  /** Practice, script testing */
-    'No AI' = "No AI",
+export interface RunSettings extends SettingsData {
+  exclusionPattern: string | RegExp;
 }
 
 export interface GoSettings extends SettingsData {
   keepPlaying: boolean;
   loopDelay: number;
   faction: GoFaction;
-  // noinspection MagicNumberJS - Valid board sizes for IPvGo
-  boardSize: 5 | 7 | 9 | 13;
+  boardSize: GoBoardSizes;
+}
+
+export interface GangSettings extends SettingsData {
+  // TODO Determine what settings to track
 }
 
 export interface AugmentsSettings extends SettingsData {
-  mode: 'purchasable' | 'uniques' | 'rep';
+  mode: AugmentsModes;
 }
 
 export interface HacknetSettings extends SettingsData {
@@ -46,13 +41,12 @@ export interface HacknetSettings extends SettingsData {
 }
 
 export interface DeploySettings extends SettingsData {
-  mode: 'hgw' | 'share';
+  mode: DeployMode;
   resetScripts: boolean;
   targetSelf: boolean;
   targetServer: BuiltinServers;
   loopDelay: number;
-  // noinspection MagicNumberJS
-  ramCapacity: 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096 | 8192 | 16384 | 32768 | 65536 | 131072 | 262144 | 524288 | 1048576;
+  ramCapacity: ValidRamCapacity;
   shareCount: number;
   weakenCount: number;
   growCount: number;
