@@ -2,8 +2,8 @@
 // Tweaked the paths for the imports
 // noinspection InnerHTMLJS,ReuseOfLocalVariableJS,ConfusingFloatingPointLiteralJS,MagicNumberJS
 
-import {WHRNG} from "@/servers/home/scripts/catlover/lib/RNG";
-import {parseNumber} from "@/servers/home/scripts/catlover/lib/utils";
+import {WHRNG} from "@/servers/home/z_from_others/catlover/lib/RNG";
+import {parseNumber} from "@/servers/home/z_from_others/catlover/lib/utils";
 
 let doc: Document;
 let root: Element;
