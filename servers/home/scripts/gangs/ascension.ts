@@ -12,9 +12,12 @@ export function ascendMembers(ns: NS) {
 }
 
 function shouldAscendGangster(ns: NS, member: string): boolean {
+  // TODO Adjust threshold to account for territory warfare
+  /*
   if (ns.gang.getMemberInformation(member).task === GangMisc["Territory Warfare"]){
     return false; // Ascending during warfare can mean death
   }
+   */
   return (ns.gang.getAscensionResult(member)?.str ?? 0) > calculateAscendThreshold(ns, member);
 }
 

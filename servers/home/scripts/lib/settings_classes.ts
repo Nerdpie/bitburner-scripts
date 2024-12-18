@@ -1,11 +1,6 @@
 import {TailProperties} from "NetscriptDefinitions";
 import {BuiltinServers} from "@/servers/home/scripts/lib/builtin_servers";
-import {
-  AugmentsModes, DeployMode,
-  GoBoardSizes,
-  GoFaction,
-  ValidRamCapacity
-} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
+import * as EnumsAndTypes from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
 
 export interface SettingsData extends TailProperties {
   x: number;
@@ -22,16 +17,19 @@ export interface RunSettings extends SettingsData {
 export interface GoSettings extends SettingsData {
   keepPlaying: boolean;
   loopDelay: number;
-  faction: GoFaction;
-  boardSize: GoBoardSizes;
+  faction: EnumsAndTypes.GoFaction;
+  boardSize: EnumsAndTypes.GoBoardSizes;
 }
 
 export interface GangSettings extends SettingsData {
-  // TODO Determine what settings to track
+  maxRep: number;
+  mode: EnumsAndTypes.GangMode;
+  wantedPenaltyThreshold: number;
+  territoryWarfareThreshold: number;
 }
 
 export interface AugmentsSettings extends SettingsData {
-  mode: AugmentsModes;
+  mode: EnumsAndTypes.AugmentsModes;
 }
 
 export interface HacknetSettings extends SettingsData {
@@ -41,12 +39,12 @@ export interface HacknetSettings extends SettingsData {
 }
 
 export interface DeploySettings extends SettingsData {
-  mode: DeployMode;
+  mode: EnumsAndTypes.DeployMode;
   resetScripts: boolean;
   targetSelf: boolean;
   targetServer: BuiltinServers;
   loopDelay: number;
-  ramCapacity: ValidRamCapacity;
+  ramCapacity: EnumsAndTypes.ValidRamCapacity;
   shareCount: number;
   weakenCount: number;
   growCount: number;

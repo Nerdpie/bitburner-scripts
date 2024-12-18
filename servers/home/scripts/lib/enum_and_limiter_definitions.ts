@@ -14,6 +14,8 @@ export type AugmentsModes = 'purchasable' | 'uniques' | 'rep';
 
 export type DeployMode = 'hgw' | 'share';
 
+export type GangMode = 'rep' | 'cash';
+
 /**
  * @desc Valid opponent factions for IPvGo
  *

@@ -42,13 +42,18 @@ export const Go: SettingsClasses.GoSettings = {
   faction: GoFaction.Daedalus,
   boardSize: 7
 }
+// noinspection ConfusingFloatingPointLiteralJS
 export const GangLord: SettingsClasses.GangSettings = {
   // Stealing the spot from `Go` since we're using the script from Insight's repo
   x: 1500,
   y: 190,
   width: 200,
   height: 200,
-  tailTitle: 'Gang Lord'
+  tailTitle: 'Gang Lord',
+  maxRep: 1e7, // 10 million
+  mode: 'rep',
+  wantedPenaltyThreshold: 0.90,
+  territoryWarfareThreshold: 0.60,
 }
 export const NetTree: SettingsClasses.SettingsData = {
   x: 1375,
