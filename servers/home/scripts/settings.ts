@@ -29,7 +29,7 @@ export const Run: SettingsClasses.RunSettings = {
   width: 200,
   height: 200,
   tailTitle: 'Run Menu',
-  exclusionPattern: '(solvers|lib|Temp)/'
+  exclusionPattern: '(solvers|lib|Temp|gangs)/'
 }
 export const Go: SettingsClasses.GoSettings = {
   x: 1500,
@@ -57,27 +57,27 @@ export const GangLord: SettingsClasses.GangSettings = {
 }
 export const NetTree: SettingsClasses.SettingsData = {
   x: 1375,
-  y: 475,
+  y: 575,
   width: 525,
   height: 400,
   tailTitle: 'Net Tree'
 }
 export const Contracts: SettingsClasses.SettingsData = {
   x: 1500,
-  y: 510,
+  y: 610,
   width: 400,
   height: 200,
   tailTitle: 'Contract Scanner'
 }
 export const Augments: SettingsClasses.AugmentsSettings = {
   x: 1500,
-  y: 545,
+  y: 645,
   width: 400,
   height: 200,
   tailTitle: 'Augments',
   mode: "uniques"
 }
-// noinspection ConfusingFloatingPointLiteralJS - How, exactly, is 1e9 confusing?
+// noinspection ConfusingFloatingPointLiteralJS
 export const HacknetManager: SettingsClasses.HacknetSettings = {
   x: 1500,
   y: 750,
@@ -91,7 +91,7 @@ export const HacknetManager: SettingsClasses.HacknetSettings = {
 // noinspection SpellCheckingInspection - In-game servers trigger this inspection...
 export const Deploy: SettingsClasses.DeploySettings = {
   x: 1500,
-  y: 780,
+  y: 785,
   width: 400,
   height: 200,
   tailTitle: 'Deploy Orchestrator',
