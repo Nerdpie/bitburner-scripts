@@ -1,21 +1,17 @@
 /* Set of helpers for manipulating the `tail` windows */
 
-// FIXME Doesn't work properly if the script has already finished...
-
-import {RunningScript} from "NetscriptDefinitions";
-
 export enum CollapseState {
   Ignore,
-  Open,
-  Close
+  Expand,
+  Collapse
 }
 
-export function collapseTail(script: RunningScript): void {
-  const doc: Document = globalThis['document']
+function findButtonAndClick(scriptTitle: string, buttonTitle: string) {
+  const doc: Document = globalThis['document'];
 
   // Find the heading element
-  const heading = doc.querySelector("h6[title='" + script.title + "']");
-  const button = heading?.parentElement.querySelector("button[title='Collapse']");
+  const heading = doc.querySelector("h6[title='" + scriptTitle + "']");
+  const button = heading?.parentElement.querySelector("button[title='" + buttonTitle + "']");
 
   if (button) {
     // @ts-ignore  Yes, there is TOO a `click` function...
@@ -23,15 +19,23 @@ export function collapseTail(script: RunningScript): void {
   }
 }
 
-export function expandTail(script: RunningScript): void {
-  const doc: Document = globalThis['document']
+export function collapseTail(scriptTitle: string): void {
+    findButtonAndClick(scriptTitle, 'Collapse');
+}
+
+export function expandTail(scriptTitle: string): void {
+  findButtonAndClick(scriptTitle, 'Expand');
+}
+
+export function closeTail(scriptTitle: string): void {
+  findButtonAndClick(scriptTitle, 'Close window');
+}
+
+export function isTailOpen(scriptTitle: string): boolean {
+  const doc: Document = globalThis['document'];
 
   // Find the heading element
-  const heading = doc.querySelector("h6[title='" + script.title + "']");
-  const button = heading?.parentElement.querySelector("button[title='Expand']");
+  const heading = doc.querySelector("h6[title='" + scriptTitle + "']");
 
-  if (button) {
-    // @ts-ignore  Yes, there is TOO a `click` function...
-    button.click();
-  }
+  return !!heading;
 }

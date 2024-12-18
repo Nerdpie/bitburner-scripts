@@ -4,44 +4,82 @@
  */
 
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
-import {CollapseState, collapseTail} from "@/servers/home/scripts/lib/tail_helpers"
-import {RunOptions} from "NetscriptDefinitions";
+import {closeTail, CollapseState, collapseTail, expandTail, isTailOpen} from "@/servers/home/scripts/lib/tail_helpers"
+import {AutocompleteData, RunOptions} from "NetscriptDefinitions";
+import {FlagSchemaType} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
 
+interface DefaultScriptCtorParams {
+  script: string;
+  collapse?: CollapseState;
+  shouldRun?: boolean;
+  threadOrOptions?: number | RunOptions;
+  args?: string[];
+}
 
 /** Holder for settings for default scripts to launch */
 class DefaultScript {
   /**
-   * @param {string} script
-   * @param {number} collapse
-   * @param {number | RunOptions} threadOrOptions
-   * @param {string[]} args
+   * @param script
+   * @param collapse
+   * @param shouldRun
+   * @param threadOrOptions
+   * @param args
    */
-  constructor(script: string, collapse: CollapseState = CollapseState.Ignore, threadOrOptions: number | RunOptions = 1, ...args: string[]) {
-    this.#script = script;
-    this.#collapse = collapse;
-    this.#threadOrOptions = threadOrOptions;
-    this.#runArgs = args;
+  constructor({script, collapse=CollapseState.Ignore, shouldRun=true, threadOrOptions=1, args}: DefaultScriptCtorParams) {
+    this.script = script;
+    this.collapse = collapse;
+    this.shouldRun = shouldRun;
+    this.threadOrOptions = threadOrOptions;
+    this.runArgs = args;
   }
 
-  readonly #script: string;
-  #threadOrOptions: number | RunOptions;
-  readonly #collapse: CollapseState;
-  #runArgs: string[];
+  private readonly script: string;
+  private readonly collapse: CollapseState;
+  private readonly shouldRun: boolean;
+  private readonly threadOrOptions: number | RunOptions;
+  private readonly runArgs: string[];
 
-  // TODO Adjust this to also check for windows from killed scripts
+  private get titleAttribute(): string {
+    // Derived from bitburner-src/src/Script/RunningScript.ts
+    // Adjusted to remove the leading slash
+    return `${this.script.substring(1)} ${this.runArgs.join(' ')}`;
+  }
+
   /** @param {NS} ns */
   ensureScriptRunning(ns: NS): void {
-    ns.tprintf("Checking for: %s", this.#script);
-    const checkArgs = [this.#script, 'home', this.#runArgs].flat();
-    if (!ns.getRunningScript.apply(ns, checkArgs)) {
-      ns.tprintf("Not running: %s", this.#script);
-      const argArray = [this.#script, this.#threadOrOptions, this.#runArgs].flat();
-      const pid = ns.run.apply(ns, argArray);
+    if (!this.shouldRun) {
+      ns.tprintf("Skipping: %s", this.script);
+      return;
+    }
 
-      if (this.#collapse === CollapseState.Close) {
-        const scriptRef = ns.getRunningScript(pid);
-        // TODO Handle the script already having finished running...
-        collapseTail(scriptRef);
+    if (ns.ps('home').some(p => p.filename === this.script && p.args === this.runArgs )){
+      ns.tprintf("Already running: %s", this.script);
+
+      if (isTailOpen(this.titleAttribute)) {
+        switch (this.collapse) {
+          case CollapseState.Collapse:
+            collapseTail(this.titleAttribute);
+            break;
+          case CollapseState.Expand:
+            expandTail(this.titleAttribute);
+            break;
+          case CollapseState.Ignore:
+            break;
+        }
+      }
+    } else {
+      ns.tprintf("Not running: %s", this.script);
+
+      // Reset the existing tail windows
+      if (isTailOpen(this.titleAttribute)) {
+        closeTail(this.titleAttribute);
+      }
+
+      ns.run(this.script, this.threadOrOptions, ...this.runArgs);
+
+      if (this.collapse === CollapseState.Collapse) {
+        // MEMO Adjust this if we ever use custom React elements for titles
+        collapseTail(this.titleAttribute);
       }
     }
   }
@@ -72,28 +110,51 @@ function setCustomStyle() {
 `;
 }
 
+const FLAG_SCHEMA: FlagSchemaType = [
+  ['killall-scripts', false]
+]
+
 export async function main(ns: NS): Promise<void> {
-  // TODO Kill all scripts (other than ourself!) on the local host
+  if (ns.getHostname() !== 'home') {
+    ns.tprint(`ERROR: Init must only be run on 'home'!`);
+    return;
+  }
+
+  const flags = ns.flags(FLAG_SCHEMA);
+
+  if (flags['killall-scripts']) {
+    const self = ns.self();
+    ns.ps().filter(p => p.pid !== self.pid)
+      .forEach(p => ns.kill(p.pid));
+  }
 
   setCustomStyle();
-
-  const scripts = [
-    new DefaultScript("/scripts/custom_hud.js", CollapseState.Ignore),
-    new DefaultScript("/scripts/scan_files.js", CollapseState.Ignore, 1, "--scrape"),
-    new DefaultScript("/scripts/coding_contracts/contract_dispatcher.js", CollapseState.Close),
-    new DefaultScript("/scripts/scan_contracts.js", CollapseState.Close),
-    new DefaultScript("/scripts/augments.js", CollapseState.Close),
-    new DefaultScript("/scripts/net_tree.js", CollapseState.Close),
-    new DefaultScript("/scripts/run_menu.js", CollapseState.Close),
-    new DefaultScript("/z_from_others/insight/go.js", CollapseState.Ignore),
-    new DefaultScript("/scripts/gang_lord.js", CollapseState.Close),
-    new DefaultScript("/scripts/deploy.js", CollapseState.Open),
-  ]
-
-  scripts.forEach(s => s.ensureScriptRunning(ns));
 
   // We use the exposed objects enough places; may as well launch in `init`
   if (!globalThis.Terminal) {
     exposeGameInternalObjects()
   }
+
+  // REFINE Is there a way to specify only the optional params we use, and skip others?
+  // TODO Determine any other conditions to limit other scripts being run, such as RAM capacity
+  const scripts = [
+    new DefaultScript({script : "/scripts/custom_hud.js"}),
+    new DefaultScript({script : "/scripts/scan_files.js", args : ["--scrape"]}),
+    new DefaultScript({script : "/scripts/coding_contracts/contract_dispatcher.js", collapse : CollapseState.Collapse}),
+    new DefaultScript({script : "/scripts/scan_contracts.js", collapse : CollapseState.Collapse}),
+    new DefaultScript({script : "/scripts/augments.js", collapse : CollapseState.Collapse}),
+    new DefaultScript({script : "/scripts/net_tree.js", collapse : CollapseState.Collapse}),
+    new DefaultScript({script : "/scripts/run_menu.js", collapse : CollapseState.Collapse}),
+    new DefaultScript({script : "/z_from_others/insight/go.js"}),
+    new DefaultScript({script : "/scripts/gang_lord.js", collapse : CollapseState.Collapse, shouldRun : ns.gang.inGang()}),
+    new DefaultScript({script : "/scripts/deploy.js", collapse : CollapseState.Expand}),
+  ]
+
+  scripts.forEach(s => s.ensureScriptRunning(ns));
+
+}
+
+export function autocomplete(data: AutocompleteData, args: string[]): string[] {
+  data.flags(FLAG_SCHEMA);
+  return [];
 }
