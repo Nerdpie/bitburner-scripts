@@ -1,5 +1,5 @@
 // TODO Write the prime factor and square root solvers
-// noinspection MagicNumberJS - Doesn't properly handle bigint values
+// noinspection MagicNumberJS - Inspection doesn't properly handle bigint values
 
 export function largestPrimeFactor(input: number, ns: NS): number {
   // Deriving from old prime factorization homework
@@ -8,7 +8,7 @@ export function largestPrimeFactor(input: number, ns: NS): number {
   let largestFactor = 1;
 
   for (let p = 2; p < Math.sqrt(input); p++) {
-    if (input % p === 0) {
+    if (temp % p === 0) {
       largestFactor = p;
       ns.print(p);
       do {

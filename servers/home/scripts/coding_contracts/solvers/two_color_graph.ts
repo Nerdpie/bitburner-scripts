@@ -90,12 +90,14 @@ export function twoColorGraph(input: [number, [[number, number]]]): number[] {
 
   // REFINE Adjust this to NOT rely on exceptions for code flow...
   try {
-    // Since we aren't guaranteed that any given vertex will be present, find the first one
-    const firstVert = Array.from(vertices.keys()).reduce((acc, val) => Math.min(acc, val), 0);
-    vertices.get(firstVert).setColor(0);
-    vertices.get(firstVert).colorNeighbors();
-
-    // REFINE We MIGHT get a case where there are isolated sub-graphs?
+    // The map APPEARS to be sorted on the keys/insert order (same in our case), so...
+    // This also handles the case where vertices aren't all in a single graph
+    vertices.forEach((v) => {
+      if (v.color === -1) {
+        v.setColor(0);
+        v.colorNeighbors();
+      }
+    })
   } catch (error) {
     console.log('Two Color Graph error: ' + error);
     return [];

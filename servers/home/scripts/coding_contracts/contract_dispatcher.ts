@@ -15,10 +15,23 @@ function getAllContracts(ns: NS): ContractWrapper[] {
   return contracts;
 }
 
+async function attemptAndLog(ns: NS, contract: ContractWrapper) {
+  // Log the time
+  ns.print(new Date().toLocaleTimeString([], {hourCycle: "h23"}));
+  ns.print(`Type: ${contract.type}`)
+  const reward = await contract.attemptToSolve(ns);
+  if (reward && reward.length > 0) {
+    ns.print(`Success - Reward: ${reward}`)
+  } else {
+    ns.print(`Failure - Incorrect solution`)
+  }
+}
+
 export async function main(ns: NS): Promise<void> {
   const DISABLED_LOGS = [
     'scan',
     'sleep',
+    'codingcontract.attempt'
   ]
   ns.disableLog('disableLog')
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
@@ -30,8 +43,7 @@ export async function main(ns: NS): Promise<void> {
   while (true) {
     // TODO Add logic to track what contracts have been attempted and failed
     for (const c1 of getAllContracts(ns).filter(c => c.solver.finished)) {
-      ns.print(new Date().toLocaleTimeString([], {hourCycle: "h23"}));
-      await c1.attemptToSolve(ns)
+      await attemptAndLog(ns, c1);
     }
 
     // TODO Check the assumptions and bounds for all contracts

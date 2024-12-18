@@ -24,9 +24,8 @@ function rotN(char: string, offset: number): string {
 /**
  * Encryption I: Caesar Cipher
  * @param {string} input
- * @param {NS} ns
  */
-export function encryption1(input: [string, number], ns: NS): string {
+export function encryption1(input: [string, number]): string {
   /* Sample description
   Encryption I: Caesar Cipher
 You are attempting to solve a Coding Contract. You have 10 tries remaining, after which the contract will self-destruct.
@@ -49,9 +48,6 @@ Return the ciphertext as uppercase string. Spaces remains the same.
   // Codepoint 32 (space) remains the same
   const plaintext: string = input[0];
   const offset: number = input[1];
-
-  ns.print(plaintext)
-  ns.print(offset)
 
   let result = '';
   for (let i = 0; i < plaintext.length; i++) {

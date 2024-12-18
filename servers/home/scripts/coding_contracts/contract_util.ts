@@ -187,11 +187,11 @@ export class ContractWrapper {
     this.solver = ContractSolvers[this.type];
   }
 
-  host;
-  filename;
-  type;
-  description;
-  data;
+  host: string;
+  filename: string;
+  type: string;
+  description: string;
+  data: any;
   solver: SolverInfo;
 
   get #isSolverAsync(): boolean {
