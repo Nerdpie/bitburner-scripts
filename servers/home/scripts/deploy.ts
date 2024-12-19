@@ -4,6 +4,7 @@ import {BackdoorConcat, Deploy, setTailWindow} from "@/servers/home/scripts/sett
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
 import {Server} from "NetscriptDefinitions";
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
+import { DeploySettings } from "./lib/settings_classes";
 
 function getAvailableTools(ns: NS): ((host: string) => void)[] {
   const PROGRAMS: ({ file: string; action: (host: string) => void })[] = [
@@ -99,7 +100,7 @@ function execScript(ns: NS, server: string, script: string, targetServer?: strin
   }
 }
 
-function buildCluster(ns: NS, config) {
+function buildCluster(ns: NS, config: DeploySettings) {
   const RAM_CAPACITY = config.ramCapacity
   // noinspection OverlyComplexBooleanExpressionJS - Abusing boolean expression to short-circuit if low on funds
   buyServers(ns, 'cluster-', config.clusterCount, RAM_CAPACITY) &&
@@ -141,7 +142,7 @@ function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number):
 }
 
 function sortBackdoorPriority(a: string, b: string): number {
-  // Make sure we hit out target server FIRST
+  // Make sure we hit our target server FIRST
   if (Deploy.targetServer === a) {
     return -1;
   } else if (Deploy.targetServer === b) {
