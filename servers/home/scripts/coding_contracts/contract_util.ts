@@ -111,7 +111,7 @@ export const ContractSolvers: Record<CodingContractTypes, Required<SolverInfo>> 
   },
   "Find Largest Prime Factor": {
     function: largestPrimeFactor,
-    finished: false
+    finished: true
   },
   "Generate IP Addresses": {
     function: generateIPAddresses,

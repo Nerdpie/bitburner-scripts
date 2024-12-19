@@ -1,4 +1,4 @@
-// TODO Write the prime factor and square root solvers
+// TODO Write the square root solver
 // noinspection MagicNumberJS - Inspection doesn't properly handle bigint values
 
 export function largestPrimeFactor(input: number, ns: NS): number {
@@ -10,7 +10,6 @@ export function largestPrimeFactor(input: number, ns: NS): number {
   for (let p = 2; p < Math.sqrt(input); p++) {
     if (temp % p === 0) {
       largestFactor = p;
-      ns.print(p);
       do {
         temp /= p;
       } while ( temp % p === 0);
@@ -19,7 +18,6 @@ export function largestPrimeFactor(input: number, ns: NS): number {
 
   // Any remainder
   if (temp > 1) {
-    ns.print(temp)
     largestFactor = temp;
   }
 
@@ -33,24 +31,6 @@ Hint: If you are having trouble, you might consult https://en.wikipedia.org/wiki
 
 Input number:
 155749932796205787079025839946442092616646565216212968193628150507722784379219739882976855229303236383313179875170603194170831690566247341307989070313945888007061855549721919178598301718356612610671431
-   */
-
-  // Nope, not that easy, since 0.5 isn't an integer... d'oh
-  //ns.print(input ** BigInt(0.5));
-
-  // Having glanced at the Wikipedia article, a very naive approach comes to mind
-  /*
-  As numbers get larger, the relative gap between them and their root widens
-  For example, 2^2 = 4, with a ratio of 1:2 ; 4^2 = 16, with a ratio of 1:4
-
-  Trying a binary search
-  input
-  upper = input
-  lower = 1n
-
-  while
-
-
    */
 
   // Yes, this could be inlined, but I was testing different algorithms, and it seems to work, so...
