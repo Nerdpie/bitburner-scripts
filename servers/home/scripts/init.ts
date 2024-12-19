@@ -25,8 +25,12 @@ class DefaultScript {
    * @param threadOrOptions
    * @param args
    */
-  constructor({script, collapse=CollapseState.Ignore, shouldRun=true, threadOrOptions=1, args}: DefaultScriptCtorParams) {
-    this.script = script;
+  constructor({script, collapse=CollapseState.Ignore, shouldRun=true, threadOrOptions=1, args=[]}: DefaultScriptCtorParams) {
+    if (script.charAt(0) === '/') {
+      this.script = script.substring(1);
+    } else {
+      this.script = script;
+    }
     this.collapse = collapse;
     this.shouldRun = shouldRun;
     this.threadOrOptions = threadOrOptions;
@@ -39,10 +43,16 @@ class DefaultScript {
   private readonly threadOrOptions: number | RunOptions;
   private readonly runArgs: string[];
 
+  /**
+   * The `title` attribute used in tail windows
+   * @private
+   */
   private get titleAttribute(): string {
     // Derived from bitburner-src/src/Script/RunningScript.ts
-    // Adjusted to remove the leading slash
-    return `${this.script.substring(1)} ${this.runArgs.join(' ')}`;
+    if (!this.runArgs || this.runArgs.length < 1) {
+      return `${this.script} `;
+    }
+    return `${this.script} ${this.runArgs?.join(' ')}`;
   }
 
   /** @param {NS} ns */
@@ -52,21 +62,10 @@ class DefaultScript {
       return;
     }
 
-    if (ns.ps('home').some(p => p.filename === this.script && p.args === this.runArgs )){
+    // Just eat the RAM cost; not sure what wasn't matching for `ns.ps`...
+    if (ns.isRunning(this.script, 'home', ...this.runArgs)){
       ns.tprintf("Already running: %s", this.script);
 
-      if (isTailOpen(this.titleAttribute)) {
-        switch (this.collapse) {
-          case CollapseState.Collapse:
-            collapseTail(this.titleAttribute);
-            break;
-          case CollapseState.Expand:
-            expandTail(this.titleAttribute);
-            break;
-          case CollapseState.Ignore:
-            break;
-        }
-      }
     } else {
       ns.tprintf("Not running: %s", this.script);
 
@@ -76,10 +75,20 @@ class DefaultScript {
       }
 
       ns.run(this.script, this.threadOrOptions, ...this.runArgs);
+    }
+  }
 
-      if (this.collapse === CollapseState.Collapse) {
-        // MEMO Adjust this if we ever use custom React elements for titles
-        collapseTail(this.titleAttribute);
+  ensureTailState(): void {
+    if (isTailOpen(this.titleAttribute)) {
+      switch (this.collapse) {
+        case CollapseState.Collapse:
+          collapseTail(this.titleAttribute);
+          break;
+        case CollapseState.Expand:
+          expandTail(this.titleAttribute);
+          break;
+        case CollapseState.Ignore:
+          break;
       }
     }
   }
@@ -151,6 +160,10 @@ export async function main(ns: NS): Promise<void> {
   ]
 
   scripts.forEach(s => s.ensureScriptRunning(ns));
+
+  await ns.sleep(10);
+
+  scripts.forEach(s => s.ensureTailState());
 
 }
 
