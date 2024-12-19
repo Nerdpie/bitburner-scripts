@@ -54,6 +54,8 @@ export const GangLord: SettingsClasses.GangSettings = {
   mode: 'rep',
   wantedPenaltyThreshold: 0.90,
   territoryWarfareThreshold: 0.60,
+  memberWarfareThreshold: 600,
+  memberMinTraining: 100,
 }
 export const NetTree: SettingsClasses.SettingsData = {
   x: 1375,

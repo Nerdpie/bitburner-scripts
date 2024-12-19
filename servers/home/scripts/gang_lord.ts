@@ -171,12 +171,11 @@ function bestTaskForMember(ns: NS, gangInfo: GangGenInfo, member: string): GEnum
   const memberInfo = ns.gang.getMemberInformation(member);
 
   // Is the member 'ready to fight', and is there territory to claim yet?
-  // noinspection MagicNumberJS - REFINE Add field to settings
-  if (memberInfo.def >= 600 && gangInfo.territory < 1) {
+  if (memberInfo.def >= config.memberWarfareThreshold && gangInfo.territory < 1) {
     return GEnums.GangMisc["Territory Warfare"];
   }
 
-  if (memberInfo.str < 200) {
+  if (memberInfo.def < config.memberMinTraining) {
     return GEnums.GangTraining["Train Combat"];
   }
 

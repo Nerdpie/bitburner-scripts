@@ -26,6 +26,8 @@ export interface GangSettings extends SettingsData {
   mode: EnumsAndTypes.GangMode;
   wantedPenaltyThreshold: number;
   territoryWarfareThreshold: number;
+  memberWarfareThreshold: number;
+  memberMinTraining: number;
 }
 
 export interface AugmentsSettings extends SettingsData {
