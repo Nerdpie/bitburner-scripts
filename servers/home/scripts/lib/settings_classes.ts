@@ -28,6 +28,8 @@ export interface GangSettings extends SettingsData {
   territoryWarfareThreshold: number;
   memberWarfareThreshold: number;
   memberMinTraining: number;
+  targetFactionRep: number;
+  targetGangRespect: number;
 }
 
 export interface AugmentsSettings extends SettingsData {

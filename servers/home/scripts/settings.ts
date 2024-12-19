@@ -56,6 +56,8 @@ export const GangLord: SettingsClasses.GangSettings = {
   territoryWarfareThreshold: 0.60,
   memberWarfareThreshold: 600,
   memberMinTraining: 100,
+  targetFactionRep: 10e6,
+  targetGangRespect: 1.3e6, // I THINK this is a bit more than needed to recruit all 12 members?
 }
 export const NetTree: SettingsClasses.SettingsData = {
   x: 1375,

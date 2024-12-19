@@ -2,6 +2,7 @@ import {ascendMembers} from "@/servers/home/scripts/gangs/ascension";
 import * as GEnums from "@/servers/home/scripts/gangs/gang_enums";
 import {GangGenInfo, GangMemberInfo, GangOtherInfo} from "NetscriptDefinitions";
 import {GangLord, setTailWindow} from "@/servers/home/scripts/settings";
+import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
 
 const config = GangLord;
 
@@ -33,6 +34,10 @@ export async function main(ns: NS): Promise<void> {
   });
 
   setTailWindow(ns, config);
+
+  if (!globalThis.Factions) {
+    exposeGameInternalObjects();
+  }
 
   // TODO Need logic to synchronize to the territory tick, and assign EVERYONE to Territory Warfare that tick for growth
   //  UNLESS clashes are enabled; then, check the stats before assigning
@@ -95,8 +100,7 @@ function generateMemberName(ns: NS): string {
 
 function equipMembers(ns: NS) {
   const members = ns.gang.getMemberNames().map(member => ns.gang.getMemberInformation(member));
-  // TODO Extend this to check for the cash-on-hand
-  // TODO Extend this to prioritize more carefully
+  // TODO Extend this to prioritize more carefully and leave a buffer of on-hand cash
 
   // Get the augments first
   equipAllAugments(ns, members)
@@ -150,10 +154,10 @@ function assignAll(ns: NS) {
   const members = ns.gang.getMemberNames();
   const gangInfo = ns.gang.getGangInformation()
 
-  // FIXME Does not work properly when gang is first created; minimum respect causes a fixed penalty of 50%?
 
   // REFINE Ideally, we would only assign enough to pull back the gain rate
   //  Or, better, assign a mix so we aren't constantly thrashing assignments...
+  // Below a certain respect level, the best way to offset the wanted penalty is to gain more respect
   if (config.wantedPenaltyThreshold > gangInfo.wantedPenalty && gangInfo.respect > 10) {
     members.forEach(member => {
       if (ns.gang.getMemberInformation(member).task !== GEnums.GangMisc["Territory Warfare"]) {
@@ -179,10 +183,11 @@ function bestTaskForMember(ns: NS, gangInfo: GangGenInfo, member: string): GEnum
     return GEnums.GangTraining["Train Combat"];
   }
 
-  // TODO Extend this to check for the rep threshold
-  //  May require Singularity?
-  //  May also want to switch per-member, to keep them at a threshold of respect (helps with discounts)
-  const gainFunction = (config.mode === "rep") ? ns.formulas.gang.respectGain : ns.formulas.gang.moneyGain;
+  const focusRep = config.mode === 'rep'
+    && ( globalThis.Factions[gangInfo.faction].playerReputation < config.targetFactionRep || gangInfo.respect < config.targetGangRespect );
+
+  // REFINE May want to switch per-member, to keep them at a threshold of respect (helps with discounts)
+  const gainFunction = focusRep ? ns.formulas.gang.respectGain : ns.formulas.gang.moneyGain;
 
   // Default to training combat
   let bestTask: [GEnums.GangTask, number] = [GEnums.GangTraining["Train Combat"], 0];
