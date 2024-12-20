@@ -11,7 +11,6 @@ export async function main(ns: NS): Promise<void> {
     exposeGameInternalObjects()
   }
 
-  // REFINE Swap to Singularity when available...
   const currentServer = globalThis.Player.getCurrentServer().hostname;
   const availableContracts = ns.ls(currentServer, '.cct');
 

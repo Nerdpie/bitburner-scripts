@@ -11,6 +11,8 @@ export async function main(ns: NS): Promise<void> {
   const config = Augments;
   setTailWindow(ns, config);
 
+  // FIXME None of these account for gang augment sales
+  // TODO Add special-case handling of NFG; worth showing its rep & cash cost
   switch (config.mode) {
     case 'purchasable':
       showPurchasableAugs(ns);
@@ -113,6 +115,7 @@ function showPurchasableAugs(ns: NS): void {
 
   const purchasableAugs: any[] = getPurchasableAugs()
     // TODO Filter on the rep requirement, within some percent of current rep
+    //  Will need to account for rep with ANY faction offering the aug
     .sort((a, b) => b.baseCost - a.baseCost);
 
   if (purchasableAugs.length > 0) {
@@ -126,10 +129,10 @@ function showPurchasableAugs(ns: NS): void {
 }
 
 function factionRepNeeded(ns: NS): void {
-  const playerFacs = globalThis.Player.factions;
+  const playerFacs: string[] = globalThis.Player.factions;
   const purchasableAugs = getPurchasableAugs();
 
-  ns.print('Rep needed to buy augs:')
+  ns.print("Add'l rep needed to buy augs:");
 
   if (!purchasableAugs || purchasableAugs.length === 0) {
     ns.print('All bought!');
@@ -137,13 +140,15 @@ function factionRepNeeded(ns: NS): void {
   }
 
   function maxRepRequirementForFaction(faction: string): number {
-    return purchasableAugs.filter(a => a.factions.includes(faction))
+    const maxRep = purchasableAugs.filter(a => a.factions.includes(faction))
       .map(a => a.baseRepRequirement)
       .reduce((acc, rep) => Math.max(acc, rep), 0)
+
+    // If we have excess rep, clamp at zero
+    return Math.max(maxRep - globalThis.Factions[faction].playerReputation, 0);
   }
 
-  // REFINE Filter out those that don't have any left to buy...
-  // TODO Revisit once we unlock Singularity, or manage to expose the internals
-  //  Until then, we can only show the totals
-  playerFacs.sort().forEach(f => ns.printf('%-16s - %6s', f, ns.formatNumber(maxRepRequirementForFaction(f), 1)))
+  const facsWithAugs = playerFacs.filter(f => purchasableAugs.some(a => a.factions.includes(f)));
+
+  facsWithAugs.sort().forEach((f: string) => ns.printf('%-16s - %6s', f, ns.formatNumber(maxRepRequirementForFaction(f), 1)))
 }

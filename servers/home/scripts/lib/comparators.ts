@@ -12,7 +12,7 @@ export function comparePairs(a: number[], b: number[]): number {
   }
 }
 
-// REFINE Given how simple it is, should we even keep this?
+// Kept only as a reference; will typically just write in-line
 /**
  * Helper to compare pairs of numbers
  * @param {number} a

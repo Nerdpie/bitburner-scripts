@@ -58,6 +58,7 @@ export const GangLord: SettingsClasses.GangSettings = {
   memberMinTraining: 100,
   targetFactionRep: 10e6,
   targetGangRespect: 1.3e6, // I THINK this is a bit more than needed to recruit all 12 members?
+  targetFactionRep: 2.5e6, // Barring any multipliers, this SHOULD be the most required for augments
 }
 export const NetTree: SettingsClasses.SettingsData = {
   x: 1375,

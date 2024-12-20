@@ -109,23 +109,6 @@ function equipMembers(ns: NS) {
   equipAllOfType(ns, members, GEnums.GangArmor);
   equipAllOfType(ns, members, GEnums.GangVehicle);
   equipAllOfType(ns, members, GEnums.GangRootkit);
-
-  /*
-  const equipmentToBuy: GangEquipment[] = [
-    GangArmor['Bulletproof Vest'],
-    GangWeapon["Baseball Bat"],
-    GangVehicle["Ford Flex V20"]
-  ]
-
-  for (const member of members) {
-    equipmentToBuy.forEach(e => {
-      if (!member.upgrades.includes(e)) {
-        ns.gang.purchaseEquipment(member.name, e);
-      }
-    });
-  }
-   */
-
 }
 
 function equipAllAugments(ns: NS, members: GangMemberInfo[]) {
@@ -158,6 +141,7 @@ function assignAll(ns: NS) {
   // REFINE Ideally, we would only assign enough to pull back the gain rate
   //  Or, better, assign a mix so we aren't constantly thrashing assignments...
   // Below a certain respect level, the best way to offset the wanted penalty is to gain more respect
+  // Some advise to not worry about the wanted level, or to only pre-calc the impact for an ascension
   if (config.wantedPenaltyThreshold > gangInfo.wantedPenalty && gangInfo.respect > 10) {
     members.forEach(member => {
       if (ns.gang.getMemberInformation(member).task !== GEnums.GangMisc["Territory Warfare"]) {

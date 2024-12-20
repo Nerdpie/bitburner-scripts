@@ -60,7 +60,7 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
       let decor = ''
       if (this.#server.hasAdminRights) {
         decor = ' (+'
-        // REFINE This line is a mixed bag; it's not TOO heinous, and the equivalent if-else is messy
+        // This line is a mixed bag; it's not TOO heinous, and the equivalent if-else is messy
         // noinspection NestedConditionalExpressionJS
         decor += this.#server.backdoorInstalled ? '*' : this.#canBackdoor ? '!' : ''
         decor += ')'
