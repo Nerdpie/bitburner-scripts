@@ -135,9 +135,9 @@ export const ServerSelections = {
     'powerhouse-fitness',   // Gym - 20x cost, 10x exp
     'rothman-uni',          // Uni - 3x cost,  2x exp
     // --Aevum--
-    //'crush-fitness',        // Gym - 3x cost,  2x exp
-    //'snap-fitness',         // Gym - 10x cost, 5x exp
-    //'summit-uni',           // Uni - 4x cost,  3x exp
+    //'crush-fitness',      // Gym - 3x cost,  2x exp
+    //'snap-fitness',       // Gym - 10x cost, 5x exp
+    //'summit-uni',         // Uni - 4x cost,  3x exp
     // --Volhaven--
     //'millenium-fitness',  // Gym - 7x cost,  4x exp
     'zb-institute'          // Uni - 5x cost,  4x exp

@@ -78,18 +78,28 @@ class DefaultScript {
     }
   }
 
-  ensureTailState(): void {
-    if (isTailOpen(this.titleAttribute)) {
-      switch (this.collapse) {
-        case CollapseState.Collapse:
-          collapseTail(this.titleAttribute);
-          break;
-        case CollapseState.Expand:
-          expandTail(this.titleAttribute);
-          break;
-        case CollapseState.Ignore:
-          break;
+  async ensureTailState(ns: NS): Promise<void> {
+    if (!isTailOpen(this.titleAttribute)) {
+      if (this.collapse === CollapseState.Ignore) {
+        return;
       }
+      ns.tail(this.script, 'home', ...this.runArgs);
+
+      // Ensure that the tail window has time to render before we try to act on it
+      await ns.sleep(10);
+    }
+
+    // REFINE Have this also ensure the position of the tail windows
+
+    switch (this.collapse) {
+      case CollapseState.Collapse:
+        collapseTail(this.titleAttribute);
+        break;
+      case CollapseState.Expand:
+        expandTail(this.titleAttribute);
+        break;
+      case CollapseState.Ignore:
+        break;
     }
   }
 }
@@ -144,7 +154,6 @@ export async function main(ns: NS): Promise<void> {
     exposeGameInternalObjects()
   }
 
-  // REFINE Is there a way to specify only the optional params we use, and skip others?
   // TODO Determine any other conditions to limit other scripts being run, such as RAM capacity
   const scripts = [
     new DefaultScript({script : "/scripts/custom_hud.js"}),
@@ -163,7 +172,9 @@ export async function main(ns: NS): Promise<void> {
 
   await ns.sleep(10);
 
-  scripts.forEach(s => s.ensureTailState());
+  for (const s of scripts) {
+    await s.ensureTailState(ns);
+  }
 
 }
 
