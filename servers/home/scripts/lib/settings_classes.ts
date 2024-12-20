@@ -53,4 +53,5 @@ export interface DeploySettings extends SettingsData {
   weakenCount: number;
   growCount: number;
   clusterCount: number;
+  homeReservedRam: number;
 }

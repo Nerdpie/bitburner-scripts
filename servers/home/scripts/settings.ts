@@ -56,9 +56,8 @@ export const GangLord: SettingsClasses.GangSettings = {
   territoryWarfareThreshold: 0.60,
   memberWarfareThreshold: 600,
   memberMinTraining: 100,
-  targetFactionRep: 10e6,
-  targetGangRespect: 1.3e6, // I THINK this is a bit more than needed to recruit all 12 members?
   targetFactionRep: 2.5e6, // Barring any multipliers, this SHOULD be the most required for augments
+  targetGangRespect: 20e6,
 }
 export const NetTree: SettingsClasses.SettingsData = {
   x: 1375,
@@ -111,6 +110,7 @@ export const Deploy: SettingsClasses.DeploySettings = {
   weakenCount: 0,
   growCount: 0,
   clusterCount: 0,
+  homeReservedRam: 64,
 }
 
 // noinspection SpellCheckingInspection - In-game servers have irregular names

@@ -4,7 +4,8 @@ import {BackdoorConcat, Deploy, setTailWindow} from "@/servers/home/scripts/sett
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
 import {Server} from "NetscriptDefinitions";
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
-import { DeploySettings } from "./lib/settings_classes";
+
+const config = Deploy;
 
 function getAvailableTools(ns: NS): ((host: string) => void)[] {
   const PROGRAMS: ({ file: string; action: (host: string) => void })[] = [
@@ -26,26 +27,24 @@ function getAvailableTools(ns: NS): ((host: string) => void)[] {
   return availableTools;
 }
 
-function pwnServer(ns: NS, target: string, tools: ((host: string) => void)[]) {
-  const server: Server = ns.getServer(target);
-
+function pwnServer(ns: NS, target: Server, tools: ((host: string) => void)[]) {
   // Don't waste cycles if we already own the box
-  if (server.hasAdminRights) {
-    tryBackdoor(ns, server)
+  if (target.hasAdminRights) {
+    tryBackdoor(ns, target)
     return true;
   }
 
   let openPorts = 0;
   tools.forEach(tool => {
-    tool(target);
+    tool(target.hostname);
     openPorts++;
   })
 
-  if (server.numOpenPortsRequired <= openPorts) {
-    ns.nuke(target);
-    ns.printf('Target pwned: %s', target);
+  if (target.numOpenPortsRequired <= openPorts) {
+    ns.nuke(target.hostname);
+    ns.printf('Target pwned: %s', target.hostname);
 
-    tryBackdoor(ns, server)
+    tryBackdoor(ns, target)
     return true;
   }
 
@@ -57,7 +56,7 @@ function pwnServer(ns: NS, target: string, tools: ((host: string) => void)[]) {
  * @param {Server} server
  */
 function tryBackdoor(ns: NS, server: Server) {
-  // REFINE Revisit when we have Singularity access ... or not
+  // Revisit when we have Singularity access ... or not
   if (!server.backdoorInstalled
     && !server.purchasedByPlayer
     && server.requiredHackingSkill <= ns.getHackingLevel()) {
@@ -86,8 +85,7 @@ function execScript(ns: NS, server: string, script: string, targetServer?: strin
 
   let ramAvailable = ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
   if ('home' === server) {
-    // noinspection MagicNumberJS - TODO Pull this out to a config
-    ramAvailable -= 64; // Leave some RAM free on `home`
+    ramAvailable -= config.homeReservedRam;
   }
 
   const numThreads = Math.floor(ramAvailable / ramCost);
@@ -100,13 +98,12 @@ function execScript(ns: NS, server: string, script: string, targetServer?: strin
   }
 }
 
-function buildCluster(ns: NS, config: DeploySettings) {
-  const RAM_CAPACITY = config.ramCapacity
+function buildCluster(ns: NS) {
   // noinspection OverlyComplexBooleanExpressionJS - Abusing boolean expression to short-circuit if low on funds
-  buyServers(ns, 'cluster-', config.clusterCount, RAM_CAPACITY) &&
-  buyServers(ns, 'weaken-', config.weakenCount, RAM_CAPACITY) &&
-  buyServers(ns, 'grow-', config.growCount, RAM_CAPACITY) &&
-  buyServers(ns, 'share-', config.shareCount, RAM_CAPACITY)
+  buyServers(ns, 'cluster-', config.clusterCount) &&
+  buyServers(ns, 'weaken-', config.weakenCount) &&
+  buyServers(ns, 'grow-', config.growCount) &&
+  buyServers(ns, 'share-', config.shareCount)
 }
 
 /**
@@ -114,47 +111,46 @@ function buildCluster(ns: NS, config: DeploySettings) {
  * @param ns
  * @param prefix
  * @param count
- * @param ramCapacity
  * @returns Whether all requested servers were bought/upgraded
  */
-function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number): boolean {
-  const PRICE = ns.getPurchasedServerCost(ramCapacity);
+function buyServers(ns: NS, prefix: string, count: number): boolean {
+  const RAM_CAPACITY = config.ramCapacity;
+  const PRICE = ns.getPurchasedServerCost(RAM_CAPACITY);
   for (let i = 0; i < count; i++) {
     const serverName = prefix + i;
     if (ns.serverExists(serverName)) {
       // Check if the server's RAM is at the current target
-      if (ns.getServerMaxRam(serverName) < ramCapacity) {
-        if (ns.getServerMoneyAvailable('home') < ns.getPurchasedServerUpgradeCost(serverName, ramCapacity)) {
+      if (ns.getServerMaxRam(serverName) < RAM_CAPACITY) {
+        if (ns.getServerMoneyAvailable('home') < ns.getPurchasedServerUpgradeCost(serverName, RAM_CAPACITY)) {
           ns.printf("Insufficient funds to upgrade %s", serverName);
           return false;
         }
-        ns.upgradePurchasedServer(serverName, ramCapacity);
+        ns.upgradePurchasedServer(serverName, RAM_CAPACITY);
       }
     } else {
       if (ns.getServerMoneyAvailable('home') < PRICE) {
         ns.printf("Insufficient funds to buy %s", serverName)
         return false;
       }
-      ns.purchaseServer(serverName, ramCapacity);
+      ns.purchaseServer(serverName, RAM_CAPACITY);
     }
   }
   return true;
 }
 
-function sortBackdoorPriority(a: string, b: string): number {
+function sortBackdoorPriority(a: Server, b: Server): number {
   // Make sure we hit our target server FIRST
-  if (Deploy.targetServer === a) {
+  if (Deploy.targetServer === a.hostname) {
     return -1;
-  } else if (Deploy.targetServer === b) {
+  } else if (Deploy.targetServer === b.hostname) {
     return 1;
   }
 
-  const backdoorSoonA = BackdoorConcat.includes(a);
-  const backdoorSoonB = BackdoorConcat.includes(b);
+  const backdoorSoonA = BackdoorConcat.includes(a.hostname);
+  const backdoorSoonB = BackdoorConcat.includes(b.hostname);
 
-  // REFINE If they both are in the 'make sure we backdoor' list, hit the lower security one first (faster)
   if (backdoorSoonA === backdoorSoonB) {
-    return 0;
+    return (a.requiredHackingSkill ?? 0) - (b.requiredHackingSkill ?? 0);
   }
 
   // They are NOT the same priority; if `a` has priority, return -1 (first in sort order)
@@ -175,7 +171,6 @@ export async function main(ns: NS): Promise<void> {
     return;
   }
 
-  const config = Deploy;
   setTailWindow(ns, config);
 
   ns.disableLog('disableLog'); // Ironic, no?
@@ -183,11 +178,10 @@ export async function main(ns: NS): Promise<void> {
 
   const MAX_LOG_LINES = 25;
 
-  let servers: string[];
   let tools: ((host: string) => void)[];
   let script: string;
 
-  let targetSelf = config.targetSelf; // Targeting self, or a specific server
+  let targetSelf = config.targetSelf;
   // noinspection ES6ConvertLetToConst - Need to rework this to be dynamic ANYWAY...
   let targetServer = config.targetServer;
   let resetScripts = config.resetScripts;
@@ -224,10 +218,7 @@ export async function main(ns: NS): Promise<void> {
   while (true) {
     ns.printf('Looping at %s', new Date(Date.now()).toLocaleString());
 
-    buildCluster(ns, config)
-
-    // Mainly for [spoilers] becoming available
-    servers = getAllServers(ns);
+    buildCluster(ns)
 
     // Check inside the loop in case we unlock more tools
     tools = getAvailableTools(ns);
@@ -237,22 +228,24 @@ export async function main(ns: NS): Promise<void> {
     }
 
     const purchasedServers = ns.getPurchasedServers();
-    servers.filter(s => (s !== 'home'))
+    getAllServers(ns)
+      .filter(s => (s !== 'home'))
       .filter(s => !purchasedServers.includes(s))
+      .map(s => ns.getServer(s))
       .sort(sortBackdoorPriority)
       .filter(s => pwnServer(ns, s, tools))
       .forEach(server => {
         if (resetScripts) {
-          ns.killall(server);
+          ns.killall(server.hostname);
         }
-        ns.scp(filesToCopy, server);
+        ns.scp(filesToCopy, server.hostname);
 
         if (targetSelf) {
-          if (ns.getServerMaxMoney(server) > 0 && ns.getServer(server).backdoorInstalled) {
-            execScript(ns, server, script, server);
+          if ((server.moneyMax ?? 0) > 0 && server.backdoorInstalled) {
+            execScript(ns, server.hostname, script, server.hostname);
           }
         } else {
-          execScript(ns, server, script, targetServer);
+          execScript(ns, server.hostname, script, targetServer);
         }
       });
 
@@ -280,7 +273,7 @@ export async function main(ns: NS): Promise<void> {
           //  Iterating servers and min-maxing grow-weaken
           // Will want to use a proper port-based manager technique so
           //  target can change w/o having to reset the scripts
-          execScript(ns, s, '/scripts/share.js', targetServer);
+          execScript(ns, s, '/scripts/share.js');
         } else {
           switch (s.split('-')[0]) { // Check the hostname's prefix
             case 'weaken':
