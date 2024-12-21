@@ -1,8 +1,9 @@
+// noinspection IfStatementWithTooManyBranchesJS
+
 import {Scratchpad, setTailWindow} from "@/servers/home/scripts/settings"
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
 import {Player} from "NetscriptDefinitions";
 import {sprintf} from "sprintf-js";
-import {CodingContractTypes} from "@/servers/home/scripts/coding_contracts/contract_util";
 
 
 /** @param {NS} ns */
@@ -12,18 +13,9 @@ export async function main(ns: NS): Promise<void> {
   //ns.codingcontract.createDummyContract(CodingContractTypes["Algorithmic Stock Trader IV"])
 
   // Lame way to avoid having code purged from the scratchpad, but not executed
-  const HUSH_IM_BUSY: number = -1
+  const HUSH_IM_BUSY: number = 4
 
   if (HUSH_IM_BUSY === 1) {
-    const contractNum = 161265
-    const contractGroup = ''
-    // noinspection SpellCheckingInspection - In-game servers have irregular names
-    const hostname = 'syscore'
-
-    const contractName = `contract-${contractNum}${contractGroup === '' ? '' : '-' + contractGroup}.cct`;
-    ns.print(ns.codingcontract.getData(contractName, hostname))
-
-  } else if (HUSH_IM_BUSY === 2) {
 
     if (!globalThis.Companies) {
       exposeGameInternalObjects()
@@ -34,13 +26,13 @@ export async function main(ns: NS): Promise<void> {
         return ns.formulas.reputation.calculateRepToFavor(ns.formulas.reputation.calculateFavorToRep(favor) + rep);
       }
 
-      globalThis.Companies.metadata.filter(c => c.playerReputation > 0 || c.favor > 8)
+      globalThis.Companies.filter(c => c.playerReputation > 0 || c.favor > 8)
         .forEach(c => {
           //ns.print(sprintf('%-20s  Rep: %7d  Favor %4d', c.name, c.playerReputation, c.favor))
           ns.print(sprintf('%-20s  Favor %4d', c.name, calcFavorAfterReset(c.favor, c.playerReputation)))
         })
     }
-  } else if (HUSH_IM_BUSY === 3) {
+  } else if (HUSH_IM_BUSY === 2) {
     const SECONDS_PER_MINUTE = 60;
 
     const me: Player = ns.getPlayer();
@@ -59,5 +51,13 @@ export async function main(ns: NS): Promise<void> {
     const millisecondsNeeded = expDiff / gainPerMillisecond;
 
     ns.printf("Level %d requires class for %s", TARGET_LEVEL, ns.tFormat(millisecondsNeeded))
+  } else if (HUSH_IM_BUSY === 3) {
+    const getFactionRep = (faction: string) => globalThis.Factions[faction].playerReputation
+    const TARGET_REP = 75000;
+    const getWorkRepPerSecond = () => globalThis.Player.currentWork.getReputationRate() * 5;
+    ns.print(ns.tFormat((TARGET_REP - getFactionRep('Tian Di Hui')) / getWorkRepPerSecond() * 1000));
+  } else if (HUSH_IM_BUSY === 4) {
+    // Goodie, different paths to the reputation rate depending upon the TYPE of work...
+    ns.print((400e3 - globalThis.Companies.MegaCorp.playerReputation) / (globalThis.Player.currentWork.getGainRates('Software Engineering Intern').reputation * 5) / 60);
   }
 }

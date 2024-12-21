@@ -1,4 +1,4 @@
-// Copied from https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
+// Derived from https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 import {HacknetManager, setTailWindow} from "@/servers/home/scripts/settings"
 
 /**
@@ -13,7 +13,7 @@ import {HacknetManager, setTailWindow} from "@/servers/home/scripts/settings"
  */
 export async function main(ns: NS): Promise<void> {
   // Log settings: Disable verbose logging for the specified function.
-  const DISABLED_LOGS = ['getServerMoneyAvailable'];
+  const DISABLED_LOGS = ['getServerMoneyAvailable', 'sleep'];
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
   const config = HacknetManager;

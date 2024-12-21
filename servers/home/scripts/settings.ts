@@ -113,6 +113,8 @@ export const Deploy: SettingsClasses.DeploySettings = {
   homeReservedRam: 64,
 }
 
+// TODO Can we make this strongly-typed to the list of in-game servers
+//  WITHOUT it requiring the enum namespace?
 // noinspection SpellCheckingInspection - In-game servers have irregular names
 export const ServerSelections = {
   alwaysBackdoor: [
@@ -124,16 +126,19 @@ export const ServerSelections = {
     '.',            // The Dark Army
     'The-Cave',     // Daedalus
     // 'w0r1d_d43m0n', // May not want to backdoor right away...
-    // Good targets
+  ],
+  goodTargets: [
     'n00dles',      // Stupid easy early-game target for basic cash
     'joesguns',     // Apparently can be `grow`-farmed for exp?
+    'phantasy',
+    'omega-net',
   ],
   // Get a 10% discount if a venue is backdoored
   classesBackdoor: [
     // --Sector 12--
-    'iron-gym',             // Gym - 1x cost,  1x exp
+    //'iron-gym',           // Gym - 1x cost,  1x exp
     'powerhouse-fitness',   // Gym - 20x cost, 10x exp
-    'rothman-uni',          // Uni - 3x cost,  2x exp
+    //'rothman-uni',        // Uni - 3x cost,  2x exp
     // --Aevum--
     //'crush-fitness',      // Gym - 3x cost,  2x exp
     //'snap-fitness',       // Gym - 10x cost, 5x exp
@@ -160,7 +165,8 @@ export const ServerSelections = {
 export const BackdoorConcat: string[] =
   ServerSelections.alwaysBackdoor.concat(
     ServerSelections.classesBackdoor,
-    ServerSelections.companyBackdoor);
+    ServerSelections.goodTargets,
+    /* ServerSelections.companyBackdoor */);
 
 // This should be fine, since ESBuild includes imported code into the output file
 export function setTailWindow(ns: NS, config: SettingsClasses.SettingsData, clearLog: boolean = true): void {
