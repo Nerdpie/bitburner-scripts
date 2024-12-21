@@ -58,6 +58,7 @@ export const GangLord: SettingsClasses.GangSettings = {
   memberMinTraining: 100,
   targetFactionRep: 2.5e6, // Barring any multipliers, this SHOULD be the most required for augments
   targetGangRespect: 20e6,
+  vigilanteRespectThreshold: 3,
 }
 export const NetTree: SettingsClasses.SettingsData = {
   x: 1375,

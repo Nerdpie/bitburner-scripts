@@ -161,7 +161,8 @@ function assignAll(ns: NS) {
   //  Or, better, assign a mix so we aren't constantly thrashing assignments...
   // Below a certain respect level, the best way to offset the wanted penalty is to gain more respect
   // Some advise to not worry about the wanted level, or to only pre-calc the impact for an ascension
-  if (config.wantedPenaltyThreshold > gangInfo.wantedPenalty && gangInfo.respect > 10 && tickToNextTerritoryUpdate !== 0) {
+  // May want to check the internal formulae and look at the ratio of wanted level & respect to penalty
+  if (config.wantedPenaltyThreshold > gangInfo.wantedPenalty && gangInfo.respect > config.vigilanteRespectThreshold && tickToNextTerritoryUpdate !== 0) {
     members.forEach(member => {
       ns.gang.setMemberTask(member, GEnums.GangMisc["Vigilante Justice"])
     })

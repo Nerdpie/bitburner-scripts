@@ -30,6 +30,7 @@ export interface GangSettings extends SettingsData {
   memberMinTraining: number;
   targetFactionRep: number;
   targetGangRespect: number;
+  vigilanteRespectThreshold: number;
 }
 
 export interface AugmentsSettings extends SettingsData {
