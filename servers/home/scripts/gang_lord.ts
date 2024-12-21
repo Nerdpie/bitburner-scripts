@@ -5,28 +5,15 @@ import {GangLord, setTailWindow} from "@/servers/home/scripts/settings";
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
 
 const config = GangLord;
+let previousOtherGangInfo: GangOtherInfo;
+let tickToNextTerritoryUpdate: number;
 
 export async function main(ns: NS): Promise<void> {
-  /*
-  Denis' outermost loop is:
-
-    function tick() {
-    recruit();
-    equipMembers(); // Equip everyone
-    ascend();
-    equipMembers(); // Equip ascended members
-    updateTerritory();
-    assignAll();
-  }
-
-  // begin territory warfare; synchronize to clashes
-  for (; ; await waitCycle(17500, tick)) await syncWarfareTick();
-   */
-
   const DISABLED_LOGS = [
     'gang.setMemberTask',
     'gang.recruitMember',
     'getServerMoneyAvailable',
+    'gang.purchaseEquipment',
   ];
   ns.disableLog('disableLog');
   DISABLED_LOGS.forEach(log => {
@@ -39,18 +26,58 @@ export async function main(ns: NS): Promise<void> {
     exposeGameInternalObjects();
   }
 
-  // TODO Need logic to synchronize to the territory tick, and assign EVERYONE to Territory Warfare that tick for growth
-  //  UNLESS clashes are enabled; then, check the stats before assigning
+  if (!ns.gang.inGang()) {
+    ns.tprint('Not yet in a gang!');
+    return;
+  }
 
   // noinspection InfiniteLoopJS - Intended design
   while (true) {
+    syncTerritoryCycle(ns);
     recruit(ns);
     ascendMembers(ns);
     equipMembers(ns);
-    assignAll(ns);
+    // Determine if we will have a clash BEFORE sending members off to war
     mortalCombat(ns);
+    assignAll(ns);
     await ns.gang.nextUpdate();
   }
+}
+
+function syncTerritoryCycle(ns: NS) {
+  const otherGangInfo = ns.gang.getOtherGangInformation();
+  /*
+  Gang cycles are pushed every game cycle (200ms, or 5 times a second)
+  While the stored gang cycles are less than the min to process (10 cycles, or two seconds), it waits
+  Territory updates process every ten gang ticks (twenty seconds)
+   */
+
+  // Save a few calculations if we already beat the other gangs
+  if (ns.gang.getGangInformation().territory === 1) {
+    tickToNextTerritoryUpdate = 9;
+    return;
+  }
+
+  if (isOtherGangInfoEqual(previousOtherGangInfo, otherGangInfo)) {
+    // Effectively, subtracts one and wraps around
+    tickToNextTerritoryUpdate = (tickToNextTerritoryUpdate + 9) % 10;
+  } else {
+    previousOtherGangInfo = otherGangInfo;
+    tickToNextTerritoryUpdate = 9;
+  }
+}
+
+function isOtherGangInfoEqual(previous: GangOtherInfo, current: GangOtherInfo): boolean {
+  if (!previous) {
+    return false;
+  }
+
+  for (const gang in previous) {
+    if (previous[gang].power !== current[gang].power || previous[gang].territory !== current[gang].territory) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function recruit(ns: NS) {
@@ -103,31 +130,23 @@ function equipMembers(ns: NS) {
   // TODO Extend this to prioritize more carefully and leave a buffer of on-hand cash
 
   // Get the augments first
-  equipAllAugments(ns, members)
-
-  equipAllOfType(ns, members, GEnums.GangWeapon);
-  equipAllOfType(ns, members, GEnums.GangArmor);
-  equipAllOfType(ns, members, GEnums.GangVehicle);
-  equipAllOfType(ns, members, GEnums.GangRootkit);
+  equipAllOfType(ns, members, GEnums.GangAugment, 'augmentations');
+  equipAllOfType(ns, members, GEnums.GangWeapon, 'upgrades');
+  equipAllOfType(ns, members, GEnums.GangArmor, 'upgrades');
+  equipAllOfType(ns, members, GEnums.GangVehicle, 'upgrades');
+  equipAllOfType(ns, members, GEnums.GangRootkit, 'upgrades');
 }
 
-function equipAllAugments(ns: NS, members: GangMemberInfo[]) {
-  for (const equipment in GEnums.GangAugment) {
-    const equipPrice = ns.gang.getEquipmentCost(equipment);
-    members.forEach(member => {
-      if (!member.augmentations.includes(equipment) && equipPrice < ns.getServerMoneyAvailable('home')) {
-        ns.gang.purchaseEquipment(member.name, equipment);
-      }
-    })
-  }
-}
-
-function equipAllOfType(ns: NS, members: GangMemberInfo[], type: any) {
+function equipAllOfType(ns: NS, members: GangMemberInfo[], type: any, slot: string) {
   for (const equipment in type) {
     const equipPrice = ns.gang.getEquipmentCost(equipment);
     members.forEach(member => {
-      if (!member.upgrades.includes(equipment) && equipPrice < ns.getServerMoneyAvailable('home')) {
-        ns.gang.purchaseEquipment(member.name, equipment);
+      if (!member[slot].includes(equipment) && equipPrice < ns.getServerMoneyAvailable('home')) {
+        const success = ns.gang.purchaseEquipment(member.name, equipment);
+
+        if (success) {
+          ns.print(`Bought ${member.name} the ${equipment}`);
+        }
       }
     })
   }
@@ -142,11 +161,9 @@ function assignAll(ns: NS) {
   //  Or, better, assign a mix so we aren't constantly thrashing assignments...
   // Below a certain respect level, the best way to offset the wanted penalty is to gain more respect
   // Some advise to not worry about the wanted level, or to only pre-calc the impact for an ascension
-  if (config.wantedPenaltyThreshold > gangInfo.wantedPenalty && gangInfo.respect > 10) {
+  if (config.wantedPenaltyThreshold > gangInfo.wantedPenalty && gangInfo.respect > 10 && tickToNextTerritoryUpdate !== 0) {
     members.forEach(member => {
-      if (ns.gang.getMemberInformation(member).task !== GEnums.GangMisc["Territory Warfare"]) {
-        ns.gang.setMemberTask(member, GEnums.GangMisc["Vigilante Justice"])
-      }
+      ns.gang.setMemberTask(member, GEnums.GangMisc["Vigilante Justice"])
     })
   } else {
     members.forEach(member => {
@@ -158,17 +175,18 @@ function assignAll(ns: NS) {
 function bestTaskForMember(ns: NS, gangInfo: GangGenInfo, member: string): GEnums.GangTask {
   const memberInfo = ns.gang.getMemberInformation(member);
 
-  // Is the member 'ready to fight', and is there territory to claim yet?
-  if (memberInfo.def >= config.memberWarfareThreshold && gangInfo.territory < 1) {
+  // Is it time to flash mob, and is the member at risk if they do so?
+  if (tickToNextTerritoryUpdate === 0 && (memberInfo.def >= config.memberWarfareThreshold || !isClashPossible(gangInfo))) {
     return GEnums.GangMisc["Territory Warfare"];
   }
 
+  // Early gains are slow; bootstrap it
   if (memberInfo.def < config.memberMinTraining) {
     return GEnums.GangTraining["Train Combat"];
   }
 
   const focusRep = config.mode === 'rep'
-    && ( globalThis.Factions[gangInfo.faction].playerReputation < config.targetFactionRep || gangInfo.respect < config.targetGangRespect );
+    && (globalThis.Factions[gangInfo.faction].playerReputation < config.targetFactionRep || gangInfo.respect < config.targetGangRespect);
 
   // REFINE May want to switch per-member, to keep them at a threshold of respect (helps with discounts)
   const gainFunction = focusRep ? ns.formulas.gang.respectGain : ns.formulas.gang.moneyGain;
@@ -185,16 +203,21 @@ function bestTaskForMember(ns: NS, gangInfo: GangGenInfo, member: string): GEnum
     }
   } else {
     // FIXME Determine an ACTUAL formula for this, not assigning arbitrarily...
-    bestTask = [GEnums.GangEarning["Traffick Illegal Arms"], 5];
+    bestTask = [GEnums.GangEarning["Run a Con"], 5];
   }
 
   return bestTask[0];
 }
 
+function isClashPossible(gangInfo: GangGenInfo): boolean {
+  return gangInfo.territoryWarfareEngaged || gangInfo.territoryClashChance > 0;
+}
+
 function mortalCombat(ns: NS) {
   const gangInfo = ns.gang.getGangInformation();
-  const otherGangs: GangOtherInfo = ns.gang.getOtherGangInformation();
+  const otherGangs: GangOtherInfo = previousOtherGangInfo;
 
+  // If we have all territory, no point for further clashes to process
   if (gangInfo.territory === 1) {
     if (gangInfo.territoryWarfareEngaged) {
       ns.gang.setTerritoryWarfare(false);
