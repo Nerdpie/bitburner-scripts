@@ -1,10 +1,78 @@
-// REFINE Remove this suppression once the algo is done
+function cleanUnmatchableRightParens(input: string) {
+  // Check for any right parens that CANNOT match
+  // e.g. ())a) => ()a)
+  let countLeft = 0;
+  let countRight = 0;
+  let temp = '';
+  for (let i = 0; i < input.length; i++) {
+    const char = input.charAt(i);
+    switch (char) {
+      case ')':
+        // Are there enough left parens
+        if (countRight < countLeft) {
+          countRight++;
+          temp += ')';
+        }
+        break;
+      case '(':
+        countLeft++;
+        countRight = 0; // Avoid removing valid options
+        temp += '(';
+        break;
+      default:
+        countRight = 0; // Avoid removing valid options
+        temp += char;
+    }
+  }
+  return temp;
+}
+
+function cleanUnmatchableLeftParens(input: string) {
+  // Check for any left parens that CANNOT match
+  // e.g. (a(() => (a()
+  let countLeft = 0;
+  let countRight = 0;
+  let temp = '';
+  for (let i = input.length - 1; i >= 0; i--) {
+    const char = input.charAt(i);
+    switch (char) {
+      case '(':
+        // Are there enough right parens
+        if (countLeft < countRight) {
+          countLeft++;
+          temp = '(' + temp;
+        }
+        break;
+      case ')':
+        countRight++;
+        countLeft = 0; // Avoid removing valid options
+        temp = ')' + temp;
+        break;
+      default:
+        countLeft = 0; // Avoid removing valid options
+        temp = char + temp;
+    }
+  }
+  return temp;
+}
+
+function countCharInString(input: string, char: string): number {
+  let count = 0
+  for (let i = 0; i < input.length; i++) {
+    if (input.charAt(i) === char) {
+      count++;
+    }
+  }
+
+  return count;
+}
+
 // noinspection GrazieInspection - Grammar in sample description
 /**
  * @param {string} input
  * @param {NS} ns
  */
-export function sanitizeParens(input: string, ns: NS): void {
+export function sanitizeParens(input: string, ns: NS): string[] {
   /* Sample description:
   Given the following string:
 
@@ -28,8 +96,7 @@ export function sanitizeParens(input: string, ns: NS): void {
 
   ns.print("Input: " + input)
 
-  /** @type {string} */
-  let trimmed = input;
+  let trimmed: string = input;
 
   // Remove any parens that CANNOT match
   while (trimmed.charAt(0) === ')') {
@@ -41,57 +108,23 @@ export function sanitizeParens(input: string, ns: NS): void {
 
   ns.print("Trimmed: " + trimmed)
 
-  // Check for any right parens that CANNOT match
-  // e.g. ())a) => ()a)
-  let countLeft = 0;
-  let countRight = 0;
-  let temp = '';
-  for (let i = 0; i < trimmed.length; i++) {
-    const char = trimmed.charAt(i);
-    // noinspection FallThroughInSwitchStatementJS - We reset `countRight` for either case
-    switch (char) {
-      case ')':
-        // Are there enough left parens
-        if (countRight < countLeft) {
-          countRight++;
-          temp += char;
-        }
-        break;
-      case '(':
-        countLeft++;
-      default:
-        countRight = 0; // Avoid removing valid options
-        temp += char;
-    }
-  }
+  trimmed = cleanUnmatchableRightParens(trimmed);
 
-  trimmed = temp
   ns.print('RCleaned: ' + trimmed);
 
-  // Repeat for left parens that CANNOT match
-  countLeft = 0;
-  countRight = 0;
-  temp = '';
-  for (let i = trimmed.length - 1; i >= 0; i--) {
-    const char = trimmed.charAt(i);
-    // noinspection FallThroughInSwitchStatementJS - We reset `countLeft` for either case
-    switch (char) {
-      case '(':
-        // Are there enough right parens
-        if (countLeft < countRight) {
-          countLeft++;
-          temp = char + temp;
-        }
-        break;
-      case ')':
-        countRight++;
-      default:
-        countLeft = 0; // Avoid removing valid options
-        temp = char + temp;
-    }
+  trimmed = cleanUnmatchableLeftParens(trimmed);
+
+  ns.print("LCleaned: " + trimmed)
+
+  const countLeft = countCharInString(trimmed, '(');
+  const countRight = countCharInString(trimmed, ')');
+
+  if ( countLeft === countRight ) {
+    return [trimmed];
   }
 
-  ns.print("LCleaned: " + temp)
+  ns.print(`LCount: ${countLeft}`);
+  ns.print(`RCount: ${countRight}`);
 
   // TODO Check my old CS code for the parser logic
   // ... while accidental, the representation from `compression1` may help... hmm...
@@ -103,4 +136,6 @@ export function sanitizeParens(input: string, ns: NS): void {
 
   // Look into another recursive algorithm that returns options for a subsection
   // (recurring theme in these problems: subdivide the problem space...)
+
+  return [''];
 }
