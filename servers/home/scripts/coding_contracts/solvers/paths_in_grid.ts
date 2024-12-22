@@ -1,4 +1,3 @@
-// TODO Write the path solvers
 import {ZeroOrOne} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
 import {newMultidimensionalArray} from "@/servers/home/scripts/lib/array_util";
 
@@ -49,11 +48,7 @@ You are located in the top-left corner of the following grid:
   // Calculate the 'no path' upper bound
   const invalidPathLength = input.length * input[0].length;
 
-  ns.print(invalidPathLength)
-
   const result = findPath(input, visited, 0, 0, invalidPathLength);
-
-  ns.print(result);
 
   if (result[1] >= invalidPathLength) {
     return '';
@@ -105,17 +100,11 @@ function findPath(grid: ZeroOrOne[][], visited: boolean[][], row: number, col: n
   // MEMO Tried writing a version that was iterable using `map` and `reduce`; it wasn't any cleaner to read
   // Get the path and path length for each direction; the recursive call handles the bounds checks
   const subPaths: Record<'U' | 'D' | 'L' | 'R', [string, number]> = {
-    U: ['', invalidPathLength],
-    D: ['', invalidPathLength],
-    L: ['', invalidPathLength],
-    R: ['', invalidPathLength]
-  };
-  subPaths.U = findPath(grid, newVisited, row - 1, col, invalidPathLength);
-  subPaths.D = findPath(grid, newVisited, row + 1, col, invalidPathLength);
-  subPaths.L = findPath(grid, newVisited, row, col - 1, invalidPathLength);
-  subPaths.R = findPath(grid, newVisited, row, col + 1, invalidPathLength);
-
-  debugger
+    U: findPath(grid, newVisited, row - 1, col, invalidPathLength),
+    D: findPath(grid, newVisited, row + 1, col, invalidPathLength),
+    L: findPath(grid, newVisited, row, col - 1, invalidPathLength),
+    R: findPath(grid, newVisited, row, col + 1, invalidPathLength)
+  }
 
   let shortestPath: [string, number] = ['', invalidPathLength];
   let direction: string = '';
