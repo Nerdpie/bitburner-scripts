@@ -23,9 +23,26 @@ export const ContractDispatcher: SettingsClasses.SettingsData = {
   height: 200,
   tailTitle: 'Contract Dispatcher'
 }
+// noinspection ConfusingFloatingPointLiteralJS
+export const GangLord: SettingsClasses.GangSettings = {
+  x: 1250,
+  y: 155,
+  width: 450,
+  height: 200,
+  tailTitle: 'Gang Lord',
+  maxRep: 1e7, // 10 million
+  mode: 'rep',
+  wantedPenaltyThreshold: 0.90,
+  territoryWarfareThreshold: 0.60,
+  memberWarfareThreshold: 600,
+  memberMinTraining: 100,
+  targetFactionRep: 2.5e6, // Barring any multipliers, this SHOULD be the most required for augments
+  targetGangRespect: 20e6,
+  vigilanteRespectThreshold: 3,
+}
 export const Run: SettingsClasses.RunSettings = {
   x: 1500,
-  y: 155,
+  y: 190,
   width: 200,
   height: 200,
   tailTitle: 'Run Menu',
@@ -41,24 +58,6 @@ export const Go: SettingsClasses.GoSettings = {
   loopDelay: 100,
   faction: GoFaction.Daedalus,
   boardSize: 7
-}
-// noinspection ConfusingFloatingPointLiteralJS
-export const GangLord: SettingsClasses.GangSettings = {
-  // Stealing the spot from `Go` since we're using the script from Insight's repo
-  x: 1500,
-  y: 190,
-  width: 200,
-  height: 200,
-  tailTitle: 'Gang Lord',
-  maxRep: 1e7, // 10 million
-  mode: 'rep',
-  wantedPenaltyThreshold: 0.90,
-  territoryWarfareThreshold: 0.60,
-  memberWarfareThreshold: 600,
-  memberMinTraining: 100,
-  targetFactionRep: 2.5e6, // Barring any multipliers, this SHOULD be the most required for augments
-  targetGangRespect: 20e6,
-  vigilanteRespectThreshold: 3,
 }
 export const NetTree: SettingsClasses.SettingsData = {
   x: 1375,

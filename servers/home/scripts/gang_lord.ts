@@ -14,6 +14,7 @@ export async function main(ns: NS): Promise<void> {
     'gang.recruitMember',
     'getServerMoneyAvailable',
     'gang.purchaseEquipment',
+    'gang.setTerritoryWarfare',
   ];
   ns.disableLog('disableLog');
   DISABLED_LOGS.forEach(log => {
@@ -162,7 +163,8 @@ function assignAll(ns: NS) {
   // Below a certain respect level, the best way to offset the wanted penalty is to gain more respect
   // Some advise to not worry about the wanted level, or to only pre-calc the impact for an ascension
   // May want to check the internal formulae and look at the ratio of wanted level & respect to penalty
-  if (config.wantedPenaltyThreshold > gangInfo.wantedPenalty && gangInfo.respect > config.vigilanteRespectThreshold && tickToNextTerritoryUpdate !== 0) {
+  const reduceWantedLevel = config.wantedPenaltyThreshold > gangInfo.wantedPenalty && gangInfo.respect > config.vigilanteRespectThreshold && gangInfo.wantedLevel > 1;
+  if (reduceWantedLevel && tickToNextTerritoryUpdate !== 0) {
     members.forEach(member => {
       ns.gang.setMemberTask(member, GEnums.GangMisc["Vigilante Justice"])
     })
@@ -222,6 +224,7 @@ function mortalCombat(ns: NS) {
   if (gangInfo.territory === 1) {
     if (gangInfo.territoryWarfareEngaged) {
       ns.gang.setTerritoryWarfare(false);
+      ns.print('Victory is ours!')
     }
     return;
   }
@@ -242,8 +245,10 @@ function mortalCombat(ns: NS) {
   if (avgChance < config.territoryWarfareThreshold) {
     if (gangInfo.territoryWarfareEngaged) {
       ns.gang.setTerritoryWarfare(false);
+      ns.print('Retreat!');
     }
   } else if (!gangInfo.territoryWarfareEngaged) {
     ns.gang.setTerritoryWarfare(true);
+    ns.print('Attack!');
   }
 }
