@@ -7,3 +7,15 @@
 export function arrayUnique(a: any[]): any[] {
   return [...new Set(a)];
 }
+
+// REFINE Needs a better name...
+/**
+ * Create a typed multidimensional array with the given fill value
+ * @param rows
+ * @param columns
+ * @param fillValue
+ */
+export function newMultidimensionalArray<T>(rows: number, columns: number, fillValue: T): T[][] {
+    const row = Array<T>(columns).fill(fillValue);
+    return Array<Array<T>>(rows).fill(row);
+}

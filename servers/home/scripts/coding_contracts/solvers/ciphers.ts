@@ -1,7 +1,8 @@
+const ASCII_LETTER_A: number = 65;
+const ASCII_LETTER_Z: number = 90;
+const ALPHABET_SIZE: number = ASCII_LETTER_Z - ASCII_LETTER_A + 1;
+
 function rotN(char: string, offset: number): string {
-  const ASCII_LETTER_A: number = 65;
-  const ASCII_LETTER_Z: number = 90;
-  const ALPHABET_SIZE: number = ASCII_LETTER_Z - ASCII_LETTER_A + 1;
 
   // Only shifting A-Z
   const charPoint = char.charCodeAt(0);
@@ -62,7 +63,7 @@ Return the ciphertext as uppercase string. Spaces remains the same.
  * @param {string} input
  * @param {NS} ns
  */
-export function encryption2(input: string, ns: NS): void {
+export function encryption2(input: [string, string], ns: NS): string {
   /* Sample descriptions
   You are attempting to solve a Coding Contract. You have 10 tries remaining, after which the contract will self-destruct.
 
@@ -96,12 +97,24 @@ Return the ciphertext as uppercase string.
 If your solution is an empty string, you must leave the text box empty. Do not use "", '', or ``.
    */
 
-  /*
-  First, determine how we will track the substitution table;
-  while comparatively trivial, building it in memory seems... inefficient.
+  // Treat the substitution table as a sum of offsets, with A as 0
+  const plaintext = input[0];
+  const keyword = input[1];
+  const keywordOffsets: number[] = Array(keyword.length);
+  let result = '';
 
-  Once we have the substitution table, we can effectively
-  take the index of the plaintext mod the length of the key to find the lookup.
-   */
+  for (let i = 0; i < keyword.length; i++) {
+    keywordOffsets[i] = keyword.charCodeAt(i) - ASCII_LETTER_A;
+  }
 
+  for (let i = 0; i < plaintext.length; i++) {
+    const plaintextOffset = plaintext.charCodeAt(i) - ASCII_LETTER_A;
+
+    // Take the sum of the two offsets, wrapping around the end of the keyword & alphabet size
+    const charOffset = (plaintextOffset + keywordOffsets[i % keywordOffsets.length]) % ALPHABET_SIZE;
+
+    result += String.fromCodePoint(charOffset + ASCII_LETTER_A);
+  }
+
+  return result;
 }

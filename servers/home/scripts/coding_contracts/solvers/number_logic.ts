@@ -1,4 +1,3 @@
-// TODO Write the square root solver
 // noinspection MagicNumberJS - Inspection doesn't properly handle bigint values
 
 export function largestPrimeFactor(input: number, ns: NS): number {
@@ -38,6 +37,7 @@ Input number:
 }
 
 function squareRootHeronsMethod(input: bigint): bigint {
+  // Shouldn't be necessary; added during testing due to infinite loops with earlier designs
   const maxPasses = 400;
   let passes = 0;
   let x = 1n;
