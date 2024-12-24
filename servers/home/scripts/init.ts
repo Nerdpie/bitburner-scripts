@@ -116,7 +116,9 @@ function setCustomStyle() {
     customStyle.id = "nerdpie-css";
   }
   // noinspection CssUnusedSymbol,SpellCheckingInspection
+  // language=CSS
   customStyle.textContent = `
+@import "https://www.nerdfonts.com/assets/css/webfont.css";
 /* Tweak the CSS for the view so it doesn't hide behind core info as much */
 #root > div.MuiBox-root > div.MuiBox-root { 
   margin-right: 400px; 
@@ -149,7 +151,6 @@ export async function main(ns: NS): Promise<void> {
 
   setCustomStyle();
 
-  // We use the exposed objects enough places; may as well launch in `init`
   if (!globalThis.Terminal) {
     exposeGameInternalObjects()
   }
