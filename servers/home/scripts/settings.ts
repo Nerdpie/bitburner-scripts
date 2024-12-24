@@ -37,7 +37,7 @@ export const GangLord: SettingsClasses.GangSettings = {
   memberWarfareThreshold: 600,
   memberMinTraining: 100,
   targetFactionRep: 2.5e6, // Barring any multipliers, this SHOULD be the most required for augments
-  targetGangRespect: 20e6,
+  targetGangRespect: 2e6, // Even this is probably more than enough; after that point, even focusing on cash still brings rep
   vigilanteRespectThreshold: 3,
 }
 export const Run: SettingsClasses.RunSettings = {
@@ -88,7 +88,7 @@ export const HacknetManager: SettingsClasses.HacknetSettings = {
   width: 400,
   height: 200,
   tailTitle: 'Hacknet Manager',
-  maxPrice: 1e9,
+  maxPrice: 1e6,
   loopDelay: 10 * 1000,
   threshold: undefined
 }
@@ -101,9 +101,9 @@ export const Deploy: SettingsClasses.DeploySettings = {
   tailTitle: 'Deploy Orchestrator',
   mode: 'hgw',
   resetScripts: true,
-  targetSelf: true,
-  targetServer: BuiltinServers['4sigma'],
-  loopDelay: 60 * 1000,
+  targetSelf: false,
+  targetServer: BuiltinServers['joesguns'],
+  loopDelay: 15 * 1000,
   ramCapacity: 16,
   // Adjust per-run; previously used 5, 3, 2, 3
   shareCount: 0,
@@ -168,6 +168,8 @@ export const BackdoorConcat: string[] =
     ServerSelections.goodTargets,
     /* ServerSelections.companyBackdoor */);
 
+// MEMO Yes, this arguably should be in `tail_helpers.ts`; however, most programs already import this, but not that
+//  Yes, this is weak justification.  Shush.
 // This should be fine, since ESBuild includes imported code into the output file
 export function setTailWindow(ns: NS, config: SettingsClasses.SettingsData, clearLog: boolean = true): void {
   ns.tail();
