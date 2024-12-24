@@ -27,12 +27,15 @@ AllServersModule - src/Server/AllServers
 
 export interface Faction {
   alreadyInvited: boolean;
-  augmentations: string[]; // Technically typed as AugmentationName[]
-  favor: number; // Public getter ONLY
+  // Technically typed as AugmentationName[]
+  augmentations: string[];
+  // Public getter ONLY
+  favor: number;
   isBanned: boolean;
   isMember: boolean;
   discovery: FactionDiscovery;
-  name: string; // Technically typed as FactionName
+  // Technically typed as FactionName
+  name: string;
   playerReputation: number;
   // getInfo: () => FactionInfo; // May be valuable... later
   // Not specifying the methods to set favor, prestige
@@ -50,7 +53,9 @@ export interface Augmentation {
   info: string;
   stats: string;
   isSpecial: boolean;
-  name: string; // Technically typed as AugmentationName
-  prereqs: string[]; // Technically typed as AugmentationName[]
+  // Technically typed as AugmentationName
+  name: string;
+  // Technically typed as AugmentationName[]
+  prereqs: string[];
 
 }
