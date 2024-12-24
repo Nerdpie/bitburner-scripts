@@ -1,3 +1,5 @@
+import {trimEndChars, trimStartChars} from "@/servers/home/scripts/lib/string_util";
+
 function cleanUnmatchableRightParens(input: string) {
   // Check for any right parens that CANNOT match
   // e.g. ())a) => ()a)
@@ -99,12 +101,8 @@ export function sanitizeParens(input: string, ns: NS): string[] {
   let trimmed: string = input;
 
   // Remove any parens that CANNOT match
-  while (trimmed.charAt(0) === ')') {
-    trimmed = trimmed.substring(1)
-  }
-  while (trimmed.charAt(trimmed.length - 1) === '(') {
-    trimmed = trimmed.substring(0, trimmed.length - 1)
-  }
+  trimmed = trimStartChars(trimmed, ')');
+  trimmed = trimEndChars(trimmed, '(');
 
   ns.print("Trimmed: " + trimmed)
 

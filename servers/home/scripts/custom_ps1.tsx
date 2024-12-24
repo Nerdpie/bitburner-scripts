@@ -13,6 +13,7 @@
  */
 
 import React, {ReactNode} from "react";
+import { trimChars } from "./lib/string_util";
 
 // Property names are, of course, open to discussion
 // The hostname and current directory are critical to provide;
@@ -35,12 +36,7 @@ export function ps1(data: PS1Data): string | ReactNode {
 }
 
 function PS1Element({data}: {data: PS1Data}): React.ReactElement {
-  let pathParts: string[];
-  if (data.cwd.length > 0 && data.cwd.charAt(0) === '/') {
-    pathParts = data.cwd.substring(1).split('/')
-  } else {
-    pathParts = data.cwd.split('/');
-  }
+  const pathParts: string[] = trimChars(data.cwd, '/').split('/');
 
   return (
     <span>
