@@ -4,6 +4,8 @@ import {Scratchpad, setTailWindow} from "@/servers/home/scripts/settings"
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
 import {Player} from "NetscriptDefinitions";
 import {sprintf} from "sprintf-js";
+// noinspection ES6UnusedImports
+import {CodingContractTypes} from "./coding_contracts/contract_util";
 
 
 /** @param {NS} ns */
@@ -13,7 +15,7 @@ export async function main(ns: NS): Promise<void> {
   //ns.codingcontract.createDummyContract(CodingContractTypes["Algorithmic Stock Trader IV"])
 
   // Lame way to avoid having code purged from the scratchpad, but not executed
-  const HUSH_IM_BUSY: number = 4
+  const HUSH_IM_BUSY: number = -1
 
   if (HUSH_IM_BUSY === 1) {
 
@@ -52,12 +54,33 @@ export async function main(ns: NS): Promise<void> {
 
     ns.printf("Level %d requires class for %s", TARGET_LEVEL, ns.tFormat(millisecondsNeeded))
   } else if (HUSH_IM_BUSY === 3) {
-    const getFactionRep = (faction: string) => globalThis.Factions[faction].playerReputation
-    const TARGET_REP = 75000;
-    const getWorkRepPerSecond = () => globalThis.Player.currentWork.getReputationRate() * 5;
-    ns.print(ns.tFormat((TARGET_REP - getFactionRep('Tian Di Hui')) / getWorkRepPerSecond() * 1000));
-  } else if (HUSH_IM_BUSY === 4) {
+    const currentWork = globalThis.Player.currentWork;
     // Goodie, different paths to the reputation rate depending upon the TYPE of work...
-    ns.print((400e3 - globalThis.Companies.MegaCorp.playerReputation) / (globalThis.Player.currentWork.getGainRates('Software Engineering Intern').reputation * 5) / 60);
+    if (currentWork?.type === 'FACTION') {
+      // MEMO Does NOT account for any passive gains!
+      const TARGET_REP = 75000;
+      const currentFaction = currentWork.factionName
+      const factionRep = globalThis.Factions[currentFaction].playerReputation
+      const repPerSecond = currentWork.getReputationRate() * 5;
+      ns.print(ns.tFormat((TARGET_REP - factionRep) / repPerSecond * 1000));
+    } else if (currentWork?.type === 'COMPANY') {
+      const TARGET_REP = 400000;
+      const currentCompany = currentWork.companyName;
+      const companyRep = globalThis.Companies[currentCompany].playerReputation;
+      const currentJobTitle = globalThis.Player.jobs[currentCompany];
+      const repPerSecond = currentWork.getGainRates(currentJobTitle).reputation * 5;
+      ns.print(ns.tFormat((TARGET_REP - companyRep) / repPerSecond * 1000));
+    }
+  } else if (HUSH_IM_BUSY === 4) {
+    const doc = globalThis['document'];
+    // TODO Either unlock Singularity, or implement this to auto-buy the Tor router
+    // Find one of the 'technology' locations
+    // @ts-ignore - `innerText` certainly appears to be valid...
+    const techStores = Array.from(doc.querySelectorAll(`span[class$='location']`)).filter(n => n.ariaLabel !== 'Travel Agency' && n.innerText === 'T')
+
+    if (techStores && techStores.length > 0) {
+      // @ts-ignore - Again, that IS a valid method...
+      techStores[0].click();
+    }
   }
 }

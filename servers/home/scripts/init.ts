@@ -131,6 +131,25 @@ function setCustomStyle() {
 `;
 }
 
+function setCustomPS1() {
+  // Based in part on Shy's code at https://github.com/shyguy1412/bb-scripts/blob/468b5732e6be176fc3d8740e2e2f6e2fe1f42880/src/lib/BitburnerDOM.ts#L32
+  const observer = new MutationObserver(mutations => {
+
+    mutations.forEach(mutation => {
+
+    })
+
+  })
+
+  const doc: Document = globalThis['document'];
+  const terminalInput = doc.getElementById('terminal-input');
+  const promptNodes = terminalInput.parentElement.firstElementChild.childNodes;
+  /*
+  Example nodes: '[','the-hub',' /','',']> '
+   */
+  terminalInput.parentElement.onchange
+}
+
 const FLAG_SCHEMA: FlagSchemaType = [
   ['killall-scripts', false]
 ]
@@ -154,6 +173,8 @@ export async function main(ns: NS): Promise<void> {
   if (!globalThis.Terminal) {
     exposeGameInternalObjects()
   }
+
+  //setCustomPS1();
 
   // TODO Determine any other conditions to limit other scripts being run, such as RAM capacity
   const scripts = [

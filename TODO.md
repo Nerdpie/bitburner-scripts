@@ -12,6 +12,8 @@
 - Write a routine that goes through all eligible servers, and pushes them to 100% money, min sec
 - Create a settings daemon - scripts check in with it, then it notifies if settings change.
     Basically, make it so that I can change settings on the fly, without relaunching programs.
+- Look into implementing API hooks for arbitrary language runtime support, e.g. being able to use Blazor, JSPython/Brython, etc.
+    Starting point: [CatLover's commit adding TS/TSX scripts](https://github.com/Nerdpie/bitburner-src/commit/864613c61632947be6ba0215253194c0a56d6259)
 
 # Contracts to code:
 - Hamming codes
