@@ -4,6 +4,7 @@ import {BackdoorConcat, Deploy, setTailWindow} from "@/servers/home/scripts/sett
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
 import {Server} from "NetscriptDefinitions";
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
+import {BuiltinServers} from "@/servers/home/scripts/lib/builtin_servers";
 
 const config = Deploy;
 
@@ -56,6 +57,13 @@ function pwnServer(ns: NS, target: Server, tools: ((host: string) => void)[]) {
  * @param {Server} server
  */
 function tryBackdoor(ns: NS, server: Server) {
+  if (server.hostname === BuiltinServers["w0r1d_d43m0n"]) {
+    // REFINE Add a config to auto-complete BitNodes
+    if (server.requiredHackingSkill <= ns.getHackingLevel()) {
+      ns.printf('Can backdoor: %s', BuiltinServers["w0r1d_d43m0n"]);
+    }
+    return;
+  }
   // Revisit when we have Singularity access ... or not
   if (!server.backdoorInstalled
     && !server.purchasedByPlayer
