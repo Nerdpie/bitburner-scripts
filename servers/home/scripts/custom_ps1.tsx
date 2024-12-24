@@ -49,6 +49,15 @@ function PS1Element({data}: {data: PS1Data}): React.ReactElement {
   )
 }
 
+function ps1_alternate(data: PS1Data): string {
+  const pathParts = trimChars(data.cwd, '/').split('/');
+
+  const pleHoneycomb = ''
+  const plePixelatedSquaresBig = ''
+
+  return `neo@${data.hostname}${plePixelatedSquaresBig}${pathParts.join(pleHoneycomb)}${pleHoneycomb}`;
+}
+
 
 
 export async function main(ns: NS): Promise<void> {
@@ -58,4 +67,5 @@ export async function main(ns: NS): Promise<void> {
   }
   // @ts-ignore Difference between the actual React type, and the NetscriptDefinitions type
   ns.printRaw(ps1(data));
+  ns.printRaw(ps1_alternate(data));
 }
