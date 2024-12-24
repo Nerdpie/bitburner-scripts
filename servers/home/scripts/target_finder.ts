@@ -1,6 +1,5 @@
 import { getAllServers } from "@/servers/home/scripts/lib/scan_servers"
 import { exposeGameInternalObjects } from "@/servers/home/scripts/lib/exploits"
-import {sprintf} from "sprintf-js";
 import {Server} from "NetscriptDefinitions";
 
 let formatNumber;
@@ -55,7 +54,7 @@ class ServerTargeting {
   }
 
   toString(): string {
-    return sprintf('%-18s HackLvl %4d BD %s MinSec %2s CurSec %6.3f  Value %8s / %8s ( %6s )',
+    return globalThis.sprintf('%-18s HackLvl %4d BD %s MinSec %2s CurSec %6.3f  Value %8s / %8s ( %6s )',
       this.#server.hostname,
       this.#server.requiredHackingSkill ?? 0,
       this.haveBackdoor ? 'Y' : 'N',
