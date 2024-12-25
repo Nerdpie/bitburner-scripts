@@ -38,7 +38,7 @@ export const GangLord: SettingsClasses.GangSettings = {
   memberMinTraining: 100,
   targetFactionRep: 2.5e6, // Barring any multipliers, this SHOULD be the most required for augments
   targetGangRespect: 2e6, // Even this is probably more than enough; after that point, even focusing on cash still brings rep
-  vigilanteRespectThreshold: 3,
+  vigilanteRespectThreshold: 10,
 }
 export const Run: SettingsClasses.RunSettings = {
   x: 1500,
@@ -79,6 +79,7 @@ export const Augments: SettingsClasses.AugmentsSettings = {
   width: 400,
   height: 200,
   tailTitle: 'Augments',
+  repMargin: 1.10,
   mode: "uniques"
 }
 // noinspection ConfusingFloatingPointLiteralJS

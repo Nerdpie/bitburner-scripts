@@ -65,6 +65,8 @@ export function algoStockTrade4(input: [number, number[]], ns: NS): number {
   let numPrices = prices.length;
 
 
+  // REFINE Implement the comparison that MaxMinMedian shared: https://discord.com/channels/415207508303544321/923282733332054126/1321371942304874496
+  //  (y - x) * (y - z) <=0
   // Trim out any entries that will not be picked
   // If we have [1, 2, 3], we won't buy or sell at 2
   for (let i = 0; i + 2 < numPrices; i++) {

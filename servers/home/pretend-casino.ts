@@ -23,5 +23,5 @@ export async function main(ns: NS) {
     }
     globalThis.Player.travel('Aevum');
   }
-  globalThis.Player.gainMoney(MAX_CASINO_MONEY - casinoMoney, 'Casino');
+  globalThis.Player.gainMoney(MAX_CASINO_MONEY - casinoMoney, 'casino');
 }

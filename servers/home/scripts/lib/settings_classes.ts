@@ -34,6 +34,7 @@ export interface GangSettings extends SettingsData {
 }
 
 export interface AugmentsSettings extends SettingsData {
+  repMargin: number;
   mode: EnumsAndTypes.AugmentsModes;
 }
 
