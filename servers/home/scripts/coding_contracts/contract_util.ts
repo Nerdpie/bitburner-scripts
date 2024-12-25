@@ -3,24 +3,24 @@ import {
   algoStockTrade2,
   algoStockTrade3,
   algoStockTrade4
-} from "@/servers/home/scripts/coding_contracts/solvers/stock_traders";
-import {arrayJumpingGame, arrayJumpingGame2} from "@/servers/home/scripts/coding_contracts/solvers/array_jumping_game";
-import {compression1, compression2, compression3} from "@/servers/home/scripts/coding_contracts/solvers/compression";
-import {encryption1, encryption2} from "@/servers/home/scripts/coding_contracts/solvers/ciphers";
+} from "./solvers/stock_traders";
+import {arrayJumpingGame, arrayJumpingGame2} from "./solvers/array_jumping_game";
+import {compression1, compression2, compression3} from "./solvers/compression";
+import {encryption1, encryption2} from "./solvers/ciphers";
 import {
   findValidMathExpression,
   generateIPAddresses
-} from "@/servers/home/scripts/coding_contracts/solvers/valid_expressions";
-import {bigIntSquareRoot, largestPrimeFactor} from "@/servers/home/scripts/coding_contracts/solvers/number_logic";
-import {decodeHammingBinary, encodeIntegerHamming} from "@/servers/home/scripts/coding_contracts/solvers/hamming_codes";
-import {mergeOverlappingPairs} from "@/servers/home/scripts/coding_contracts/solvers/merge_overlapping_pairs";
-import {minPathSumInTriangle} from "@/servers/home/scripts/coding_contracts/solvers/min_path_sum_in_triangle";
-import {twoColorGraph} from "@/servers/home/scripts/coding_contracts/solvers/two_color_graph";
-import {sanitizeParens} from "@/servers/home/scripts/coding_contracts/solvers/sanitize_parens";
-import {shortestPath, uniquePaths1, uniquePaths2} from "@/servers/home/scripts/coding_contracts/solvers/paths_in_grid";
-import {spiralizeMatrix} from "@/servers/home/scripts/coding_contracts/solvers/spiralize_matrix";
-import {subarrayMaxSum} from "@/servers/home/scripts/coding_contracts/solvers/subarray_max_sum";
-import {waysToSum1, waysToSum2} from "@/servers/home/scripts/coding_contracts/solvers/ways_to_sum";
+} from "./solvers/valid_expressions";
+import {bigIntSquareRoot, largestPrimeFactor} from "./solvers/number_logic";
+import {decodeHammingBinary, encodeIntegerHamming} from "./solvers/hamming_codes";
+import {mergeOverlappingPairs} from "./solvers/merge_overlapping_pairs";
+import {minPathSumInTriangle} from "./solvers/min_path_sum_in_triangle";
+import {twoColorGraph} from "./solvers/two_color_graph";
+import {sanitizeParens} from "./solvers/sanitize_parens";
+import {shortestPath, uniquePaths1, uniquePaths2} from "./solvers/paths_in_grid";
+import {spiralizeMatrix} from "./solvers/spiralize_matrix";
+import {subarrayMaxSum} from "./solvers/subarray_max_sum";
+import {waysToSum1, waysToSum2} from "./solvers/ways_to_sum";
 
 export enum CodingContractTypes {
   // noinspection JSNonASCIINames - These MUST match the names from in-game
@@ -103,7 +103,7 @@ export const ContractSolvers: Record<CodingContractTypes, Required<SolverInfo>> 
   },
   "Encryption II: Vigenère Cipher": {
     function: encryption2,
-    finished: false
+    finished: true
   },
   "Find All Valid Math Expressions": {
     function: findValidMathExpression,
