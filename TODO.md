@@ -14,6 +14,22 @@
     Basically, make it so that I can change settings on the fly, without relaunching programs.
 - Look into implementing API hooks for arbitrary language runtime support, e.g. being able to use Blazor, JSPython/Brython, etc.
     Starting point: [CatLover's commit adding TS/TSX scripts](https://github.com/Nerdpie/bitburner-src/commit/864613c61632947be6ba0215253194c0a56d6259)
+- Implement logic to determine which augments to buy, and in what order
+  - Will need to include the price increase factor
+  - Priorities may shift per BitNode, but for the most part, we will want to focus on:
+    1. CashRoot Starter Kit - Helps bootstrap after installing augs; once obtained, other augs for programs aren't as critical (money from casino)
+    2. Charisma level, charisma EXP, faction rep (get more augments faster)
+    3. Hacking level, hacking EXP
+    4. Hacking speed
+    5. Other hacking stats
+    6. Combat stats - any particular order?
+    7. Leftovers
+    8. As many levels of NFG as we can - Need to special-case so we don't grab NFG right away.  Also depends upon the installed LEVEL.
+  - Some BitNodes may make, for instance, crime success more important, or the Hacknet server bonuses
+  - Need to account for pre-reqs for desired augs; when computing the purchase chain, should we get pre-reqs for the highest
+      desired aug regardless, or only if we will be able to get the target aug afterward?
+  - SoA and NFG augs have custom price handling
+  - 
 
 # Contracts to code:
 - Hamming codes
@@ -23,7 +39,5 @@
 
 # Script changes
 - Research script autocompletion options - https://github.com/bitburner-official/bitburner-src/blob/633da383016ad0521f9f1c17cdd99478d2701e41/src/Terminal/getTabCompletionPossibilities.ts#L290
-- Evaluate making the pattern that sets up a tail window a library function
 - Tweak `find_server` to show ALL servers in hierarchy, annotate pwned hosts
-- Write script to show servers with contracts in a hierarchy
 - Check the different array functions, such as `unshift`

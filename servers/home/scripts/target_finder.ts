@@ -1,6 +1,7 @@
 import { getAllServers } from "@/servers/home/scripts/lib/scan_servers"
 import { exposeGameInternalObjects } from "@/servers/home/scripts/lib/exploits"
 import {Server} from "NetscriptDefinitions";
+import {ServerSelections} from "@/servers/home/scripts/settings";
 
 let formatNumber;
 let formatPercent;
@@ -104,7 +105,8 @@ export async function main(ns: NS): Promise<void> {
     .filter(s => s.canBackdoor)
     .filter(s => s.canHaveMoney)
     // Aim for hosts ~1/2 your hacking level; will need adjusted for later-game
-    .filter(s => MINIMUM_LEVEL_REQUIRED <= s.levelRequired)
+    // Leave in our usual targets for easy reference
+    .filter(s => MINIMUM_LEVEL_REQUIRED <= s.levelRequired || ServerSelections.goodTargets.includes(s.hostname))
     .sort(ServerTargeting.compareServer)
     .forEach(s => {
       ns.tprintf("%s", s.toString());

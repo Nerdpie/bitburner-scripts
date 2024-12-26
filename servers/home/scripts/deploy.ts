@@ -5,6 +5,7 @@ import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
 import {Server} from "NetscriptDefinitions";
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
 import {BuiltinServers} from "@/servers/home/scripts/lib/builtin_servers";
+import {ValidRamCapacity} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
 
 const config = Deploy;
 
@@ -107,11 +108,23 @@ function execScript(ns: NS, server: string, script: string, targetServer?: strin
 }
 
 function buildCluster(ns: NS) {
+  let targetCapacityExponent = 0;
+  let ramCapacity: ValidRamCapacity;
+  // Start with the lowest capacity, and step towards our target
+  // Allows building up sooner
   // noinspection OverlyComplexBooleanExpressionJS - Abusing boolean expression to short-circuit if low on funds
-  buyServers(ns, 'cluster-', config.clusterCount) &&
-  buyServers(ns, 'weaken-', config.weakenCount) &&
-  buyServers(ns, 'grow-', config.growCount) &&
-  buyServers(ns, 'share-', config.shareCount)
+  do {
+    targetCapacityExponent++;
+    // noinspection MagicNumberJS - Ensure we don't exceed the max valid RAM capacity
+    if (targetCapacityExponent > 20) {
+      break;
+    }
+    ramCapacity = 2 ** targetCapacityExponent;
+  } while (ramCapacity <= config.ramCapacity &&
+  buyServers(ns, 'cluster-', config.clusterCount, ramCapacity) &&
+  buyServers(ns, 'weaken-', config.weakenCount, ramCapacity) &&
+  buyServers(ns, 'grow-', config.growCount, ramCapacity) &&
+  buyServers(ns, 'share-', config.shareCount, ramCapacity))
 }
 
 /**
@@ -119,28 +132,28 @@ function buildCluster(ns: NS) {
  * @param ns
  * @param prefix
  * @param count
+ * @param ramCapacity
  * @returns Whether all requested servers were bought/upgraded
  */
-function buyServers(ns: NS, prefix: string, count: number): boolean {
-  const RAM_CAPACITY = config.ramCapacity;
-  const PRICE = ns.getPurchasedServerCost(RAM_CAPACITY);
+function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number): boolean {
+  const PRICE = ns.getPurchasedServerCost(ramCapacity);
   for (let i = 0; i < count; i++) {
     const serverName = prefix + i;
     if (ns.serverExists(serverName)) {
       // Check if the server's RAM is at the current target
-      if (ns.getServerMaxRam(serverName) < RAM_CAPACITY) {
-        if (ns.getServerMoneyAvailable('home') < ns.getPurchasedServerUpgradeCost(serverName, RAM_CAPACITY)) {
-          ns.printf("Insufficient funds to upgrade %s", serverName);
+      if (ns.getServerMaxRam(serverName) < ramCapacity) {
+        if (ns.getServerMoneyAvailable('home') < ns.getPurchasedServerUpgradeCost(serverName, ramCapacity)) {
+          // ns.printf("Insufficient funds to upgrade %s", serverName);
           return false;
         }
-        ns.upgradePurchasedServer(serverName, RAM_CAPACITY);
+        ns.upgradePurchasedServer(serverName, ramCapacity);
       }
     } else {
       if (ns.getServerMoneyAvailable('home') < PRICE) {
-        ns.printf("Insufficient funds to buy %s", serverName)
+        // ns.printf("Insufficient funds to buy %s", serverName)
         return false;
       }
-      ns.purchaseServer(serverName, RAM_CAPACITY);
+      ns.purchaseServer(serverName, ramCapacity);
     }
   }
   return true;
@@ -193,6 +206,7 @@ export async function main(ns: NS): Promise<void> {
   // noinspection ES6ConvertLetToConst - Need to rework this to be dynamic ANYWAY...
   let targetServer = config.targetServer;
   let resetScripts = config.resetScripts;
+  let loopDelay = config.loopDelay;
 
   switch (config.mode) {
     case 'share':
@@ -235,13 +249,26 @@ export async function main(ns: NS): Promise<void> {
       ns.print("Killing running scripts")
     }
 
+    // While I CAN filter on the names, this is more concise...
     const purchasedServers = ns.getPurchasedServers();
-    getAllServers(ns)
+
+    const nonPurchasedServers = getAllServers(ns)
       .filter(s => (s !== 'home'))
       .filter(s => !purchasedServers.includes(s))
       .map(s => ns.getServer(s))
-      .sort(sortBackdoorPriority)
-      .filter(s => pwnServer(ns, s, tools))
+      .sort(sortBackdoorPriority);
+
+    const backdooredServers = nonPurchasedServers.filter(s => s.backdoorInstalled)
+
+    // REFINE Ideally, this would increase the delay sooner, and more gradually, but late into a run,
+    //  high hacking stats can make backdoor installs FAST... and a proper batcher removes half of the need
+    // If we've backdoored all servers (ignoring w0r1d_d43m0n), increase the loop delay
+    if (nonPurchasedServers.filter(s => s.hostname !== BuiltinServers["w0r1d_d43m0n"]).length === backdooredServers.length) {
+      // noinspection MagicNumberJS - Five minutes
+      loopDelay = 5 * 60 * 1000;
+    }
+
+    nonPurchasedServers.filter(s => pwnServer(ns, s, tools))
       .forEach(server => {
         if (resetScripts) {
           ns.killall(server.hostname);
@@ -321,6 +348,6 @@ export async function main(ns: NS): Promise<void> {
       }
     }
 
-    await ns.sleep(config.loopDelay);
+    await ns.sleep(loopDelay);
   }
 }

@@ -183,7 +183,7 @@ export async function main(ns: NS): Promise<void> {
     new DefaultScript({script : "/scripts/coding_contracts/contract_dispatcher.js", collapse : CollapseState.Collapse}),
     new DefaultScript({script : "/scripts/scan_contracts.js", collapse : CollapseState.Collapse}),
     new DefaultScript({script : "/scripts/augments.js", collapse : CollapseState.Collapse}),
-    new DefaultScript({script : "/scripts/net_tree.js", collapse : CollapseState.Collapse}),
+    //new DefaultScript({script : "/scripts/net_tree.js", collapse : CollapseState.Collapse}),
     new DefaultScript({script : "/scripts/run_menu.js", collapse : CollapseState.Collapse}),
     new DefaultScript({script : "/z_from_others/insight/go.js"}),
     new DefaultScript({script : "/scripts/gang_lord.js", collapse : CollapseState.Collapse, shouldRun : ns.gang.inGang()}),

@@ -11,6 +11,7 @@ export async function main(ns: NS): Promise<void> {
   const script: string = <string>await ns.prompt("Script path", {type: "select", choices: filteredFiles});
 
   if (script) {
-    ns.run(script);
+    // Using `atExit` to work around the RAM usage of the run menu itself
+    ns.atExit(() => ns.run(script));
   }
 }
