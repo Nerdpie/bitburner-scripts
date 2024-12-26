@@ -54,24 +54,6 @@ export async function main(ns: NS): Promise<void> {
 
     ns.printf("Level %d requires class for %s", TARGET_LEVEL, ns.tFormat(millisecondsNeeded))
   } else if (HUSH_IM_BUSY === 3) {
-    const currentWork = globalThis.Player.currentWork;
-    // Goodie, different paths to the reputation rate depending upon the TYPE of work...
-    if (currentWork?.type === 'FACTION') {
-      // MEMO Does NOT account for any passive gains!
-      const TARGET_REP = 75000;
-      const currentFaction = currentWork.factionName
-      const factionRep = globalThis.Factions[currentFaction].playerReputation
-      const repPerSecond = currentWork.getReputationRate() * 5;
-      ns.print(ns.tFormat((TARGET_REP - factionRep) / repPerSecond * 1000));
-    } else if (currentWork?.type === 'COMPANY') {
-      const TARGET_REP = 400000;
-      const currentCompany = currentWork.companyName;
-      const companyRep = globalThis.Companies[currentCompany].playerReputation;
-      const currentJobTitle = globalThis.Player.jobs[currentCompany];
-      const repPerSecond = currentWork.getGainRates(currentJobTitle).reputation * 5;
-      ns.print(ns.tFormat((TARGET_REP - companyRep) / repPerSecond * 1000));
-    }
-  } else if (HUSH_IM_BUSY === 4) {
     const doc = globalThis['document'];
     // TODO Either unlock Singularity, or implement this to auto-buy the Tor router
     // Find one of the 'technology' locations
