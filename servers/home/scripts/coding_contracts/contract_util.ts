@@ -151,7 +151,7 @@ export const ContractSolvers: Record<CodingContractTypes, Required<SolverInfo>> 
   },
   "Square Root": {
     function: bigIntSquareRoot,
-    finished: false
+    finished: true
   },
   "Subarray with Maximum Sum": {
     function: subarrayMaxSum,

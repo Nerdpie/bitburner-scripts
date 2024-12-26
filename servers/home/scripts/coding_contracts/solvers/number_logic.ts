@@ -1,6 +1,6 @@
 // noinspection MagicNumberJS - Inspection doesn't properly handle bigint values
 
-export function largestPrimeFactor(input: number, ns: NS): number {
+export function largestPrimeFactor(input: number): number {
   // Deriving from old prime factorization homework
 
   let temp = input;
@@ -23,7 +23,7 @@ export function largestPrimeFactor(input: number, ns: NS): number {
   return largestFactor;
 }
 
-export function bigIntSquareRoot(input: bigint, ns: NS) {
+export function bigIntSquareRoot(input: bigint) {
   /* Sample description:
   You are given a ~200 digit BigInt. Find the square root of this number, to the nearest integer.
 Hint: If you are having trouble, you might consult https://en.wikipedia.org/wiki/Methods_of_computing_square_roots
@@ -33,7 +33,7 @@ Input number:
    */
 
   // Yes, this could be inlined, but I was testing different algorithms, and it seems to work, so...
-  return squareRootHeronsMethod(input);
+  return squareRootHeronsMethod(input).toString();
 }
 
 function squareRootHeronsMethod(input: bigint): bigint {
