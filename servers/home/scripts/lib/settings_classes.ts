@@ -11,7 +11,7 @@ export interface SettingsData extends TailProperties {
 }
 
 export interface RunSettings extends SettingsData {
-  exclusionPattern: string | RegExp;
+  exclusionPattern: RegExp;
 }
 
 export interface GoSettings extends SettingsData {

@@ -46,7 +46,8 @@ export const Run: SettingsClasses.RunSettings = {
   width: 200,
   height: 200,
   tailTitle: 'Run Menu',
-  exclusionPattern: '(solvers|lib|Temp|gangs)/'
+  // Negated lookahead match, so we can still invoke `exploits` to reload the objects
+  exclusionPattern: /solvers\/|lib\/(?!exploits)|Temp\/|gangs\//
 }
 export const Go: SettingsClasses.GoSettings = {
   x: 1500,
@@ -132,7 +133,7 @@ export const ServerSelections = {
     'n00dles',      // Stupid easy early-game target for basic cash
     'joesguns',     // Apparently can be `grow`-farmed for exp?
     'phantasy',
-    'omega-net',
+    'rho-construction',
   ],
   // Get a 10% discount if a venue is backdoored
   classesBackdoor: [
