@@ -1,6 +1,10 @@
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
 import {Augments, setTailWindow} from "@/servers/home/scripts/settings"
 import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
+// noinspection ES6UnusedImports - Used in type specifier
+import type {Augmentation} from "@/game_internal_types/Augmentation/Augmentation";
+import type {FactionName} from "@enums";
+import {CONSTANTS} from "@/game_internal_types/Constants";
 
 export async function main(ns: NS): Promise<void> {
 
@@ -31,19 +35,41 @@ export async function main(ns: NS): Promise<void> {
 function factionsWithUnboughtUniques(ns: NS) {
   ns.print("Facs w/unique augs to buy:")
 
+  function isEndgameFactionUnlocked(faction: FactionName): boolean {
+    // @ts-ignore - It's a string enum...
+    const endgameFactions: FactionName[] = ["Bladeburners", "Church of the Machine God"];
+    const MACHINE_GOD_NODE = 13
+    const BLADEBURNER_NODES = [6, 7]
+    if (! endgameFactions.includes(faction)) {
+      return true;
+    }
+
+    // REFINE Check when `getResetInfo` is available
+    const resetInfo = ns.getResetInfo();
+    switch (faction) {
+      case "Church of the Machine God":
+        return resetInfo.ownedSF.has(MACHINE_GOD_NODE) || resetInfo.currentNode === MACHINE_GOD_NODE
+      case "Bladeburners":
+        return BLADEBURNER_NODES.some(n => resetInfo.ownedSF.has(n) || resetInfo.currentNode === n);
+    }
+  }
+
   // Yes, I could remove half of these variables,
   // but it becomes a giant, hard-to-read mess
   const ownedAugNames = globalThis.Player.augmentations.map(a => a.name);
-  const filteredAugs = globalThis.Augmentations.metadata
+  const queuedAugNames = globalThis.Player.queuedAugmentations.map(a => a.name);
+  const filteredAugs = Object.values<Augmentation>(globalThis.Augmentations)
     .filter(aug => aug.factions.length === 1)
     .filter(aug => !ownedAugNames.includes(aug.name))
+    .filter(aug => !queuedAugNames.includes(aug.name))
     .filter(aug => aug.factions[0] !== 'Shadows of Anarchy') // Ignore infiltration
+    .filter(aug => isEndgameFactionUnlocked(aug.factions[0]))
     .map(a => a.factions[0]);
 
   const augFactions = arrayUnique(filteredAugs).sort();
 
   if (augFactions.length > 0) {
-    augFactions.forEach(fac => ns.printf("- %s", fac));
+    augFactions.forEach(fac => ns.printf("%-27s - F%6s", fac, ns.formatNumber(globalThis.Factions[fac].favor, 1)));
   } else {
     ns.print("All bought!");
   }
@@ -96,11 +122,11 @@ function truncateFacName(name: string): string {
   }
 }
 
-function getPurchasableAugs(): any[] {
+function getPurchasableAugs(): Augmentation[] {
   const ownedAugNames = globalThis.Player.augmentations.map(a => a.name);
   const queuedAugNames = globalThis.Player.queuedAugmentations.map(a => a.name);
   const playerFacs = globalThis.Player.factions;
-  return globalThis.Augmentations.metadata
+  return Object.values<Augmentation>(globalThis.Augmentations)
     .filter(a => a.factions.some(f => playerFacs.includes(f)))
     .filter(a => !ownedAugNames.includes(a.name))
     .filter(a => !queuedAugNames.includes(a.name))
@@ -113,14 +139,30 @@ function showPurchasableAugs(ns: NS): void {
 
   const playerFacs: string[] = globalThis.Player.factions;
 
-  const purchasableAugs: any[] = getPurchasableAugs()
+  const purchasableAugs = getPurchasableAugs()
     // TODO Filter on the rep requirement, within some percent of current rep
     //  Will need to account for rep with ANY faction offering the aug
     .sort((a, b) => b.baseCost - a.baseCost);
 
+  let costMultiplier = 1;
+  try {
+    costMultiplier = ns.getBitNodeMultipliers().AugmentationMoneyCost
+  } catch {
+    // If we haven't unlocked `getBitNodeMultipliers`, just use the default multiplier of 1
+  }
+
+  // This value comes from src/Constants
+  const MULTIPLE_AUG_MULTIPLIER = 1.9
+  // This logic is derived from `src/Augmentation/AugmentationHelpers`, and MAY NOT BE ACCURATE AFTER UPDATES!
+  const AUG_COST_NODE = 11;
+  const AUG_COST_MULTS = [1, 0.96, 0.94, 0.93]
+  const additionalAugMultiplier = MULTIPLE_AUG_MULTIPLIER * AUG_COST_MULTS[globalThis.Player.activeSourceFileLvl(AUG_COST_NODE)];
+  costMultiplier *= Math.pow(additionalAugMultiplier, globalThis.Player.queuedAugmentations.length)
+
+
   if (purchasableAugs.length > 0) {
     purchasableAugs.forEach(a => {
-      ns.printf("%-25s - $%8s", truncateAugName(a.name), ns.formatNumber(a.baseCost))
+      ns.printf("%-25s - $%8s", truncateAugName(a.name), ns.formatNumber(a.baseCost * costMultiplier))
       ns.print(a.factions.filter(f => playerFacs.includes(f)).map(truncateFacName))
     })
   } else {
@@ -129,7 +171,7 @@ function showPurchasableAugs(ns: NS): void {
 }
 
 function factionRepNeeded(ns: NS): void {
-  const playerFacs: string[] = globalThis.Player.factions;
+  const playerFacs: FactionName[] = globalThis.Player.factions;
   const purchasableAugs = getPurchasableAugs();
 
   ns.print("Add'l rep needed to buy augs:");
@@ -139,10 +181,17 @@ function factionRepNeeded(ns: NS): void {
     return;
   }
 
-  function maxRepRequirementForFaction(faction: string): number {
+  let repMultiplier = 1;
+  try {
+    repMultiplier = ns.getBitNodeMultipliers().AugmentationRepCost
+  } catch {
+    // If we haven't unlocked `getBitNodeMultipliers`, just use the default multiplier of 1
+  }
+
+  function maxRepRequirementForFaction(faction: FactionName): number {
     const maxRep = purchasableAugs.filter(a => a.factions.includes(faction))
       .map(a => a.baseRepRequirement)
-      .reduce((acc, rep) => Math.max(acc, rep), 0)
+      .reduce((acc, rep) => Math.max(acc, rep), 0) * repMultiplier;
 
     // If we have excess rep, clamp at zero
     return Math.max(maxRep - globalThis.Factions[faction].playerReputation, 0);
@@ -150,5 +199,5 @@ function factionRepNeeded(ns: NS): void {
 
   const facsWithAugs = playerFacs.filter(f => purchasableAugs.some(a => a.factions.includes(f)));
 
-  facsWithAugs.sort().forEach((f: string) => ns.printf('%-16s - %6s', f, ns.formatNumber(maxRepRequirementForFaction(f), 1)))
+  facsWithAugs.sort().forEach(f => ns.printf('%-16s - %6s', f, ns.formatNumber(maxRepRequirementForFaction(f), 1)))
 }
