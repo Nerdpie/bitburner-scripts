@@ -2,7 +2,7 @@ import type {Work} from "@/game_internal_types/Work/Work";
 import type {FactionWork} from "@/game_internal_types/Work/FactionWork";
 import type {Augmentation} from "@/game_internal_types/Augmentation/Augmentation";
 import type {CompanyWork} from "@/game_internal_types/Work/CompanyWork";
-import {hoursToSeconds, minutesToSeconds, secondsToHours, secondsToMinutes} from "date-fns";
+import {formatSecondsShort} from "@/servers/home/scripts/lib/time_util";
 
 export async function main(ns: NS): Promise<void> {
 
@@ -21,9 +21,16 @@ export async function main(ns: NS): Promise<void> {
     return;
   }
 
+  await ns.sleep(0);
+
   const doc = globalThis['document'];
   const hook0 = doc.getElementById('overview-extra-hook-0');
   const hook1 = doc.getElementById('overview-extra-hook-1');
+
+  if (!hook0 || !hook1) {
+    return;
+  }
+
   // noinspection InfiniteLoopJS - Intended design for this script
   while (true) {
     try {
@@ -95,25 +102,6 @@ export async function main(ns: NS): Promise<void> {
   }
 }
 
-function formatSeconds(totalSecondsNeeded: number) {
-  const hoursNeeded = secondsToHours(totalSecondsNeeded);
-  const minutesNeeded = secondsToMinutes(totalSecondsNeeded - hoursToSeconds(hoursNeeded));
-  const secondsNeeded = Math.floor(totalSecondsNeeded - (hoursToSeconds(hoursNeeded) + minutesToSeconds(minutesNeeded)));
-
-  const parts: string[] = [];
-  if (hoursNeeded > 0) {
-    parts.push(`${hoursNeeded}hr`)
-  }
-  if (minutesNeeded > 0) {
-    parts.push(`${minutesNeeded}min`)
-  }
-  if (secondsNeeded > 0) {
-    parts.push(`${secondsNeeded}sec`)
-  }
-
-  return parts.join(' ');
-}
-
 function factionWorkCountdown(work: FactionWork): string {
   const faction = work.getFaction();
   const ownedAugNames = globalThis.Player.augmentations.map(a => a.name);
@@ -128,7 +116,7 @@ function factionWorkCountdown(work: FactionWork): string {
 
   if (playerRep < maxRepNeeded) {
     const secondsNeeded = (maxRepNeeded - playerRep) / (work.getReputationRate() * 5)
-    return formatSeconds(secondsNeeded);
+    return formatSecondsShort({seconds: secondsNeeded});
   }
   return 'DONE!';
 }
@@ -148,5 +136,5 @@ function companyWorkCountdown(work: CompanyWork): string {
   const playerRep = company.playerReputation;
   const jobName = globalThis.Player.jobs[company.name];
   const totalSecondsNeeded = (TARGET_REP - playerRep) / (work.getGainRates(jobName).reputation * 5)
-  return formatSeconds(totalSecondsNeeded);
+  return formatSecondsShort({seconds: totalSecondsNeeded});
 }
