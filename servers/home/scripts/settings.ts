@@ -80,7 +80,7 @@ export const Augments: SettingsClasses.AugmentsSettings = {
   width: 400,
   height: 200,
   tailTitle: 'Augments',
-  repMargin: 1.10,
+  repMargin: 0.9,
   mode: "uniques"
 }
 // noinspection ConfusingFloatingPointLiteralJS

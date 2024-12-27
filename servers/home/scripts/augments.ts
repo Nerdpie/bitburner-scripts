@@ -3,8 +3,21 @@ import {Augments, setTailWindow} from "@/servers/home/scripts/settings"
 import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
 // noinspection ES6UnusedImports - Used in type specifier
 import type {Augmentation} from "@/game_internal_types/Augmentation/Augmentation";
-import type {FactionName} from "@enums";
-import {CONSTANTS} from "@/game_internal_types/Constants";
+import type {AugmentationName, FactionName} from "@enums";
+import type {Faction} from "@/game_internal_types/Faction/Faction";
+import type {PlayerObject} from "@/game_internal_types/PersonObjects/Player/PlayerObject";
+
+// noinspection JSUnusedLocalSymbols
+function _typeHints() {
+  // noinspection JSUnusedLocalSymbols
+  const factions = <Record<string, Faction>>globalThis.Factions;
+  // noinspection JSUnusedLocalSymbols
+  const player = <PlayerObject>globalThis.Player;
+  // noinspection JSUnusedLocalSymbols
+  const augs = <Record<AugmentationName, Augmentation>>globalThis.Augmentations;
+}
+
+const config = Augments;
 
 export async function main(ns: NS): Promise<void> {
 
@@ -12,7 +25,6 @@ export async function main(ns: NS): Promise<void> {
     exposeGameInternalObjects();
   }
 
-  const config = Augments;
   setTailWindow(ns, config);
 
   // FIXME None of these account for gang augment sales
@@ -40,7 +52,7 @@ function factionsWithUnboughtUniques(ns: NS) {
     const endgameFactions: FactionName[] = ["Bladeburners", "Church of the Machine God"];
     const MACHINE_GOD_NODE = 13
     const BLADEBURNER_NODES = [6, 7]
-    if (! endgameFactions.includes(faction)) {
+    if (!endgameFactions.includes(faction)) {
       return true;
     }
 
@@ -133,23 +145,43 @@ function getPurchasableAugs(): Augmentation[] {
     .filter(a => 'NeuroFlux Governor' !== a.name)
 }
 
+function getRepMultiplier(ns: NS) {
+  try {
+    return ns.getBitNodeMultipliers().AugmentationRepCost
+  } catch {
+    // If we haven't unlocked `getBitNodeMultipliers`, just use the default multiplier of 1
+  }
+  return 1;
+}
+
+function getCostMultiplier(ns: NS) {
+  try {
+    return ns.getBitNodeMultipliers().AugmentationMoneyCost
+  } catch {
+    // If we haven't unlocked `getBitNodeMultipliers`, just use the default multiplier of 1
+  }
+  return 1;
+}
+
 /** @param {NS} ns */
 function showPurchasableAugs(ns: NS): void {
   ns.print("Purchasable augs by price:")
 
-  const playerFacs: string[] = globalThis.Player.factions;
+  const playerFacs: FactionName[] = globalThis.Player.factions;
+  const getFactionRep = (faction: FactionName): number => globalThis.Factions[faction].playerReputation;
+  const repMultiplier = getRepMultiplier(ns);
 
   const purchasableAugs = getPurchasableAugs()
-    // TODO Filter on the rep requirement, within some percent of current rep
-    //  Will need to account for rep with ANY faction offering the aug
+    .filter(aug => {
+      // Only look at those where we have a faction with at least `repMargin` of the required rep
+      const repNeeded = aug.baseRepRequirement * repMultiplier;
+      return aug.factions.some(faction =>
+        repNeeded * config.repMargin <= getFactionRep(faction)
+      )
+    })
     .sort((a, b) => b.baseCost - a.baseCost);
 
-  let costMultiplier = 1;
-  try {
-    costMultiplier = ns.getBitNodeMultipliers().AugmentationMoneyCost
-  } catch {
-    // If we haven't unlocked `getBitNodeMultipliers`, just use the default multiplier of 1
-  }
+  let costMultiplier = getCostMultiplier(ns);
 
   // This value comes from src/Constants
   const MULTIPLE_AUG_MULTIPLIER = 1.9
@@ -181,12 +213,7 @@ function factionRepNeeded(ns: NS): void {
     return;
   }
 
-  let repMultiplier = 1;
-  try {
-    repMultiplier = ns.getBitNodeMultipliers().AugmentationRepCost
-  } catch {
-    // If we haven't unlocked `getBitNodeMultipliers`, just use the default multiplier of 1
-  }
+  const repMultiplier = getRepMultiplier(ns)
 
   function maxRepRequirementForFaction(faction: FactionName): number {
     const maxRep = purchasableAugs.filter(a => a.factions.includes(faction))
