@@ -5,6 +5,16 @@
 - Review the rest of the settings/definition files, e.g. `package.json`
 - Determine why some inspections get stuck so badly
 - Determine the code style, such as the order of class members (fields, constructors, etc.)
+- Configure proper handlers for `tmux`
+```shell
+# Creates (if not already present) a session named 'bbsrc'
+tmux new -A -s bbsrc 'cd ../bitburner-src/ && npm run start:dev'
+```
+  - Can then detach by `C-b : detach`
+  - Alternatively, launch with this, and then attach as needed:
+```shell
+tmux new -d -s bbsrc 'cd ../bitburner-src/ && npm run start:dev'
+```
 
 # Game general
 - Determine what BitNodes to tackle first
@@ -18,13 +28,14 @@
   - Will need to include the price increase factor
   - Priorities may shift per BitNode, but for the most part, we will want to focus on:
     1. CashRoot Starter Kit - Helps bootstrap after installing augs; once obtained, other augs for programs aren't as critical (money from casino)
-    2. Charisma level, charisma EXP, faction rep (get more augments faster)
-    3. Hacking level, hacking EXP
-    4. Hacking speed
-    5. Other hacking stats
-    6. Combat stats - any particular order?
-    7. Leftovers
-    8. As many levels of NFG as we can - Need to special-case so we don't grab NFG right away.  Also depends upon the installed LEVEL.
+    2. Neuroreceptor Management Implant - Removes the focus penalty
+    3. Charisma level, charisma EXP, faction rep (get more augments faster)
+    4. Hacking level, hacking EXP
+    5. Hacking speed
+    6. Other hacking stats
+    7. Combat stats - any particular order?
+    8. Leftovers
+    9. As many levels of NFG as we can - Need to special-case so we don't grab NFG right away.  Also depends upon the installed LEVEL.
   - Some BitNodes may make, for instance, crime success more important, or the Hacknet server bonuses
   - Need to account for pre-reqs for desired augs; when computing the purchase chain, should we get pre-reqs for the highest
       desired aug regardless, or only if we will be able to get the target aug afterward?
