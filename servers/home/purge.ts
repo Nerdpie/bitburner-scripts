@@ -6,6 +6,7 @@ export async function main(ns: NS): Promise<void> {
   const exclusions = [
     'z_from_others/insight', // Helps avoid a reported issue with API call limits
     '\.lit', // No point purging the literature files; we'd just scrape them again...
+    '\.exe', // Can be a rather pricey mistake early in a run...
   ]
 
   function isExcluded(file: string): boolean {
