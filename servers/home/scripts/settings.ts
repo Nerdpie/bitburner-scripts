@@ -120,6 +120,9 @@ export const Deploy: SettingsClasses.DeploySettings = {
 // noinspection SpellCheckingInspection - In-game servers have irregular names
 export const ServerSelections = {
   alwaysBackdoor: [
+    // 'w0r1d_d43m0n', // May not want to backdoor right away...
+  ],
+  factionsBackdoor: [
     // Special servers (core factions, etc.)
     'CSEC',         // CyberSec
     'avmnite-02h',  // NiteSec
@@ -127,7 +130,6 @@ export const ServerSelections = {
     'run4theh111z', // BitRunners
     '.',            // The Dark Army
     'The-Cave',     // Daedalus
-    // 'w0r1d_d43m0n', // May not want to backdoor right away...
   ],
   goodTargets: [
     'n00dles',      // Stupid easy early-game target for basic cash
@@ -166,9 +168,11 @@ export const ServerSelections = {
 
 export const BackdoorConcat: string[] =
   ServerSelections.alwaysBackdoor.concat(
+    ServerSelections.factionsBackdoor,
     ServerSelections.classesBackdoor,
     ServerSelections.goodTargets,
-    /* ServerSelections.companyBackdoor */);
+    ServerSelections.companyBackdoor
+  );
 
 // MEMO Yes, this arguably should be in `tail_helpers.ts`; however, most programs already import this, but not that
 //  Yes, this is weak justification.  Shush.

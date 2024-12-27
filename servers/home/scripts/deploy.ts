@@ -1,6 +1,6 @@
 // Based originally on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 
-import {BackdoorConcat, Deploy, setTailWindow} from "@/servers/home/scripts/settings"
+import {BackdoorConcat, Deploy, ServerSelections, setTailWindow} from "@/servers/home/scripts/settings"
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
 import {Server} from "NetscriptDefinitions";
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
@@ -159,6 +159,56 @@ function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number):
   return true;
 }
 
+function computeBackdoorScore(s: Server): number {
+  // Smaller return value means more desirable
+  // Internally, bigger is more desirable
+  const name = s.hostname;
+  const level = s.requiredHackingSkill ?? 0;
+
+  // Using bit flags for easy comparison
+  // Represent that the server is the configured target,
+  // or in a specific `ServerSelections` list
+  const HGW_TARGET_FACTOR = 1 << 6;
+  const ALWAYS_TARGET_FACTOR = 1 << 5;
+  const GOOD_TARGET_FACTOR = 1 << 4;
+  const CLASSES_TARGET_FACTOR = 1 << 3;
+  const FACTION_TARGET_FACTOR = 1 << 2;
+  const COMPANY_TARGET_FACTOR = 1 << 1;
+
+  let score = 0;
+
+  // We only actually care about the first one to set the magnitude
+  // While it doesn't HAVE to be an else-if tree, no need for the other comparison to run every loop...
+  // noinspection IfStatementWithTooManyBranchesJS
+  if (config.targetServer === name) {
+    // MEMO Leaving the `targetServer` check for completeness, even though it isn't strictly needed
+    //  Still going to check in the outer function to reduce overhead where practical.
+    //  Yay premature micro-optimizations!
+    score += HGW_TARGET_FACTOR;
+  } else if (ServerSelections.alwaysBackdoor.includes(name)) {
+    score += ALWAYS_TARGET_FACTOR;
+  } else if (ServerSelections.goodTargets.includes(name)) {
+    score += GOOD_TARGET_FACTOR;
+  } else if (ServerSelections.classesBackdoor.includes(name)) {
+    score += CLASSES_TARGET_FACTOR;
+  } else if (ServerSelections.factionsBackdoor.includes(name)) {
+    score += FACTION_TARGET_FACTOR;
+  } else if (ServerSelections.companyBackdoor.includes(name)) {
+    score += COMPANY_TARGET_FACTOR;
+  }
+
+  // Add the required hacking level as a component;
+  // lowest significance, so we add the inverse
+  // E.g. a level of 1 results in 1/1 => 1,
+  // while a level of 255 results in 1/255 => ~0.004
+  if (level > 0) {
+    score += (1 / level);
+  }
+
+  // Flip the score so that we match the sort order convention
+  return (HGW_TARGET_FACTOR << 1) - score;
+}
+
 function sortBackdoorPriority(a: Server, b: Server): number {
   // Make sure we hit our target server FIRST
   if (Deploy.targetServer === a.hostname) {
@@ -167,18 +217,7 @@ function sortBackdoorPriority(a: Server, b: Server): number {
     return 1;
   }
 
-  const backdoorSoonA = BackdoorConcat.includes(a.hostname);
-  const backdoorSoonB = BackdoorConcat.includes(b.hostname);
-
-  if (backdoorSoonA === backdoorSoonB) {
-    return (a.requiredHackingSkill ?? 0) - (b.requiredHackingSkill ?? 0);
-  }
-
-  // They are NOT the same priority; if `a` has priority, return -1 (first in sort order)
-  if (backdoorSoonA) {
-    return -1;
-  }
-  return 1;
+  return computeBackdoorScore(a) - computeBackdoorScore(b);
 }
 
 function isAnotherInstanceRunning(ns: NS): boolean {
