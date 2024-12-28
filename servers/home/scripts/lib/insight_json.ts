@@ -21,6 +21,9 @@ export function jsonReplacer(_key: any, val: any): any {
   if (val instanceof Set) {
     return {$type: 'Set', $value: [...val]};
   }
+  if (val instanceof Date) {
+    return {$type: 'Date', $value: val.toJSON()};
+  }
   return val;
 }
 
@@ -40,6 +43,9 @@ export function jsonReviver(_key: any, val: any): any {
   }
   if (val.$type === 'Set') {
     return new Set(val.$value);
+  }
+  if (val.$type === 'Date') {
+    return new Date(val.$value);
   }
   return val;
 }

@@ -1,6 +1,10 @@
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers";
 import {ContractWrapper} from "@/servers/home/scripts/coding_contracts/contract_util";
 import {ContractDispatcher, setTailWindow} from "@/servers/home/scripts/settings";
+import {jsonReplacer, jsonReviver} from "@/servers/home/scripts/lib/insight_json";
+
+const LOG_FILE = '/logs/contracts.json';
+let failedEntries: ContractLogEntry[] = [];
 
 function getAllContracts(ns: NS): ContractWrapper[] {
   const servers = getAllServers(ns);
@@ -24,6 +28,14 @@ async function attemptAndLog(ns: NS, contract: ContractWrapper) {
     ns.print(`Success - Reward: ${reward}`)
   } else {
     ns.print(`Failure - Incorrect solution`)
+    ns.alert(`Failed to solve: ${contract.type}`)
+    failedEntries.push({
+      Hostname: contract.host,
+      ContractName: contract.filename,
+      ContractType: contract.type,
+      FailedTime: new Date(),
+      Data: contract.data
+    })
   }
 }
 
@@ -36,14 +48,27 @@ export async function main(ns: NS): Promise<void> {
   ns.disableLog('disableLog')
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
+  const logContents = ns.read(LOG_FILE);
+  if (logContents && logContents.length > 0) {
+    failedEntries = JSON.parse(logContents, jsonReviver);
+  }
+
   setTailWindow(ns, ContractDispatcher, false);
   ns.print(`Dispatcher started at ${new Date().toLocaleTimeString([], {hourCycle: "h23"})}`);
 
   // noinspection InfiniteLoopJS - Intended design
   while (true) {
-    // TODO Add logic to track what contracts have been attempted and failed
-    for (const c1 of getAllContracts(ns).filter(c => c.solver.finished)) {
+    const contractsToAttempt = getAllContracts(ns)
+      .filter(c => c.solver.finished)
+      .filter(c => !failedEntries.some(f => f.Hostname === c.host && f.ContractName === c.filename));
+
+    for (const c1 of contractsToAttempt) {
       await attemptAndLog(ns, c1);
+    }
+
+    // Store the failed attempts
+    if (failedEntries.length > 0) {
+      ns.write(LOG_FILE, JSON.stringify(failedEntries, jsonReplacer), 'w');
     }
 
     // TODO Check the assumptions and bounds for all contracts
@@ -64,4 +89,37 @@ export async function main(ns: NS): Promise<void> {
   If there are contracts found on that server, it will then prompt which one, if multiple are present.
   It will then execute the WiP solver, if present, displaying the data
    */
+}
+
+/*
+Scratchpad for the data tracking structure
+- Need to keep logging of any failed attempts; need timestamp, type, and data
+ */
+
+interface ContractLogEntry {
+  Hostname: string;
+  ContractName: string;
+  ContractType: string,
+  Data: any,
+  FailedTime: Date,
+}
+
+
+function logEntrySerialize(entry: ContractLogEntry): string {
+  function replacer(key: string, value: any): any {
+    if (key === 'Data' && typeof value === 'bigint') {
+      return value.toString();
+    }
+    return value;
+  }
+
+  return JSON.stringify(entry, replacer);
+}
+
+function logEntryDeserialize(entry: string): ContractLogEntry {
+  function reviver(key: string, value: any): any {
+    return value;
+  }
+
+  return JSON.parse(entry, reviver)
 }
