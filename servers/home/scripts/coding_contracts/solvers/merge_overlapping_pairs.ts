@@ -1,20 +1,19 @@
 import {comparePairs} from "@/servers/home/scripts/lib/comparators";
 
 /**
- * @param {number[][]} input
+ * @param {[number,number][]} input
  */
-export function mergeOverlappingPairs(input: number[][]): number[][] {
+export function mergeOverlappingPairs(input: [number, number][]): [number, number][] {
   // REFINE Evaluate use of `shift` so we don't have to reverse it
   // Leaving for now since it seems to be working fine.
 
   // Sorted in reverse because we will be using `pop`
   const sorted = input.sort(comparePairs).reverse();
-  const merged: number[][] = [];
+  const merged: [number, number][] = [];
 
   let temp = sorted.pop();
   let lower = temp[0];
   let upper = temp[1];
-
 
   // I'm sure there's a better algorithm; I'm just going off my manual process
   while (temp) {
@@ -35,5 +34,4 @@ export function mergeOverlappingPairs(input: number[][]): number[][] {
   merged.push([lower, upper]);
 
   return merged;
-
 }

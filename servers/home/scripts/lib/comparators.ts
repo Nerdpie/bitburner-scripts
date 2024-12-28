@@ -4,7 +4,7 @@
  * @param {number[]} b
  * @return {number} Negative if `a` is less than `b`, 0 if equal, and positive if `b` is less than `a`
  */
-export function comparePairs(a: number[], b: number[]): number {
+export function comparePairs(a: [number,number], b: [number,number]): number {
   if (a[0] === b[0]) {
     return a[1] - b[1]
   } else {

@@ -171,8 +171,8 @@ function computeBackdoorScore(s: Server): number {
   const HGW_TARGET_FACTOR = 1 << 6;
   const ALWAYS_TARGET_FACTOR = 1 << 5;
   const GOOD_TARGET_FACTOR = 1 << 4;
-  const CLASSES_TARGET_FACTOR = 1 << 3;
-  const FACTION_TARGET_FACTOR = 1 << 2;
+  const FACTION_TARGET_FACTOR = 1 << 3;
+  const CLASSES_TARGET_FACTOR = 1 << 2;
   const COMPANY_TARGET_FACTOR = 1 << 1;
 
   let score = 0;
@@ -189,10 +189,10 @@ function computeBackdoorScore(s: Server): number {
     score += ALWAYS_TARGET_FACTOR;
   } else if (ServerSelections.goodTargets.includes(name)) {
     score += GOOD_TARGET_FACTOR;
-  } else if (ServerSelections.classesBackdoor.includes(name)) {
-    score += CLASSES_TARGET_FACTOR;
   } else if (ServerSelections.factionsBackdoor.includes(name)) {
     score += FACTION_TARGET_FACTOR;
+  } else if (ServerSelections.classesBackdoor.includes(name)) {
+    score += CLASSES_TARGET_FACTOR;
   } else if (ServerSelections.companyBackdoor.includes(name)) {
     score += COMPANY_TARGET_FACTOR;
   }

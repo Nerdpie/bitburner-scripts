@@ -61,9 +61,8 @@ Return the ciphertext as uppercase string. Spaces remains the same.
 /**
  * Encryption II: Vigenère Cipher
  * @param {string} input
- * @param {NS} ns
  */
-export function encryption2(input: [string, string], ns: NS): string {
+export function encryption2(input: [string, string]): string {
   /* Sample descriptions
   You are attempting to solve a Coding Contract. You have 10 tries remaining, after which the contract will self-destruct.
 

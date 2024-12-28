@@ -47,7 +47,7 @@ export const Run: SettingsClasses.RunSettings = {
   height: 200,
   tailTitle: 'Run Menu',
   // Negated lookahead match, so we can still invoke `exploits` to reload the objects
-  exclusionPattern: /solvers\/|lib\/(?!exploits)|Temp\/|gangs\//
+  exclusionPattern: /solvers\/|lib\/(?!exploits)|Temp\/|gangs\/|logs\//
 }
 export const Go: SettingsClasses.GoSettings = {
   x: 1500,
