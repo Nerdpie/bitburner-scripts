@@ -91,7 +91,7 @@ export const ContractSolvers: Record<CodingContractTypes, Required<SolverInfo>> 
   },
   "Compression II: LZ Decompression": {
     function: compression2,
-    finished: false
+    finished: true
   },
   "Compression III: LZ Compression": {
     function: compression3,
@@ -139,11 +139,11 @@ export const ContractSolvers: Record<CodingContractTypes, Required<SolverInfo>> 
   },
   "Sanitize Parentheses in Expression": {
     function: sanitizeParens,
-    finished: false
+    finished: true
   },
   "Shortest Path in a Grid": {
     function: shortestPath,
-    finished: false
+    finished: true
   },
   "Spiralize Matrix": {
     function: spiralizeMatrix,

@@ -1,4 +1,5 @@
 import {trimEndChars, trimStartChars} from "@/servers/home/scripts/lib/string_util";
+import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
 
 function cleanUnmatchableRightParens(input: string) {
   // Check for any right parens that CANNOT match
@@ -69,12 +70,75 @@ function countCharInString(input: string, char: string): number {
   return count;
 }
 
+function isValidParens(input: string): boolean {
+  let countLeft = 0;
+  for (let i = 0; i < input.length; i++) {
+    const char = input.charAt(i);
+    switch (char) {
+      case '(':
+        countLeft++;
+        break;
+      case ')':
+        if (countLeft <= 0) {
+          return false;
+        }
+        countLeft--;
+        break;
+      default:
+      // No-op
+    }
+  }
+
+  return countLeft === 0;
+}
+
+function possibleRightCombos(input: string, excessCount: number): string[] {
+  if (excessCount === 0) {
+    return [input];
+  }
+
+  const temp: string[] = [];
+  for (let i = 0; i < input.length; i++) {
+    if (input[i] === ')') {
+      // We CANNOT have a valid string with a right paren at the start,
+      // so skipping the additional check
+      if (i === input.length - 1) {
+        temp.push(input.substring(0, i));
+      } else {
+        temp.push(input.substring(0, i) + input.substring(i + 1));
+      }
+    }
+  }
+
+  return temp.flatMap(s => possibleRightCombos(s, excessCount - 1))
+}
+
+function possibleLeftCombos(input: string, excessCount: number): string[] {
+  if (excessCount === 0) {
+    return [input];
+  }
+
+  const temp: string[] = [];
+  for (let i = input.length - 1; i >= 0; i--) {
+    if (input[i] === '(') {
+      // We CANNOT have a valid string with a left paren at the end,
+      // so skipping the additional check
+      if (i === 0) {
+        temp.push(input.substring(i+1));
+      } else {
+        temp.push(input.substring(0,i) + input.substring(i+1));
+      }
+    }
+  }
+
+  return temp.flatMap(s => possibleRightCombos(s, excessCount - 1))
+}
+
 // noinspection GrazieInspection - Grammar in sample description
 /**
  * @param {string} input
- * @param {NS} ns
  */
-export function sanitizeParens(input: string, ns: NS): string[] {
+export function sanitizeParens(input: string): string[] {
   /* Sample description:
   Given the following string:
 
@@ -96,44 +160,34 @@ export function sanitizeParens(input: string, ns: NS): string[] {
  ")(" -> [""]
    */
 
-  ns.print("Input: " + input)
-
   let trimmed: string = input;
 
   // Remove any parens that CANNOT match
   trimmed = trimStartChars(trimmed, ')');
   trimmed = trimEndChars(trimmed, '(');
-
-  ns.print("Trimmed: " + trimmed)
-
   trimmed = cleanUnmatchableRightParens(trimmed);
-
-  ns.print('RCleaned: ' + trimmed);
-
   trimmed = cleanUnmatchableLeftParens(trimmed);
-
-  ns.print("LCleaned: " + trimmed)
 
   const countLeft = countCharInString(trimmed, '(');
   const countRight = countCharInString(trimmed, ')');
 
-  if ( countLeft === countRight ) {
+  if (countLeft === countRight) {
     return [trimmed];
   }
 
-  ns.print(`LCount: ${countLeft}`);
-  ns.print(`RCount: ${countRight}`);
+  let result: string[];
 
-  // TODO Check my old CS code for the parser logic
-  // ... while accidental, the representation from `compression1` may help... hmm...
-  // My manual approach involves counting how many opening and closing parens I have to pair them off...
-  //    Right, push and pop the last operators!  While we have a left paren, push; when we get a right, pop!
-  //    At least, that will VALIDATE it for us.
-  //    To find the combinations, we can look at whether we have more of one side or the other.
-  //    Also, check if any inner parens CANNOT be matched, e.g. "())()" - the second right paren is invalid
+  // REFINE Failing to come up with a good algorithm, so we're going to brute force it...
+  if (countLeft < countRight) {
+    const excessRight = countRight - countLeft;
+    result = arrayUnique(possibleRightCombos(trimmed, excessRight))
+      .filter(isValidParens);
 
-  // Look into another recursive algorithm that returns options for a subsection
-  // (recurring theme in these problems: subdivide the problem space...)
+  } else {
+    const excessLeft = countLeft - countRight;
+    result = arrayUnique(possibleLeftCombos(trimmed, excessLeft))
+      .filter(isValidParens);
+  }
 
-  return [''];
+  return result;
 }

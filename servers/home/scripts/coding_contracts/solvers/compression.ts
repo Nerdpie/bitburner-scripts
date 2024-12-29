@@ -44,12 +44,12 @@ export function compression1(input: string): string {
   return result;
 }
 
+// noinspection SpellCheckingInspection - Spellcheck doesn't like the arbitrary text in the examples
 /**
  * Compression II: LZ Decompression
  * @param {string} input
- * @param {NS} ns
  */
-export function compression2(input: string, ns: NS): void {
+export function compression2(input: string): string {
   /* Sample description:
   Lempel-Ziv (LZ) compression is a data compression technique which encodes data using references to earlier parts of the data. In this variant of LZ, data is encoded in two types of chunk. Each chunk begins with a length L, encoded as a single ASCII digit from 1 to 9, followed by the chunk data, which is either:
 
@@ -70,6 +70,33 @@ export function compression2(input: string, ns: NS): void {
      5aaabb45072      ->  aaabbaaababababa
      5aaabb450723abb  ->  aaabbaaababababaabb
    */
+
+  let result = '';
+  let index = 0;
+  while (index < input.length) {
+    const length1 = parseInt(input[index]);
+    index++;
+    if (length1 > 0) {
+      result += input.slice(index, index + length1);
+      index += length1;
+    }
+
+    let length2 = parseInt(input[index]);
+    index++;
+    if (length2 > 0) {
+      let copyFrom = result.length - parseInt(input[index]);
+      index++;
+
+      do {
+        result += result[copyFrom];
+        length2--;
+        copyFrom++;
+      }
+      while (length2 > 0)
+    }
+  }
+
+  return result
 }
 
 /**

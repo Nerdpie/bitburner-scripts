@@ -1,7 +1,11 @@
 import {ZeroOrOne} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
 import {newMultidimensionalArray} from "@/servers/home/scripts/lib/array_util";
 
-export function shortestPath(input: ZeroOrOne[][], ns: NS) {
+// FIXME This works, but it locks up Firefox's JS runtime due to the recursion...
+//  Possible approach: multidimensional array, start in bottom right,
+//  set each cell to be the path & distance from there to the end.
+//  That way, we only compute each possible path ONCE...
+export function shortestPath(input: ZeroOrOne[][]) {
   /* Sample description
   Contract type: Shortest Path in a Grid
 Contract description:
