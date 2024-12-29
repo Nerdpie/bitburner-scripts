@@ -1,11 +1,12 @@
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
 import {Augments, setTailWindow} from "@/servers/home/scripts/settings"
 import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
-// noinspection ES6UnusedImports - Used in type specifier
 import type {Augmentation} from "@/game_internal_types/Augmentation/Augmentation";
 import type {AugmentationName, FactionName} from "@enums";
 import type {Faction} from "@/game_internal_types/Faction/Faction";
 import type {PlayerObject} from "@/game_internal_types/PersonObjects/Player/PlayerObject";
+import {getAugCostMultiplier, getAugRepMultiplier} from "@/servers/home/scripts/lib/bitnode_util";
+import {getAugCost} from "@/servers/home/scripts/lib/game_internals/AugmentationHelpers"
 
 // noinspection JSUnusedLocalSymbols
 function _typeHints() {
@@ -75,10 +76,9 @@ function factionsWithUnboughtUniques(ns: NS) {
     .filter(aug => !ownedAugNames.includes(aug.name))
     .filter(aug => !queuedAugNames.includes(aug.name))
     .filter(aug => aug.factions[0] !== 'Shadows of Anarchy') // Ignore infiltration
-    .filter(aug => isEndgameFactionUnlocked(aug.factions[0]))
-    .map(a => a.factions[0]);
+    .filter(aug => isEndgameFactionUnlocked(aug.factions[0]));
 
-  const augFactions = arrayUnique(filteredAugs).sort();
+  const augFactions = arrayUnique(filteredAugs.map(a => a.factions[0])).sort();
 
   if (augFactions.length > 0) {
     augFactions.forEach(fac => ns.printf("%-27s - F%6s", fac, ns.formatNumber(globalThis.Factions[fac].favor, 1)));
@@ -145,31 +145,13 @@ function getPurchasableAugs(): Augmentation[] {
     .filter(a => 'NeuroFlux Governor' !== a.name)
 }
 
-function getRepMultiplier(ns: NS) {
-  try {
-    return ns.getBitNodeMultipliers().AugmentationRepCost
-  } catch {
-    // If we haven't unlocked `getBitNodeMultipliers`, just use the default multiplier of 1
-  }
-  return 1;
-}
-
-function getCostMultiplier(ns: NS) {
-  try {
-    return ns.getBitNodeMultipliers().AugmentationMoneyCost
-  } catch {
-    // If we haven't unlocked `getBitNodeMultipliers`, just use the default multiplier of 1
-  }
-  return 1;
-}
-
 /** @param {NS} ns */
 function showPurchasableAugs(ns: NS): void {
   ns.print("Purchasable augs by price:")
 
   const playerFacs: FactionName[] = globalThis.Player.factions;
   const getFactionRep = (faction: FactionName): number => globalThis.Factions[faction].playerReputation;
-  const repMultiplier = getRepMultiplier(ns);
+  const repMultiplier = getAugRepMultiplier(ns);
 
   const purchasableAugs = getPurchasableAugs()
     .filter(aug => {
@@ -181,20 +163,9 @@ function showPurchasableAugs(ns: NS): void {
     })
     .sort((a, b) => b.baseCost - a.baseCost);
 
-  let costMultiplier = getCostMultiplier(ns);
-
-  // This value comes from src/Constants
-  const MULTIPLE_AUG_MULTIPLIER = 1.9
-  // This logic is derived from `src/Augmentation/AugmentationHelpers`, and MAY NOT BE ACCURATE AFTER UPDATES!
-  const AUG_COST_NODE = 11;
-  const AUG_COST_MULTS = [1, 0.96, 0.94, 0.93]
-  const additionalAugMultiplier = MULTIPLE_AUG_MULTIPLIER * AUG_COST_MULTS[globalThis.Player.activeSourceFileLvl(AUG_COST_NODE)];
-  costMultiplier *= Math.pow(additionalAugMultiplier, globalThis.Player.queuedAugmentations.length)
-
-
   if (purchasableAugs.length > 0) {
     purchasableAugs.forEach(a => {
-      ns.printf("%-25s - $%8s", truncateAugName(a.name), ns.formatNumber(a.baseCost * costMultiplier))
+      ns.printf("%-25s - $%8s", truncateAugName(a.name), ns.formatNumber(getAugCost(ns, a).moneyCost))
       ns.print(a.factions.filter(f => playerFacs.includes(f)).map(truncateFacName))
     })
   } else {
@@ -213,7 +184,7 @@ function factionRepNeeded(ns: NS): void {
     return;
   }
 
-  const repMultiplier = getRepMultiplier(ns)
+  const repMultiplier = getAugRepMultiplier(ns)
 
   function maxRepRequirementForFaction(faction: FactionName): number {
     const maxRep = purchasableAugs.filter(a => a.factions.includes(faction))
@@ -228,3 +199,7 @@ function factionRepNeeded(ns: NS): void {
 
   facsWithAugs.sort().forEach(f => ns.printf('%-16s - %6s', f, ns.formatNumber(maxRepRequirementForFaction(f), 1)))
 }
+
+/*
+Augment utility methods
+ */
