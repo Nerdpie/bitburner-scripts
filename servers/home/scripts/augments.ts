@@ -5,27 +5,24 @@ import type {Augmentation} from "@/game_internal_types/Augmentation/Augmentation
 import type {AugmentationName, FactionName} from "@enums";
 import type {Faction} from "@/game_internal_types/Faction/Faction";
 import type {PlayerObject} from "@/game_internal_types/PersonObjects/Player/PlayerObject";
-import {getAugCostMultiplier, getAugRepMultiplier} from "@/servers/home/scripts/lib/bitnode_util";
+import {getAugRepMultiplier} from "@/servers/home/scripts/lib/bitnode_util";
 import {getAugCost} from "@/servers/home/scripts/lib/game_internals/AugmentationHelpers"
+import {getFactionAugmentationsFiltered} from "@/servers/home/scripts/lib/game_internals/FactionHelpers";
 
-// noinspection JSUnusedLocalSymbols
-function _typeHints() {
-  // noinspection JSUnusedLocalSymbols
-  const factions = <Record<string, Faction>>globalThis.Factions;
-  // noinspection JSUnusedLocalSymbols
-  const player = <PlayerObject>globalThis.Player;
-  // noinspection JSUnusedLocalSymbols
-  const augs = <Record<AugmentationName, Augmentation>>globalThis.Augmentations;
+// Run on import, so these are visible regardless
+// Yes, this means side effects, if we have multiple instances etc,
+// but they should all point to the same instances ANYWAY...
+if (!globalThis.Player) {
+  exposeGameInternalObjects();
 }
+
+const factions = <Record<string, Faction>>globalThis.Factions;
+const player = <PlayerObject>globalThis.Player;
+const augs = <Record<AugmentationName, Augmentation>>globalThis.Augmentations;
 
 const config = Augments;
 
 export async function main(ns: NS): Promise<void> {
-
-  if (!globalThis.Player) {
-    exposeGameInternalObjects();
-  }
-
   setTailWindow(ns, config);
 
   // FIXME None of these account for gang augment sales
@@ -45,48 +42,100 @@ export async function main(ns: NS): Promise<void> {
   }
 }
 
-function factionsWithUnboughtUniques(ns: NS) {
+/*
+Output functions
+ */
+function factionsWithUnboughtUniques(ns: NS, includeSoA: boolean = false) {
   ns.print("Facs w/unique augs to buy:")
 
-  function isEndgameFactionUnlocked(faction: FactionName): boolean {
-    // @ts-ignore - It's a string enum...
-    const endgameFactions: FactionName[] = ["Bladeburners", "Church of the Machine God"];
-    const MACHINE_GOD_NODE = 13
-    const BLADEBURNER_NODES = [6, 7]
-    if (!endgameFactions.includes(faction)) {
-      return true;
-    }
-
-    // REFINE Check when `getResetInfo` is available
-    const resetInfo = ns.getResetInfo();
-    switch (faction) {
-      case "Church of the Machine God":
-        return resetInfo.ownedSF.has(MACHINE_GOD_NODE) || resetInfo.currentNode === MACHINE_GOD_NODE
-      case "Bladeburners":
-        return BLADEBURNER_NODES.some(n => resetInfo.ownedSF.has(n) || resetInfo.currentNode === n);
-    }
-  }
+  const gangAugs = getGangAugs(ns);
 
   // Yes, I could remove half of these variables,
   // but it becomes a giant, hard-to-read mess
-  const ownedAugNames = globalThis.Player.augmentations.map(a => a.name);
-  const queuedAugNames = globalThis.Player.queuedAugmentations.map(a => a.name);
-  const filteredAugs = Object.values<Augmentation>(globalThis.Augmentations)
+  const ownedAugNames = player.augmentations.map(a => a.name);
+  const queuedAugNames = player.queuedAugmentations.map(a => a.name);
+  let filteredAugs = Object.values(augs)
     .filter(aug => aug.factions.length === 1)
     .filter(aug => !ownedAugNames.includes(aug.name))
     .filter(aug => !queuedAugNames.includes(aug.name))
-    .filter(aug => aug.factions[0] !== 'Shadows of Anarchy') // Ignore infiltration
-    .filter(aug => isEndgameFactionUnlocked(aug.factions[0]));
+    .filter(aug => includeSoA || aug.factions[0] !== 'Shadows of Anarchy') // Ignore infiltration
+    .filter(aug => isEndgameFactionUnlocked(ns, aug.factions[0]));
 
-  const augFactions = arrayUnique(filteredAugs.map(a => a.factions[0])).sort();
+  // If a gang has augs that would otherwise be uniques, focus the gang instead of the others;
+  // will earn gang rep ANYWAY, so trim the list
+  let gangHasUniques = false;
+  if (filteredAugs.some(aug => gangAugs.includes(aug.name))) {
+    gangHasUniques = true;
+    filteredAugs = filteredAugs.filter(aug => !gangAugs.includes(aug.name));
+  }
 
-  if (augFactions.length > 0) {
-    augFactions.forEach(fac => ns.printf("%-27s - F%6s", fac, ns.formatNumber(globalThis.Factions[fac].favor, 1)));
+  const augFactions = filteredAugs.map(a => <string>a.factions[0])
+    .concat( gangHasUniques ? player.getGangFaction().name : '');
+
+  const uniqueFactions = arrayUnique(augFactions).sort();
+
+  if (uniqueFactions.length > 0) {
+    uniqueFactions.forEach(fac => ns.printf("%-27s - F%6s", fac, ns.formatNumber(factions[fac].favor, 1)));
   } else {
     ns.print("All bought!");
   }
 }
 
+function showPurchasableAugs(ns: NS): void {
+  ns.print("Purchasable augs by price:")
+
+  // TODO Add a `map` call so we only call `getAugCost` ONCE per aug and keep the results
+  const playerFacs = player.factions;
+  const purchasableAugs = getPurchasableAugs()
+    .filter(aug => {
+      // Only look at those where we have a faction with at least `repMargin` of the required rep
+      // MEMO Leave `repNeeded` separate; otherwise, it will be recomputed for each candidate faction
+      const repNeeded = getAugCost(ns, aug).repCost * config.repMargin;
+      return aug.factions.some(faction => repNeeded <= factions[faction].playerReputation)
+    })
+    .sort((a, b) => b.baseCost - a.baseCost);
+
+  if (purchasableAugs.length === 0) {
+    ns.print("All bought!");
+    return;
+  }
+
+  purchasableAugs.forEach(a => {
+    ns.printf("%-25s - $%8s", truncateAugName(a.name), ns.formatNumber(getAugCost(ns, a).moneyCost))
+    ns.print(a.factions.filter(f => playerFacs.includes(f)).map(truncateFacName))
+  })
+}
+
+function factionRepNeeded(ns: NS): void {
+  const playerFacs = player.factions;
+  const purchasableAugs = getPurchasableAugs();
+
+  ns.print("Add'l rep needed to buy augs:");
+
+  if (!purchasableAugs || purchasableAugs.length === 0) {
+    ns.print('All bought!');
+    return;
+  }
+
+  const repMultiplier = getAugRepMultiplier(ns)
+
+  function maxRepRequirementForFaction(faction: FactionName): number {
+    const maxRep = purchasableAugs.filter(a => a.factions.includes(faction))
+      .map(a => a.baseRepRequirement)
+      .reduce((acc, rep) => Math.max(acc, rep), 0) * repMultiplier;
+
+    // If we have excess rep, clamp at zero
+    return Math.max(maxRep - factions[faction].playerReputation, 0);
+  }
+
+  const facsWithAugs = playerFacs.filter(f => purchasableAugs.some(a => a.factions.includes(f)));
+
+  facsWithAugs.sort().forEach(f => ns.printf('%-16s - %6s', f, ns.formatNumber(maxRepRequirementForFaction(f), 1)))
+}
+
+/*
+Augment utility methods
+ */
 /** @param {string} name */
 function truncateAugName(name: string): string {
   // noinspection SpellCheckingInspection
@@ -134,72 +183,40 @@ function truncateFacName(name: string): string {
   }
 }
 
+function getGangAugs(ns: NS): AugmentationName[] {
+  if (player.inGang()) {
+    return getFactionAugmentationsFiltered(ns, player.getGangFaction());
+  }
+
+  return [];
+}
+
+function isEndgameFactionUnlocked(ns: NS, faction: FactionName): boolean {
+  // @ts-ignore - It's a string enum...
+  const endgameFactions: FactionName[] = ["Bladeburners", "Church of the Machine God"];
+  const MACHINE_GOD_NODE = 13
+  const BLADEBURNER_NODES = [6, 7]
+  if (!endgameFactions.includes(faction)) {
+    return true;
+  }
+
+  // REFINE Check when `getResetInfo` is available
+  const resetInfo = ns.getResetInfo();
+  switch (faction) {
+    case "Church of the Machine God":
+      return resetInfo.ownedSF.has(MACHINE_GOD_NODE) || resetInfo.currentNode === MACHINE_GOD_NODE
+    case "Bladeburners":
+      return BLADEBURNER_NODES.some(n => resetInfo.ownedSF.has(n) || resetInfo.currentNode === n);
+  }
+}
+
 function getPurchasableAugs(): Augmentation[] {
-  const ownedAugNames = globalThis.Player.augmentations.map(a => a.name);
-  const queuedAugNames = globalThis.Player.queuedAugmentations.map(a => a.name);
-  const playerFacs = globalThis.Player.factions;
-  return Object.values<Augmentation>(globalThis.Augmentations)
+  const ownedAugNames = player.augmentations.map(a => a.name);
+  const queuedAugNames = player.queuedAugmentations.map(a => a.name);
+  const playerFacs = player.factions;
+  return Object.values<Augmentation>(augs)
     .filter(a => a.factions.some(f => playerFacs.includes(f)))
     .filter(a => !ownedAugNames.includes(a.name))
     .filter(a => !queuedAugNames.includes(a.name))
     .filter(a => 'NeuroFlux Governor' !== a.name)
 }
-
-/** @param {NS} ns */
-function showPurchasableAugs(ns: NS): void {
-  ns.print("Purchasable augs by price:")
-
-  const playerFacs: FactionName[] = globalThis.Player.factions;
-  const getFactionRep = (faction: FactionName): number => globalThis.Factions[faction].playerReputation;
-  const repMultiplier = getAugRepMultiplier(ns);
-
-  const purchasableAugs = getPurchasableAugs()
-    .filter(aug => {
-      // Only look at those where we have a faction with at least `repMargin` of the required rep
-      const repNeeded = aug.baseRepRequirement * repMultiplier;
-      return aug.factions.some(faction =>
-        repNeeded * config.repMargin <= getFactionRep(faction)
-      )
-    })
-    .sort((a, b) => b.baseCost - a.baseCost);
-
-  if (purchasableAugs.length > 0) {
-    purchasableAugs.forEach(a => {
-      ns.printf("%-25s - $%8s", truncateAugName(a.name), ns.formatNumber(getAugCost(ns, a).moneyCost))
-      ns.print(a.factions.filter(f => playerFacs.includes(f)).map(truncateFacName))
-    })
-  } else {
-    ns.print("All bought!");
-  }
-}
-
-function factionRepNeeded(ns: NS): void {
-  const playerFacs: FactionName[] = globalThis.Player.factions;
-  const purchasableAugs = getPurchasableAugs();
-
-  ns.print("Add'l rep needed to buy augs:");
-
-  if (!purchasableAugs || purchasableAugs.length === 0) {
-    ns.print('All bought!');
-    return;
-  }
-
-  const repMultiplier = getAugRepMultiplier(ns)
-
-  function maxRepRequirementForFaction(faction: FactionName): number {
-    const maxRep = purchasableAugs.filter(a => a.factions.includes(faction))
-      .map(a => a.baseRepRequirement)
-      .reduce((acc, rep) => Math.max(acc, rep), 0) * repMultiplier;
-
-    // If we have excess rep, clamp at zero
-    return Math.max(maxRep - globalThis.Factions[faction].playerReputation, 0);
-  }
-
-  const facsWithAugs = playerFacs.filter(f => purchasableAugs.some(a => a.factions.includes(f)));
-
-  facsWithAugs.sort().forEach(f => ns.printf('%-16s - %6s', f, ns.formatNumber(maxRepRequirementForFaction(f), 1)))
-}
-
-/*
-Augment utility methods
- */
