@@ -4,8 +4,7 @@ import {BackdoorConcat, Deploy, ServerSelections, setTailWindow} from "@/servers
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
 import {Server} from "NetscriptDefinitions";
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
-import {BuiltinServers} from "@/servers/home/scripts/lib/builtin_servers";
-import {ValidRamCapacity} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
+import {BuiltinServers, ValidRamCapacity} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
 
 const config = Deploy;
 

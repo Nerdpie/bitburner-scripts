@@ -1,6 +1,6 @@
 import {TailProperties} from "NetscriptDefinitions";
-import {BuiltinServers} from "@/servers/home/scripts/lib/builtin_servers";
 import * as EnumsAndTypes from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
+import {BuiltinServers} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
 
 export interface SettingsData extends TailProperties {
   x: number;

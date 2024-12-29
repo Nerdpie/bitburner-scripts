@@ -1,6 +1,5 @@
 import * as SettingsClasses from '@/servers/home/scripts/lib/settings_classes'
-import {BuiltinServers} from "@/servers/home/scripts/lib/builtin_servers";
-import {GoFaction} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
+import {BuiltinServers, GoFaction} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
 
 export const ContractCalc: SettingsClasses.SettingsData = {
   x: 1250,
