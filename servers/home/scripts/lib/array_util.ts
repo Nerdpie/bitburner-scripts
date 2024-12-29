@@ -4,8 +4,8 @@
  * @return {Array} Unique values from the input array
  * @link https://stackoverflow.com/q/1960473 - Reference
  */
-export function arrayUnique(a: any[]): any[] {
-  return [...new Set(a)];
+export function arrayUnique<T>(a: T[]): T[] {
+  return [...new Set<T>(a)];
 }
 
 // REFINE Needs a better name...

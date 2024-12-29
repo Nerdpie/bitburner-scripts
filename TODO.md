@@ -39,8 +39,6 @@ tmux new -d -s bbsrc 'cd ../bitburner-src/ && npm run start:dev'
   - Some BitNodes may make, for instance, crime success more important, or the Hacknet server bonuses
   - Need to account for pre-reqs for desired augs; when computing the purchase chain, should we get pre-reqs for the highest
       desired aug regardless, or only if we will be able to get the target aug afterward?
-  - SoA and NFG augs have custom price handling
-  - 
 
 # Contracts to code:
 - Hamming codes

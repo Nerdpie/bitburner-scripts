@@ -6,7 +6,7 @@ import type {AugmentationName, FactionName} from "@enums";
 import type {Faction} from "@/game_internal_types/Faction/Faction";
 import type {PlayerObject} from "@/game_internal_types/PersonObjects/Player/PlayerObject";
 import {getAugRepMultiplier} from "@/servers/home/scripts/lib/bitnode_util";
-import {getAugCost} from "@/servers/home/scripts/lib/game_internals/AugmentationHelpers"
+import {AugmentationCosts, getAugCost} from "@/servers/home/scripts/lib/game_internals/AugmentationHelpers"
 import {getFactionAugmentationsFiltered} from "@/servers/home/scripts/lib/game_internals/FactionHelpers";
 
 // Run on import, so these are visible regardless
@@ -25,7 +25,6 @@ const config = Augments;
 export async function main(ns: NS): Promise<void> {
   setTailWindow(ns, config);
 
-  // FIXME None of these account for gang augment sales
   // TODO Add special-case handling of NFG; worth showing its rep & cash cost
   switch (config.mode) {
     case 'purchasable':
@@ -70,7 +69,7 @@ function factionsWithUnboughtUniques(ns: NS, includeSoA: boolean = false) {
   }
 
   const augFactions = filteredAugs.map(a => <string>a.factions[0])
-    .concat( gangHasUniques ? player.getGangFaction().name : '');
+    .concat(gangHasUniques ? player.getGangFaction().name : '');
 
   const uniqueFactions = arrayUnique(augFactions).sort();
 
@@ -84,16 +83,15 @@ function factionsWithUnboughtUniques(ns: NS, includeSoA: boolean = false) {
 function showPurchasableAugs(ns: NS): void {
   ns.print("Purchasable augs by price:")
 
-  // TODO Add a `map` call so we only call `getAugCost` ONCE per aug and keep the results
   const playerFacs = player.factions;
-  const purchasableAugs = getPurchasableAugs()
+  const purchasableAugs = getPurchasableAugsWithGang(ns)
     .filter(aug => {
       // Only look at those where we have a faction with at least `repMargin` of the required rep
       // MEMO Leave `repNeeded` separate; otherwise, it will be recomputed for each candidate faction
-      const repNeeded = getAugCost(ns, aug).repCost * config.repMargin;
+      const repNeeded = aug.costs.repCost * config.repMargin;
       return aug.factions.some(faction => repNeeded <= factions[faction].playerReputation)
     })
-    .sort((a, b) => b.baseCost - a.baseCost);
+    .sort((a, b) => b.costs.moneyCost - a.costs.moneyCost);
 
   if (purchasableAugs.length === 0) {
     ns.print("All bought!");
@@ -101,7 +99,7 @@ function showPurchasableAugs(ns: NS): void {
   }
 
   purchasableAugs.forEach(a => {
-    ns.printf("%-25s - $%8s", truncateAugName(a.name), ns.formatNumber(getAugCost(ns, a).moneyCost))
+    ns.printf("%-25s - $%8s", truncateAugName(a.name), ns.formatNumber(a.costs.moneyCost))
     ns.print(a.factions.filter(f => playerFacs.includes(f)).map(truncateFacName))
   })
 }
@@ -219,4 +217,37 @@ function getPurchasableAugs(): Augmentation[] {
     .filter(a => !ownedAugNames.includes(a.name))
     .filter(a => !queuedAugNames.includes(a.name))
     .filter(a => 'NeuroFlux Governor' !== a.name)
+}
+
+type AugWrapper = { name: AugmentationName; factions: FactionName[]; costs: AugmentationCosts };
+
+function getPurchasableAugsWithGang(ns: NS): AugWrapper[] {
+  const ownedAugNames = player.augmentations.map(a => a.name);
+  const queuedAugNames = player.queuedAugmentations.map(a => a.name);
+  const augNames = player.factions.flatMap(faction => getFactionAugmentationsFiltered(ns, factions[faction]));
+
+  const filteredNames = arrayUnique(augNames).sort()
+    .filter(a => !ownedAugNames.includes(a))
+    .filter(a => !queuedAugNames.includes(a))
+    .filter(a => 'NeuroFlux Governor' !== a)
+    .sort();
+
+  const augments = filteredNames.map(name => augs[name]);
+
+  const wrappers = augments.map((aug): AugWrapper => ({
+    name: aug.name,
+    factions: aug.factions.slice(),
+    costs: getAugCost(ns, aug)
+  }));
+
+  const gangAugs = getGangAugs(ns);
+  const gangFaction = player.getGangFaction().name;
+
+  wrappers.forEach(w => {
+    if (gangAugs.includes(w.name) && !w.factions.includes(gangFaction)) {
+      w.factions.push(gangFaction);
+    }
+  })
+
+  return wrappers
 }
