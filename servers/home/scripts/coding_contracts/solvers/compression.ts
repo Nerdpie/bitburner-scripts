@@ -99,6 +99,7 @@ export function compression2(input: string): string {
   return result
 }
 
+// noinspection SpellCheckingInspection
 /**
  * Compression III: LZ Compression
  * @param {string} input

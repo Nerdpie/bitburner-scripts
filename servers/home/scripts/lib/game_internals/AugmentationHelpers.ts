@@ -1,4 +1,6 @@
 // Derived from bitburner-src/src/Augmentations/AugmentationHelpers.ts
+// noinspection MagicNumberJS
+
 import {CONSTANTS} from "./Constants";
 import {exposeGameInternalObjects} from "../exploits";
 import type {PlayerObject} from "@/game_internal_types/PersonObjects/Player/PlayerObject";

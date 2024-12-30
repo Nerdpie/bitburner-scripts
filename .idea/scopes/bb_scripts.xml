@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="bb-scripts" pattern="file[bitburner-scripts]:*/&amp;&amp;!file:NetscriptDefinitions.d.ts&amp;&amp;!file:servers/home/git-pull.js" />
+  <scope name="bb-scripts" pattern="(file[bitburner-scripts]:*/&amp;&amp;!file:NetscriptDefinitions.d.ts&amp;&amp;!file:servers/home/git-pull.js&amp;&amp;!file[bitburner-scripts]:game_internal_types//*||file:game_internal_types/README.md)&amp;&amp;!file[bitburner-scripts]:servers/home/z_from_others//*" />
 </component>

@@ -1,6 +1,6 @@
 // Copied from bitburner-src/src/Constants.ts
 // TODO Ensure this is patched when the game updates!
-// noinspection ConfusingFloatingPointLiteralJS
+// noinspection ConfusingFloatingPointLiteralJS,SpellCheckingInspection
 
 /**
  * Generic Game Constants

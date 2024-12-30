@@ -1,5 +1,5 @@
 // Copied from bitburner-src/src/Casino/RNG.ts
-// noinspection DuplicatedCode - Ignoring the copy in CatLover's code
+// noinspection DuplicatedCode - Ignoring the copy in CatLover's code,ReuseOfLocalVariableJS,MagicNumberJS,OverlyComplexArithmeticExpressionJS
 
 interface RNG {
   random(): number;
