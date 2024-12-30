@@ -68,8 +68,11 @@ function factionsWithUnboughtUniques(ns: NS, includeSoA: boolean = false) {
     filteredAugs = filteredAugs.filter(aug => !gangAugs.includes(aug.name));
   }
 
-  const augFactions = filteredAugs.map(a => <string>a.factions[0])
-    .concat(gangHasUniques ? player.getGangFaction().name : '');
+  const augFactions = filteredAugs.map(a => <string>a.factions[0]);
+
+  if (gangHasUniques) {
+    augFactions.push(player.getGangFaction().name);
+  }
 
   const uniqueFactions = arrayUnique(augFactions).sort();
 
