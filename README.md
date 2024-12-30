@@ -2,11 +2,15 @@
 
 This repository holds my scripts for the open-source hacking game, Bitburner.
 
+> [!WARNING]
+> As with any scripts, ensure you know what they are doing, or otherwise trust the source completely!
+
+> [!IMPORTANT]
+> View these scripts at your own discretion; they make use of end-game mechanics and exploits.
+
 ## Usage
 
 While it is encouraged to try your own scripts, if you want to use mine verbatim, follow these steps.
-
-!! As with any scripts, ensure you know what they are doing, or otherwise trust the source completely! !!
 
 1. Ensure that you have a new enough version of [Node.js](https://nodejs.org) installed; the template recommends at least v20.
 2. Clone this repository; how to do so depends upon your environment
