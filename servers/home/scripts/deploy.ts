@@ -1,6 +1,6 @@
 // Based originally on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 
-import {BackdoorConcat, Deploy, ServerSelections, setTailWindow} from "@/servers/home/scripts/settings"
+import {Deploy, ServerSelections, setTailWindow} from "@/servers/home/scripts/settings"
 import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
 import {Server} from "NetscriptDefinitions";
 import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
@@ -76,17 +76,9 @@ function tryBackdoor(ns: NS, server: Server) {
       if (terminal.action === null) {
         terminal.connectToServer(server.hostname);
         terminal.executeCommands('backdoor');
-      } else if (BackdoorConcat.includes(server.hostname)
-        || Deploy.targetServer === server.hostname) {
-        // In our 'make sure we bd' list
-        //ns.printf('Need to backdoor: %s', server.hostname);
       }
     } catch {
-      if (BackdoorConcat.includes(server.hostname)
-        || Deploy.targetServer === server.hostname) {
-        // In our 'make sure we bd' list
-        //ns.printf('Need to backdoor: %s', server.hostname);
-      }
+      // We'll backdoor it eventually
     }
   }
 }
@@ -145,14 +137,12 @@ function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number):
       // Check if the server's RAM is at the current target
       if (ns.getServerMaxRam(serverName) < ramCapacity) {
         if (ns.getServerMoneyAvailable('home') < ns.getPurchasedServerUpgradeCost(serverName, ramCapacity)) {
-          // ns.printf("Insufficient funds to upgrade %s", serverName);
           return false;
         }
         ns.upgradePurchasedServer(serverName, ramCapacity);
       }
     } else {
       if (ns.getServerMoneyAvailable('home') < PRICE) {
-        // ns.printf("Insufficient funds to buy %s", serverName)
         return false;
       }
       ns.purchaseServer(serverName, ramCapacity);
@@ -274,8 +264,6 @@ export async function main(ns: NS): Promise<void> {
 
   ns.disableLog('disableLog'); // Ironic, no?
   ns.disableLog('ALL');
-
-  const MAX_LOG_LINES = 25;
 
   let tools: ((host: string) => void)[];
   let script: string;
@@ -412,22 +400,8 @@ export async function main(ns: NS): Promise<void> {
 
     // We only need to kill scripts when restarting/changing target
     // Otherwise, we will interrupt HGW calls
+    // Irrelevant when dynamic targeting is enabled
     resetScripts = false;
-
-    const logs = ns.getScriptLogs();
-
-    if (logs.length > MAX_LOG_LINES) {
-      while (logs.length > MAX_LOG_LINES) {
-        logs.shift();
-      }
-
-      ns.clearLog();
-      let nextLine = logs.shift();
-      while (nextLine) {
-        ns.print(nextLine);
-        nextLine = logs.shift();
-      }
-    }
 
     await ns.sleep(loopDelay);
   }
