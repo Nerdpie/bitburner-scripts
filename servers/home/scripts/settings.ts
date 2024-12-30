@@ -102,6 +102,7 @@ export const Deploy: SettingsClasses.DeploySettings = {
   tailTitle: 'Deploy Orchestrator',
   mode: 'hgw',
   resetScripts: true,
+  dynamicTarget: true,
   targetSelf: false,
   targetServer: BuiltinServers['joesguns'],
   loopDelay: 15 * 1000,
@@ -112,6 +113,7 @@ export const Deploy: SettingsClasses.DeploySettings = {
   growCount: 0,
   clusterCount: 0,
   homeReservedRam: 64,
+  hackTheWorld: false,
 }
 
 // TODO Can we make this strongly-typed to the list of in-game servers
@@ -119,7 +121,7 @@ export const Deploy: SettingsClasses.DeploySettings = {
 // noinspection SpellCheckingInspection - In-game servers have irregular names
 export const ServerSelections = {
   alwaysBackdoor: [
-    // 'w0r1d_d43m0n', // May not want to backdoor right away...
+    'w0r1d_d43m0n', // Control via Deploy.hackTheWorld
   ],
   factionsBackdoor: [
     // Special servers (core factions, etc.)

@@ -47,6 +47,7 @@ export interface HacknetSettings extends SettingsData {
 export interface DeploySettings extends SettingsData {
   mode: EnumsAndTypes.DeployMode;
   resetScripts: boolean;
+  dynamicTarget: boolean;
   targetSelf: boolean;
   targetServer: BuiltinServers;
   loopDelay: number;
@@ -56,4 +57,5 @@ export interface DeploySettings extends SettingsData {
   growCount: number;
   clusterCount: number;
   homeReservedRam: number;
+  hackTheWorld: boolean;
 }
