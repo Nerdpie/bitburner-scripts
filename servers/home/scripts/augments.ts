@@ -243,14 +243,16 @@ function getPurchasableAugsWithGang(ns: NS): AugWrapper[] {
     costs: getAugCost(ns, aug)
   }));
 
-  const gangAugs = getGangAugs(ns);
-  const gangFaction = player.getGangFaction().name;
+  if (player.inGang()) {
+    const gangAugs = getGangAugs(ns);
+    const gangFaction = player.getGangFaction().name;
 
-  wrappers.forEach(w => {
-    if (gangAugs.includes(w.name) && !w.factions.includes(gangFaction)) {
-      w.factions.push(gangFaction);
-    }
-  })
+    wrappers.forEach(w => {
+      if (gangAugs.includes(w.name) && !w.factions.includes(gangFaction)) {
+        w.factions.push(gangFaction);
+      }
+    })
+  }
 
   return wrappers
 }
