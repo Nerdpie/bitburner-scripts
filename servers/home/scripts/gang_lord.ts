@@ -1,8 +1,8 @@
-import {ascendMembers} from "@/servers/home/scripts/gangs/ascension";
-import * as GEnums from "@/servers/home/scripts/gangs/gang_enums";
+import {ascendMembers} from "./gangs/ascension";
+import * as GEnums from "./gangs/gang_enums";
 import {GangGenInfo, GangMemberInfo, GangOtherInfo} from "NetscriptDefinitions";
-import {GangLord, setTailWindow} from "@/servers/home/scripts/settings";
-import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
+import {GangLord, setTailWindow} from "@settings";
+import {exposeGameInternalObjects} from "@lib/exploits";
 
 const config = GangLord;
 let previousOtherGangInfo: GangOtherInfo;

@@ -1,4 +1,4 @@
-import {Run, setTailWindow} from "@/servers/home/scripts/settings"
+import {Run, setTailWindow} from "@settings"
 
 export async function main(ns: NS): Promise<void> {
   const config = Run;

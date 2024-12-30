@@ -1,5 +1,5 @@
 // Derived from https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
-import {HacknetManager, setTailWindow} from "@/servers/home/scripts/settings"
+import {HacknetManager, setTailWindow} from "@settings"
 
 /**
  * This function automates the management of hacknet nodes in a game,

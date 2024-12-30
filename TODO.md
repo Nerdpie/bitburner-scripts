@@ -5,6 +5,8 @@
 - Review the rest of the settings/definition files, e.g. `package.json`
 - Determine why some inspections get stuck so badly
 - Determine the code style, such as the order of class members (fields, constructors, etc.)
+- Define an inspection with the pattern `import (?!type).* from "@/?game_internal_types` to ensure we only use the TYPES
+  from game internal classes; avoids build errors
 - Configure proper handlers for `tmux`
 ```shell
 # Creates (if not already present) a session named 'bbsrc'

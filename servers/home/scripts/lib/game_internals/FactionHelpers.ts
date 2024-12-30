@@ -5,7 +5,7 @@ import {exposeGameInternalObjects} from "../exploits";
 import type {PlayerObject} from "@/game_internal_types/PersonObjects/Player/PlayerObject";
 import type {Augmentation} from "@/game_internal_types/Augmentation/Augmentation";
 import {SFC32RNG} from "./RNG";
-import {getGangUniqueAug} from "@/servers/home/scripts/lib/bitnode_util";
+import {getGangUniqueAug} from "../bitnode_util";
 
 export function getFactionAugmentationsFiltered(ns: NS, faction: Faction): AugmentationName[] {
   if (!globalThis.Player) {

@@ -1,7 +1,7 @@
-import {getAllServers} from "@/servers/home/scripts/lib/scan_servers";
-import {ContractWrapper} from "@/servers/home/scripts/coding_contracts/contract_util";
-import {ContractDispatcher, setTailWindow} from "@/servers/home/scripts/settings";
-import {jsonReplacer, jsonReviver} from "@/servers/home/scripts/lib/insight_json";
+import {getAllServers} from "@lib/scan_servers";
+import {ContractWrapper} from "./contract_util";
+import {ContractDispatcher, setTailWindow} from "@settings";
+import {jsonReplacer, jsonReviver} from "@lib/insight_json";
 
 const LOG_FILE = '/logs/contracts.json';
 let failedEntries: ContractLogEntry[] = [];

@@ -1,11 +1,11 @@
 // Based originally on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 
-import {Deploy, ServerSelections, setTailWindow} from "@/servers/home/scripts/settings"
-import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
+import {Deploy, ServerSelections, setTailWindow} from "@settings"
+import {getAllServers} from "@lib/scan_servers"
 import {Server} from "NetscriptDefinitions";
-import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
-import {BuiltinServers, ValidRamCapacity} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
-import {Terminal} from "@/game_internal_types/Terminal/Terminal";
+import {exposeGameInternalObjects} from "@lib/exploits";
+import {BuiltinServers, ValidRamCapacity} from "@lib/enum_and_limiter_definitions";
+import type {Terminal} from "@/game_internal_types/Terminal/Terminal";
 
 const config = Deploy;
 let prevHackingLevel = 0;

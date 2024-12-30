@@ -1,7 +1,7 @@
-import { getAllServers } from "@/servers/home/scripts/lib/scan_servers"
-import { exposeGameInternalObjects } from "@/servers/home/scripts/lib/exploits"
+import { getAllServers } from "@lib/scan_servers"
+import { exposeGameInternalObjects } from "@lib/exploits"
 import {Server} from "NetscriptDefinitions";
-import {ServerSelections} from "@/servers/home/scripts/settings";
+import {ServerSelections} from "@settings";
 
 let formatNumber;
 let formatPercent;

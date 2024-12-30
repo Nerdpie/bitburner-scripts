@@ -1,6 +1,6 @@
 // 2-coloring of a graph
-import {comparePairs} from "@/servers/home/scripts/lib/comparators";
-import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
+import {comparePairs} from "@lib/comparators";
+import {arrayUnique} from "@lib/array_util";
 
 class Vertex {
   id: number;

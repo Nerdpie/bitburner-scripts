@@ -1,5 +1,5 @@
 import React from "react";
-import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
+import {exposeGameInternalObjects} from "../exploits";
 
 export function ServerLink({dashes = '', hostname, decorator = ''}): React.ReactElement {
   if (!globalThis.Terminal) {

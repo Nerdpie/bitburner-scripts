@@ -1,13 +1,13 @@
-import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
-import {Augments, setTailWindow} from "@/servers/home/scripts/settings"
-import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
+import {exposeGameInternalObjects} from "@lib/exploits"
+import {Augments, setTailWindow} from "@settings"
+import {arrayUnique} from "@lib/array_util";
 import type {Augmentation} from "@/game_internal_types/Augmentation/Augmentation";
 import type {AugmentationName, FactionName} from "@enums";
 import type {Faction} from "@/game_internal_types/Faction/Faction";
 import type {PlayerObject} from "@/game_internal_types/PersonObjects/Player/PlayerObject";
-import {getAugRepMultiplier} from "@/servers/home/scripts/lib/bitnode_util";
-import {AugmentationCosts, getAugCost} from "@/servers/home/scripts/lib/game_internals/AugmentationHelpers"
-import {getFactionAugmentationsFiltered} from "@/servers/home/scripts/lib/game_internals/FactionHelpers";
+import {getAugRepMultiplier} from "@lib/bitnode_util";
+import {AugmentationCosts, getAugCost} from "@lib/game_internals/AugmentationHelpers"
+import {getFactionAugmentationsFiltered} from "@lib/game_internals/FactionHelpers";
 
 // Run on import, so these are visible regardless
 // Yes, this means side effects, if we have multiple instances etc,

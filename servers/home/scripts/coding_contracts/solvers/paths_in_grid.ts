@@ -1,5 +1,5 @@
-import {ZeroOrOne} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
-import {newMultidimensionalArray} from "@/servers/home/scripts/lib/array_util";
+import {ZeroOrOne} from "@lib/enum_and_limiter_definitions";
+import {newMultidimensionalArray} from "@lib/array_util";
 
 // FIXME This works, but it locks up Firefox's JS runtime due to the recursion...
 //  Possible approach: multidimensional array, start in bottom right,

@@ -1,7 +1,7 @@
 import React, {ReactNode} from "react";
 import {Server} from "NetscriptDefinitions";
-import {NetTree, setTailWindow} from "@/servers/home/scripts/settings"
-import {ServerLink} from "@/servers/home/scripts/lib/ui/server_link";
+import {NetTree, setTailWindow} from "@settings"
+import {ServerLink} from "@lib/ui/server_link";
 
 /** @param {NS} ns */
 export async function main(ns: NS): Promise<void> {

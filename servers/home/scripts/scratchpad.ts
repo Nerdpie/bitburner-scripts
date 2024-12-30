@@ -1,9 +1,8 @@
 // noinspection IfStatementWithTooManyBranchesJS
 
-import {Scratchpad, setTailWindow} from "@/servers/home/scripts/settings"
-import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
+import {Scratchpad, setTailWindow} from "@settings"
+import {exposeGameInternalObjects} from "@lib/exploits"
 import {Player} from "NetscriptDefinitions";
-import {sprintf} from "sprintf-js";
 // noinspection ES6UnusedImports
 import {CodingContractTypes} from "./coding_contracts/contract_util";
 
@@ -11,6 +10,8 @@ import {CodingContractTypes} from "./coding_contracts/contract_util";
 /** @param {NS} ns */
 export async function main(ns: NS): Promise<void> {
   setTailWindow(ns, Scratchpad);
+
+  const sprintf: (format: string, ...args: any[]) => string = globalThis.sprintf;
 
   //ns.codingcontract.createDummyContract(CodingContractTypes["Algorithmic Stock Trader IV"])
 

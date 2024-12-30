@@ -13,7 +13,7 @@
  */
 
 import React, {ReactNode} from "react";
-import { trimChars } from "./lib/string_util";
+import { trimChars } from "@lib/string_util";
 
 // Property names are, of course, open to discussion
 // The hostname and current directory are critical to provide;

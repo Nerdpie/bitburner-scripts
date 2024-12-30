@@ -1,4 +1,4 @@
-import {Go, setTailWindow} from "@/servers/home/scripts/settings"
+import {Go, setTailWindow} from "@settings"
 import {GoOpponent} from "NetscriptDefinitions";
 
 /**

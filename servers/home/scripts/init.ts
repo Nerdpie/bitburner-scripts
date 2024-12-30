@@ -3,10 +3,10 @@
  *
  */
 
-import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits"
-import {closeTail, CollapseState, collapseTail, expandTail, isTailOpen} from "@/servers/home/scripts/lib/tail_helpers"
+import {exposeGameInternalObjects} from "@lib/exploits"
+import {closeTail, CollapseState, collapseTail, expandTail, isTailOpen} from "@lib/tail_helpers"
 import {AutocompleteData, RunOptions} from "NetscriptDefinitions";
-import {FlagSchemaType} from "@/servers/home/scripts/lib/enum_and_limiter_definitions";
+import {FlagSchemaType} from "@lib/enum_and_limiter_definitions";
 
 interface DefaultScriptCtorParams {
   script: string;

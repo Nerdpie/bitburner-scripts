@@ -1,4 +1,4 @@
-import {exposeGameInternalObjects} from './scripts/lib/exploits'
+import {exposeGameInternalObjects} from '@lib/exploits'
 
 export async function main(ns: NS) {
   if (!globalThis.Player) {

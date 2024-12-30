@@ -1,5 +1,5 @@
-import {trimEndChars, trimStartChars} from "@/servers/home/scripts/lib/string_util";
-import {arrayUnique} from "@/servers/home/scripts/lib/array_util";
+import {trimEndChars, trimStartChars} from "@lib/string_util";
+import {arrayUnique} from "@lib/array_util";
 
 function cleanUnmatchableRightParens(input: string) {
   // Check for any right parens that CANNOT match

@@ -1,7 +1,7 @@
-import {ContractCalc, setTailWindow} from "@/servers/home/scripts/settings"
-import {exposeGameInternalObjects} from "@/servers/home/scripts/lib/exploits";
+import {ContractCalc, setTailWindow} from "@settings"
+import {exposeGameInternalObjects} from "@lib/exploits";
 
-import {ContractWrapper} from "@/servers/home/scripts/coding_contracts/contract_util";
+import {ContractWrapper} from "./coding_contracts/contract_util";
 
 /** @param {NS} ns */
 export async function main(ns: NS): Promise<void> {

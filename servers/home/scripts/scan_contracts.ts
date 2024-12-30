@@ -2,10 +2,10 @@
  * Script to iterate over hosts and list contracts
  */
 
-import {Contracts, setTailWindow} from "@/servers/home/scripts/settings"
-import {getAllServers} from "@/servers/home/scripts/lib/scan_servers"
+import {Contracts, setTailWindow} from "@settings"
+import {getAllServers} from "@lib/scan_servers"
 import React, {ReactNode} from "react";
-import {ServerLink} from "@/servers/home/scripts/lib/ui/server_link";
+import {ServerLink} from "@lib/ui/server_link";
 
 export async function main(ns: NS): Promise<void> {
   setTailWindow(ns, Contracts);

@@ -2,7 +2,7 @@ import type {Work} from "@/game_internal_types/Work/Work";
 import type {FactionWork} from "@/game_internal_types/Work/FactionWork";
 import type {Augmentation} from "@/game_internal_types/Augmentation/Augmentation";
 import type {CompanyWork} from "@/game_internal_types/Work/CompanyWork";
-import {formatSecondsShort} from "@/servers/home/scripts/lib/time_util";
+import {formatSecondsShort} from "@lib/time_util";
 
 export async function main(ns: NS): Promise<void> {
 
