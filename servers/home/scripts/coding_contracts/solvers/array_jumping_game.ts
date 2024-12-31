@@ -1,4 +1,4 @@
-export async function arrayJumpingGame(input: number[]) {
+export function arrayJumpingGame(input: number[]) {
   /* Sample description:
   You are given the following array of integers:
 

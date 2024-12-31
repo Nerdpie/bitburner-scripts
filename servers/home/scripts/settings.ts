@@ -106,7 +106,7 @@ export const Deploy: SettingsClasses.DeploySettings = {
   targetSelf: false,
   targetServer: BuiltinServers['joesguns'],
   loopDelay: 15 * 1000,
-  ramCapacity: 16,
+  ramCapacity: 2048,
   // Adjust per-run; previously used 5, 3, 2, 3
   shareCount: 0,
   weakenCount: 0,
