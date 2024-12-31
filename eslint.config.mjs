@@ -9,7 +9,6 @@ import eslint from '@eslint/js';
 // eslint-disable-next-line n/no-unpublished-import
 import eslintPluginImportX from 'eslint-plugin-import-x';
 import n from 'eslint-plugin-n';
-import prettier from 'eslint-plugin-prettier';
 // noinspection SpellCheckingInspection
 import tseslint from 'typescript-eslint';
 
@@ -26,7 +25,6 @@ export default tseslint.config(
     plugins: {
       '@typescript-eslint': tseslint.plugin,
       n: n,
-      prettier: prettier,
       'import-x': eslintPluginImportX,
     },
     languageOptions: {
@@ -82,7 +80,6 @@ export default tseslint.config(
       'no-var': 'error',
       'prefer-arrow-callback': 'error',
       'prefer-const': 'error',
-      'prettier/prettier': 'error',
       quotes: [
         'warn',
         'single',
