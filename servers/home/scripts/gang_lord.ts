@@ -1,12 +1,20 @@
-import {ascendMembers} from "./gangs/ascension";
-import * as GEnums from "./gangs/gang_enums";
-import {GangGenInfo, GangMemberInfo, GangOtherInfo} from "NetscriptDefinitions";
-import {GangLord, setTailWindow} from "@settings";
-import {exposeGameInternalObjects} from "@lib/exploits";
+import type {Faction}                                    from '@/game_internal_types/Faction/Faction';
+import type {FactionName}                                from '@enums';
+import {exposeGameInternalObjects}                       from '@lib/exploits';
+import {GangLord, setTailWindow}                         from '@settings';
+import type {GangGenInfo, GangMemberInfo, GangOtherInfo} from 'NetscriptDefinitions';
+import {ascendMembers}                                   from './gangs/ascension';
+import * as GEnums                                       from './gangs/gang_enums';
 
 const config = GangLord;
 let previousOtherGangInfo: GangOtherInfo;
 let tickToNextTerritoryUpdate: number;
+
+if (!globalThis.Factions) {
+  exposeGameInternalObjects();
+}
+
+const factions = <Record<FactionName, Faction>>globalThis.Factions;
 
 export async function main(ns: NS): Promise<void> {
   const DISABLED_LOGS = [
@@ -18,14 +26,10 @@ export async function main(ns: NS): Promise<void> {
   ];
   ns.disableLog('disableLog');
   DISABLED_LOGS.forEach(log => {
-    ns.disableLog(log)
+    ns.disableLog(log);
   });
 
   setTailWindow(ns, config);
-
-  if (!globalThis.Factions) {
-    exposeGameInternalObjects();
-  }
 
   if (!ns.gang.inGang()) {
     ns.tprint('Not yet in a gang!');
@@ -82,9 +86,13 @@ function isOtherGangInfoEqual(previous: GangOtherInfo, current: GangOtherInfo): 
 }
 
 function recruit(ns: NS) {
+  function haveEnoughRespect(ns: NS): boolean {
+    const gangInfo = ns.gang.getGangInformation();
+    return gangInfo.respectForNextRecruit <= gangInfo.respect;
+  }
+
   let success = true;
-  const getGangInfo = ns.gang.getGangInformation;
-  while (getGangInfo().respectForNextRecruit <= getGangInfo().respect && success) {
+  while (haveEnoughRespect(ns) && success) {
     success = ns.gang.recruitMember(generateMemberName(ns));
   }
 }
@@ -102,7 +110,7 @@ function generateMemberName(ns: NS): string {
     'Goodie',
     'Two',
     'Shoes',
-  ]
+  ];
 
   // Names found at https://tagvault.org/blog/redneck-hillbilly-names/
   // noinspection SpellCheckingInspection - Using names, so... to be expected
@@ -118,7 +126,7 @@ function generateMemberName(ns: NS): string {
     'Sarge',
     'Buford',
     'Leroy',
-  ]
+  ];
 
   const usedNames = ns.gang.getMemberNames();
   const availableNames = starterNames.concat(moreNames).filter(n => !usedNames.includes(n));
@@ -138,7 +146,14 @@ function equipMembers(ns: NS) {
   equipAllOfType(ns, members, GEnums.GangRootkit, 'upgrades');
 }
 
-function equipAllOfType(ns: NS, members: GangMemberInfo[], type: any, slot: string) {
+type GangEquip =
+  typeof GEnums.GangAugment
+  | typeof GEnums.GangWeapon
+  | typeof GEnums.GangArmor
+  | typeof GEnums.GangVehicle
+  | typeof GEnums.GangRootkit;
+
+function equipAllOfType(ns: NS, members: GangMemberInfo[], type: GangEquip, slot: 'augmentations' | 'upgrades') {
   for (const equipment in type) {
     const equipPrice = ns.gang.getEquipmentCost(equipment);
     members.forEach(member => {
@@ -149,13 +164,13 @@ function equipAllOfType(ns: NS, members: GangMemberInfo[], type: any, slot: stri
           ns.print(`Bought ${member.name} the ${equipment}`);
         }
       }
-    })
+    });
   }
 }
 
 function assignAll(ns: NS) {
   const members = ns.gang.getMemberNames();
-  const gangInfo = ns.gang.getGangInformation()
+  const gangInfo = ns.gang.getGangInformation();
 
 
   // REFINE Ideally, we would only assign enough to pull back the gain rate
@@ -166,12 +181,12 @@ function assignAll(ns: NS) {
   const reduceWantedLevel = config.wantedPenaltyThreshold > gangInfo.wantedPenalty && gangInfo.respect > config.vigilanteRespectThreshold && gangInfo.wantedLevel > 1;
   if (reduceWantedLevel && tickToNextTerritoryUpdate !== 0) {
     members.forEach(member => {
-      ns.gang.setMemberTask(member, GEnums.GangMisc["Vigilante Justice"])
-    })
+      ns.gang.setMemberTask(member, GEnums.GangMisc['Vigilante Justice']);
+    });
   } else {
     members.forEach(member => {
       ns.gang.setMemberTask(member, bestTaskForMember(ns, gangInfo, member));
-    })
+    });
   }
 }
 
@@ -180,33 +195,37 @@ function bestTaskForMember(ns: NS, gangInfo: GangGenInfo, member: string): GEnum
 
   // Is it time to flash mob, and is the member at risk if they do so?
   if (tickToNextTerritoryUpdate === 0 && (memberInfo.def >= config.memberWarfareThreshold || !isClashPossible(gangInfo))) {
-    return GEnums.GangMisc["Territory Warfare"];
+    return GEnums.GangMisc['Territory Warfare'];
   }
 
   // Early gains are slow; bootstrap it
   if (memberInfo.def < config.memberMinTraining) {
-    return GEnums.GangTraining["Train Combat"];
+    return GEnums.GangTraining['Train Combat'];
   }
 
   const focusRep = config.mode === 'rep'
-    && (globalThis.Factions[gangInfo.faction].playerReputation < config.targetFactionRep || gangInfo.respect < config.targetGangRespect);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    && (factions[gangInfo.faction].playerReputation < config.targetFactionRep || gangInfo.respect < config.targetGangRespect);
 
   // REFINE May want to switch per-member, to keep them at a threshold of respect (helps with discounts)
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const gainFunction = focusRep ? ns.formulas.gang.respectGain : ns.formulas.gang.moneyGain;
 
   // Default to training combat
-  let bestTask: [GEnums.GangTask, number] = [GEnums.GangTraining["Train Combat"], 0];
+  let bestTask: [GEnums.GangTask, number] = [GEnums.GangTraining['Train Combat'], 0];
   if (ns.fileExists('Formulas.exe', 'home')) {
     for (const task in GEnums.GangEarning) {
       const taskStats = ns.gang.getTaskStats(task);
       const gain = gainFunction(gangInfo, memberInfo, taskStats);
       if (gain > bestTask[1]) {
+        // This shouldn't be unsafe, as `task` should always be a valid key for the enum...
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         bestTask = [GEnums.GangEarning[task], gain];
       }
     }
   } else {
     // FIXME Determine an ACTUAL formula for this, not assigning arbitrarily...
-    bestTask = [GEnums.GangEarning["Run a Con"], 5];
+    bestTask = [GEnums.GangEarning['Run a Con'], 5];
   }
 
   return bestTask[0];
@@ -224,7 +243,7 @@ function mortalCombat(ns: NS) {
   if (gangInfo.territory === 1) {
     if (gangInfo.territoryWarfareEngaged) {
       ns.gang.setTerritoryWarfare(false);
-      ns.print('Victory is ours!')
+      ns.print('Victory is ours!');
     }
     return;
   }

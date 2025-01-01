@@ -16,5 +16,5 @@ export function arrayUnique<T>(a: T[]): T[] {
  * @param fillValue
  */
 export function newMultidimensionalArray<T>(rows: number, columns: number, fillValue: T): T[][] {
-    return Array(rows).fill(0).map(() => Array<T>(columns).fill(fillValue));
+  return Array(rows).fill(0).map(() => Array<T>(columns).fill(fillValue));
 }

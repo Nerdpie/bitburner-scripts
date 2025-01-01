@@ -23,12 +23,8 @@ determine whether you are able to reach the last index.
  * @param {number[]} input
  */
 export function arrayJumpingGame2(input: number[]) {
-  if (!input) {
-    throw new Error("Invalid input for arrayJumpingGame: " + input)
-  }
-
   if (input.length === 0) {
-    throw new Error("Undefined behavior: no jumps defined")
+    throw new Error('Undefined behavior: no jumps defined');
   }
 
   let workArray = input.slice();
@@ -36,7 +32,7 @@ export function arrayJumpingGame2(input: number[]) {
   let offset = 0;
 
   do {
-    offset = workArray[0]
+    offset = workArray[0];
 
     if (offset >= workArray.length - 1) {
       // We can go right to the end
@@ -54,7 +50,7 @@ export function arrayJumpingGame2(input: number[]) {
       const curTravel = i + workArray[i];
       if (maxTravel < curTravel) {
         maxTravel = curTravel;
-        nextIndex = i
+        nextIndex = i;
       }
     }
 

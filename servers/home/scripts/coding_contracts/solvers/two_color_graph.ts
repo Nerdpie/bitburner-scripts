@@ -1,11 +1,11 @@
 // 2-coloring of a graph
-import {comparePairs} from "@lib/comparators";
-import {arrayUnique} from "@lib/array_util";
+import {arrayUnique}  from '@lib/array_util';
+import {comparePairs} from '@lib/comparators';
 
 class Vertex {
   id: number;
-  #color: -1 | 0 | 1;
   neighbors: Set<Vertex>;
+  #color: -1 | 0 | 1;
 
   constructor(id: number) {
     this.id = id;
@@ -29,7 +29,7 @@ class Vertex {
     const neighborColor = this.#color === 0 ? 1 : 0;
     this.neighbors.forEach(v => {
       const origColor = v.color;
-      v.setColor(neighborColor)
+      v.setColor(neighborColor);
 
       // Avoid looping
       if (origColor === -1) {
@@ -74,7 +74,7 @@ export function twoColorGraph(input: [number, [[number, number]]]): number[] {
   // The classes help me follow the flow more easily, and add in safeties
   const vertices = new Map<number, Vertex>();
   arrayUnique(edges.flat()).sort().forEach(v => {
-    vertices.set(v, new Vertex(v))
+    vertices.set(v, new Vertex(v));
   });
 
   // Populate the list of neighbors
@@ -86,7 +86,7 @@ export function twoColorGraph(input: [number, [[number, number]]]): number[] {
   });
 
   // Our result will need to have a space for each POSSIBLE vertex
-  const result: number[] = Array<number>(numVertices).fill(null)
+  const result: number[] = Array<number>(numVertices).fill(null);
 
   // REFINE Adjust this to NOT rely on exceptions for code flow...
   try {
@@ -97,7 +97,7 @@ export function twoColorGraph(input: [number, [[number, number]]]): number[] {
         v.setColor(0);
         v.colorNeighbors();
       }
-    })
+    });
   } catch (error) {
     console.log('Two Color Graph error: ' + error);
     return [];
@@ -105,7 +105,7 @@ export function twoColorGraph(input: [number, [[number, number]]]): number[] {
 
   vertices.forEach((v) => {
     result[v.id] = v.color;
-  })
+  });
 
   return result;
 }

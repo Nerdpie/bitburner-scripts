@@ -6,7 +6,7 @@ function rotN(char: string, offset: number): string {
 
   // Only shifting A-Z
   const charPoint = char.charCodeAt(0);
-  if ( charPoint < ASCII_LETTER_A || charPoint > ASCII_LETTER_Z ) {
+  if (charPoint < ASCII_LETTER_A || charPoint > ASCII_LETTER_Z) {
     return char;
   }
 
@@ -99,7 +99,7 @@ If your solution is an empty string, you must leave the text box empty. Do not u
   // Treat the substitution table as a sum of offsets, with A as 0
   const plaintext = input[0];
   const keyword = input[1];
-  const keywordOffsets: number[] = Array(keyword.length);
+  const keywordOffsets: number[] = Array<number>(keyword.length);
   let result = '';
 
   for (let i = 0; i < keyword.length; i++) {

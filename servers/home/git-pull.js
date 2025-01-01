@@ -1,3 +1,6 @@
+/* eslint-disable */
+// noinspection NonBlockStatementBodyJS,SpellCheckingInspection,JSCommentMatchesSignature,GrazieInspection,JSUnresolvedReference,EqualityComparisonWithCoercionJS
+
 let options;
 const argsSchema = [
   ['github', 'alainbryden'],

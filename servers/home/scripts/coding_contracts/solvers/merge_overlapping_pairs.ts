@@ -1,4 +1,4 @@
-import {comparePairs} from "@lib/comparators";
+import {comparePairs} from '@lib/comparators';
 
 /**
  * @param {[number,number][]} input
@@ -19,7 +19,7 @@ export function mergeOverlappingPairs(input: [number, number][]): [number, numbe
   while (temp) {
     // Only checking one 'edge' since it's already sorted
     if (lower <= temp[0] && temp[0] <= upper) {
-      upper = Math.max(upper, temp[1])
+      upper = Math.max(upper, temp[1]);
     } else {
       merged.push([lower, upper]);
       lower = temp[0];

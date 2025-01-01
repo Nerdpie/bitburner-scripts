@@ -1,5 +1,5 @@
-import {ZeroOrOne} from "@lib/enum_and_limiter_definitions";
-import {newMultidimensionalArray} from "@lib/array_util";
+import {newMultidimensionalArray} from '@lib/array_util';
+import type {ZeroOrOne}           from '@lib/enum_and_limiter_definitions';
 
 // FIXME This works, but it locks up Firefox's JS runtime due to the recursion...
 //  Possible approach: multidimensional array, start in bottom right,
@@ -47,7 +47,7 @@ You are located in the top-left corner of the following grid:
   Use a 'visited' table - passed by value, or it'll become... messy - to prevent loops
    */
 
-  const visited: boolean[][] = newMultidimensionalArray(input.length, input[0].length, false)
+  const visited: boolean[][] = newMultidimensionalArray(input.length, input[0].length, false);
 
   // Calculate the 'no path' upper bound
   const invalidPathLength = input.length * input[0].length;
@@ -93,7 +93,7 @@ function findPath(grid: ZeroOrOne[][], visited: boolean[][], row: number, col: n
   // Yes, this can result in a lot of objects being created and discarded
   // However, if we DON'T do this, e.g. if we just use `slice`, the nested arrays are passed by ref,
   //  so different paths confuse each other's status
-  const newVisited = newMultidimensionalArray(visited.length, visited[0].length, false)
+  const newVisited = newMultidimensionalArray(visited.length, visited[0].length, false);
   for (let i = 0; i < visited.length; i++) {
     for (let j = 0; j < visited[i].length; j++) {
       newVisited[i][j] = visited[i][j];
@@ -108,12 +108,15 @@ function findPath(grid: ZeroOrOne[][], visited: boolean[][], row: number, col: n
     D: findPath(grid, newVisited, row + 1, col, invalidPathLength),
     L: findPath(grid, newVisited, row, col - 1, invalidPathLength),
     R: findPath(grid, newVisited, row, col + 1, invalidPathLength)
-  }
+  };
 
   let shortestPath: [string, number] = ['', invalidPathLength];
   let direction: string = '';
   for (const path in subPaths) {
+    // TODO Check why this error occurs; these should be bounded to valid values...
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (subPaths[path][1] < shortestPath[1]) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       shortestPath = subPaths[path];
       direction = path;
     }
@@ -123,7 +126,7 @@ function findPath(grid: ZeroOrOne[][], visited: boolean[][], row: number, col: n
     return shortestPath;
   }
 
-  return [direction + shortestPath[0], shortestPath[1] + 1]
+  return [direction + shortestPath[0], shortestPath[1] + 1];
 }
 
 
@@ -169,7 +172,7 @@ export function uniquePaths2(input: ZeroOrOne[][]): number {
   return 1 + countBranches(input, 0, 0);
 }
 
-function countBranches(grid: ZeroOrOne[][], row: number, column: number) {
+function countBranches(grid: ZeroOrOne[][], row: number, column: number): number {
 
   // Bound for the edges
   // We're at the end; only 'blocked' case that doesn't subtract a branch
@@ -196,6 +199,4 @@ function countBranches(grid: ZeroOrOne[][], row: number, column: number) {
   }
 
   return 1 + countBranches(grid, row, column + 1) + countBranches(grid, row + 1, column);
-
-
 }

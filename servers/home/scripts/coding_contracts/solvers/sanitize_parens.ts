@@ -1,5 +1,5 @@
-import {trimEndChars, trimStartChars} from "@lib/string_util";
-import {arrayUnique} from "@lib/array_util";
+import {arrayUnique}                  from '@lib/array_util';
+import {trimEndChars, trimStartChars} from '@lib/string_util';
 
 function cleanUnmatchableRightParens(input: string) {
   // Check for any right parens that CANNOT match
@@ -60,7 +60,7 @@ function cleanUnmatchableLeftParens(input: string) {
 }
 
 function countCharInString(input: string, char: string): number {
-  let count = 0
+  let count = 0;
   for (let i = 0; i < input.length; i++) {
     if (input.charAt(i) === char) {
       count++;
@@ -110,7 +110,7 @@ function possibleRightCombos(input: string, excessCount: number): string[] {
     }
   }
 
-  return temp.flatMap(s => possibleRightCombos(s, excessCount - 1))
+  return temp.flatMap(s => possibleRightCombos(s, excessCount - 1));
 }
 
 function possibleLeftCombos(input: string, excessCount: number): string[] {
@@ -124,9 +124,9 @@ function possibleLeftCombos(input: string, excessCount: number): string[] {
       // We CANNOT have a valid string with a left paren at the end,
       // so skipping the additional check
       if (i === 0) {
-        temp.push(input.substring(i+1));
+        temp.push(input.substring(i + 1));
       } else {
-        temp.push(input.substring(0,i) + input.substring(i+1));
+        temp.push(input.substring(0, i) + input.substring(i + 1));
       }
     }
   }

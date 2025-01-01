@@ -6,7 +6,7 @@ export function ascendMembers(ns: NS) {
     if (shouldAscendGangster(ns, member)) {
       ns.gang.ascendMember(member);
     }
-  })
+  });
 }
 
 function shouldAscendGangster(ns: NS, member: string): boolean {

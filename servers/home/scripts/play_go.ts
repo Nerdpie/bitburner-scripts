@@ -1,5 +1,5 @@
-import {Go, setTailWindow} from "@settings"
-import {GoOpponent} from "NetscriptDefinitions";
+import {Go, setTailWindow} from '@settings';
+import type {GoOpponent}   from 'NetscriptDefinitions';
 
 /**
  * Basic IPvGo script derived from https://github.com/bitburner-official/bitburner-src/blob/dev/src/Documentation/doc/programming/go_algorithms.md
@@ -7,7 +7,7 @@ import {GoOpponent} from "NetscriptDefinitions";
  */
 export async function main(ns: NS): Promise<void> {
   const config = Go;
-  setTailWindow(ns, config)
+  setTailWindow(ns, config);
 
   const DISABLED_LOGS = [
     'sleep',
@@ -20,20 +20,20 @@ export async function main(ns: NS): Promise<void> {
   /** Delay before processing the next move, in milliseconds */
   const LOOP_DELAY = config.loopDelay || 200;
 
-  let result;
-  let x;
-  let y;
+  let result: { type: 'move' | 'pass' | 'gameOver'; x: number; y: number; };
+  let x: number;
+  let y: number;
 
   if (ns.go.getCurrentPlayer() === 'White') {
-    await ns.go.opponentNextTurn(false)
+    await ns.go.opponentNextTurn(false);
   }
 
   // Have to fetch again, to determine if we need a new board
   if (ns.go.getCurrentPlayer() === 'None') {
     if (config.keepPlaying) {
-      ns.go.resetBoardState(<GoOpponent>config.faction, config.boardSize)
+      ns.go.resetBoardState(<GoOpponent>config.faction, config.boardSize);
     } else {
-      ns.print("Game needs reset")
+      ns.print('Game needs reset');
     }
   }
 
@@ -64,17 +64,18 @@ export async function main(ns: NS): Promise<void> {
       await ns.sleep(LOOP_DELAY);
 
       // Keep looping as long as the opponent is playing moves
-    } while (result?.type !== "gameOver");
+    } while (result?.type !== 'gameOver');
 
-    ns.go.resetBoardState(<GoOpponent>config.faction, config.boardSize)
-  } while (config.keepPlaying)
+    ns.go.resetBoardState(<GoOpponent>config.faction, config.boardSize);
+  } while (config.keepPlaying);
 }
+
 
 /**
  * Choose one of the empty points on the board at random to play
  */
-const getRandomMove = (board, validMoves) => {
-  const moveOptions = [];
+function getRandomMove(board: string[], validMoves: boolean[][]) {
+  const moveOptions: [number, number][] = [];
   const size = board[0].length;
 
   // Look through all the points on the board
@@ -95,4 +96,4 @@ const getRandomMove = (board, validMoves) => {
   // Choose one of the found moves at random
   const randomIndex = Math.floor(Math.random() * moveOptions.length);
   return moveOptions[randomIndex] ?? [];
-};
+}

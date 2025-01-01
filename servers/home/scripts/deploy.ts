@@ -1,11 +1,11 @@
 // Based originally on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 
-import {Deploy, ServerSelections, setTailWindow} from "@settings"
-import {getAllServers} from "@lib/scan_servers"
-import {Server} from "NetscriptDefinitions";
-import {exposeGameInternalObjects} from "@lib/exploits";
-import {BuiltinServers, ValidRamCapacity} from "@lib/enum_and_limiter_definitions";
-import type {Terminal} from "@/game_internal_types/Terminal/Terminal";
+import type {Terminal}                           from '@/game_internal_types/Terminal/Terminal';
+import {BuiltinServers, ValidRamCapacity}        from '@lib/enum_and_limiter_definitions';
+import {exposeGameInternalObjects}               from '@lib/exploits';
+import {getAllServers}                           from '@lib/scan_servers';
+import {Deploy, ServerSelections, setTailWindow} from '@settings';
+import type {Server}                             from 'NetscriptDefinitions';
 
 const config = Deploy;
 let prevHackingLevel = 0;
@@ -13,11 +13,16 @@ let prevTarget: BuiltinServers = undefined;
 
 function getAvailableTools(ns: NS): ((host: string) => void)[] {
   const PROGRAMS: ({ file: string; action: (host: string) => void })[] = [
-    {file: "BruteSSH.exe", action: ns.brutessh},
-    {file: "FTPCrack.exe", action: ns.ftpcrack},
-    {file: "RelaySMTP.exe", action: ns.relaysmtp},
-    {file: "HTTPWorm.exe", action: ns.httpworm},
-    {file: "SQLInject.exe", action: ns.sqlinject}
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    {file: 'BruteSSH.exe', action: ns.brutessh},
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    {file: 'FTPCrack.exe', action: ns.ftpcrack},
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    {file: 'RelaySMTP.exe', action: ns.relaysmtp},
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    {file: 'HTTPWorm.exe', action: ns.httpworm},
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    {file: 'SQLInject.exe', action: ns.sqlinject}
   ];
 
   const availableTools: ((host: string) => void)[] = [];
@@ -26,7 +31,7 @@ function getAvailableTools(ns: NS): ((host: string) => void)[] {
     if (ns.fileExists(program.file)) {
       availableTools.push(program.action);
     }
-  })
+  });
 
   return availableTools;
 }
@@ -34,7 +39,7 @@ function getAvailableTools(ns: NS): ((host: string) => void)[] {
 function pwnServer(ns: NS, target: Server, tools: ((host: string) => void)[]) {
   // Don't waste cycles if we already own the box
   if (target.hasAdminRights) {
-    tryBackdoor(ns, target)
+    tryBackdoor(ns, target);
     return true;
   }
 
@@ -42,13 +47,13 @@ function pwnServer(ns: NS, target: Server, tools: ((host: string) => void)[]) {
   tools.forEach(tool => {
     tool(target.hostname);
     openPorts++;
-  })
+  });
 
   if (target.numOpenPortsRequired <= openPorts) {
     ns.nuke(target.hostname);
     //ns.printf('Target pwned: %s', target.hostname);
 
-    tryBackdoor(ns, target)
+    tryBackdoor(ns, target);
     return true;
   }
 
@@ -60,9 +65,10 @@ function pwnServer(ns: NS, target: Server, tools: ((host: string) => void)[]) {
  * @param {Server} server
  */
 function tryBackdoor(ns: NS, server: Server) {
-  if (!config.hackTheWorld && server.hostname === BuiltinServers["w0r1d_d43m0n"]) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+  if (!config.hackTheWorld && server.hostname === BuiltinServers['w0r1d_d43m0n']) {
     if (server.requiredHackingSkill <= ns.getHackingLevel()) {
-      ns.printf('Can backdoor: %s', BuiltinServers["w0r1d_d43m0n"]);
+      ns.printf('Can backdoor: %s', BuiltinServers['w0r1d_d43m0n']);
     }
     return;
   }
@@ -71,6 +77,7 @@ function tryBackdoor(ns: NS, server: Server) {
     && !server.purchasedByPlayer
     && server.requiredHackingSkill <= ns.getHackingLevel()) {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const terminal: Terminal = globalThis.Terminal;
       // Make sure the Terminal isn't busy with another action
       if (terminal.action === null) {
@@ -86,7 +93,7 @@ function tryBackdoor(ns: NS, server: Server) {
 function execScript(ns: NS, server: Server, script: string, targetServer?: string): void {
   const ramCost = ns.getScriptRam(script, server.hostname);
 
-  let ramAvailable = server.maxRam - server.ramUsed
+  let ramAvailable = server.maxRam - server.ramUsed;
   if ('home' === server.hostname) {
     ramAvailable -= config.homeReservedRam;
   }
@@ -96,7 +103,7 @@ function execScript(ns: NS, server: Server, script: string, targetServer?: strin
     if (targetServer) {
       ns.exec(script, server.hostname, numThreads, targetServer);
     } else {
-      ns.exec(script, server.hostname, numThreads)
+      ns.exec(script, server.hostname, numThreads);
     }
   }
 }
@@ -118,7 +125,7 @@ function buildCluster(ns: NS) {
   buyServers(ns, 'cluster-', config.clusterCount, ramCapacity) &&
   buyServers(ns, 'weaken-', config.weakenCount, ramCapacity) &&
   buyServers(ns, 'grow-', config.growCount, ramCapacity) &&
-  buyServers(ns, 'share-', config.shareCount, ramCapacity))
+  buyServers(ns, 'share-', config.shareCount, ramCapacity));
 }
 
 /**
@@ -171,7 +178,7 @@ function computeBackdoorScore(s: Server): number {
 
   // We only actually care about the first one to set the magnitude
   // While it doesn't HAVE to be an else-if tree, no need for the other comparison to run every loop...
-  // noinspection IfStatementWithTooManyBranchesJS
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
   if (config.targetServer === name) {
     // MEMO Leaving the `targetServer` check for completeness, even though it isn't strictly needed
     //  Still going to check in the outer function to reduce overhead where practical.
@@ -203,9 +210,12 @@ function computeBackdoorScore(s: Server): number {
 
 function sortBackdoorPriority(a: Server, b: Server): number {
   // Make sure we hit our target server FIRST
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
   if (Deploy.targetServer === a.hostname) {
     return -1;
-  } else if (Deploy.targetServer === b.hostname) {
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+  if (Deploy.targetServer === b.hostname) {
     return 1;
   }
 
@@ -229,21 +239,26 @@ function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServers] {
   // At low levels, we want to hit Joe's Guns ASAP; usually level 11
   // Yes, if you try to evaluate EACH server, this may jump back down, but not with a proper list of good targets
   const targetLevel = curHackingLevel <= 30 ? curHackingLevel : Math.ceil(curHackingLevel / 2);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, targetServer] = TARGET_OPTIONS.map(n => ns.getServer(n))
     .filter(s => s.requiredHackingSkill <= targetLevel && s.backdoorInstalled)
     .reduce((acc, cur) => {
       if (acc[0] < cur.requiredHackingSkill) {
-        return [cur.requiredHackingSkill, <BuiltinServers>cur.hostname]
+        return [cur.requiredHackingSkill, <BuiltinServers>cur.hostname];
       }
-      return acc
+      return acc;
     }, [0, <BuiltinServers>undefined]);
 
-  const changedTarget = targetServer !== prevTarget
+  const changedTarget = targetServer !== prevTarget;
   prevTarget = targetServer;
-  prevHackingLevel = curHackingLevel
+  prevHackingLevel = curHackingLevel;
 
+  // REFINE Store a pre-computed formatter for this
   if (changedTarget) {
-    ns.printf(`[${new Date().toLocaleTimeString([], {hour12: false, hourCycle: 'h23'})}] Now targeting: ${targetServer}`);
+    ns.printf(`[${new Date().toLocaleTimeString([], {
+      hour12: false,
+      hourCycle: 'h23'
+    })}] Now targeting: ${targetServer}`);
   }
 
   return [changedTarget, targetServer === undefined, targetServer];
@@ -251,7 +266,7 @@ function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServers] {
 
 function isAnotherInstanceRunning(ns: NS): boolean {
   const self = ns.self();
-  return ns.ps().some(v => v.pid !== self.pid && v.filename === self.filename)
+  return ns.ps().some(v => v.pid !== self.pid && v.filename === self.filename);
 }
 
 /** @param {NS} ns */
@@ -286,7 +301,8 @@ export async function main(ns: NS): Promise<void> {
     default:
       // `config.mode` is highlighted due to value narrowing
       // Leave it here in case we add a new option and don't fully implement it
-      ns.print("WARNING: Invalid mode '" + config.mode + "' - defaulting to 'hgw'")
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      ns.print(`WARNING: Invalid mode '${config.mode}' - defaulting to 'hgw'`);
       script = '/scripts/zac_hack.js';
   }
 
@@ -310,28 +326,29 @@ export async function main(ns: NS): Promise<void> {
 
   // noinspection InfiniteLoopJS - Intended design
   while (true) {
-    buildCluster(ns)
+    buildCluster(ns);
 
     // Check inside the loop in case we unlock more tools
     tools = getAvailableTools(ns);
 
     if (config.dynamicTarget) {
-      [resetScripts, targetSelf, targetServer] = getDynamicTarget(ns)
+      [resetScripts, targetSelf, targetServer] = getDynamicTarget(ns);
     }
 
     const serverList = getAllServers(ns)
-      .map(s => ns.getServer(s))
+      .map(s => ns.getServer(s));
 
     const nonPurchasedServers = serverList
       .filter(s => !s.purchasedByPlayer)
       .sort(sortBackdoorPriority);
 
-    const backdooredServers = nonPurchasedServers.filter(s => s.backdoorInstalled)
+    const backdooredServers = nonPurchasedServers.filter(s => s.backdoorInstalled);
 
     // REFINE Ideally, this would increase the delay sooner, and more gradually, but late into a run,
     //  high hacking stats can make backdoor installs FAST... and a proper batcher removes half of the need
     // If we've backdoored all servers (ignoring w0r1d_d43m0n), increase the loop delay
-    if (nonPurchasedServers.filter(s => s.hostname !== BuiltinServers["w0r1d_d43m0n"]).length === backdooredServers.length) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+    if (nonPurchasedServers.filter(s => s.hostname !== BuiltinServers['w0r1d_d43m0n']).length === backdooredServers.length) {
       // noinspection MagicNumberJS - Five minutes
       loopDelay = 5 * 60 * 1000;
     }
@@ -353,13 +370,13 @@ export async function main(ns: NS): Promise<void> {
       });
 
     // Manage scripts on `home`
-    const home = ns.getServer('home')
+    const home = ns.getServer('home');
     if (resetScripts) {
       ns.scriptKill('/scripts/zac_hack.js', 'home');
       ns.scriptKill('/scripts/share.js', 'home');
     }
     if (targetSelf) {
-      execScript(ns, home, '/scripts/share.js')
+      execScript(ns, home, '/scripts/share.js');
     } else {
       execScript(ns, home, script, targetServer);
     }
@@ -396,7 +413,7 @@ export async function main(ns: NS): Promise<void> {
             // Leave it be, special use systems
           }
         }
-      })
+      });
 
     // We only need to kill scripts when restarting/changing target
     // Otherwise, we will interrupt HGW calls

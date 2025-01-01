@@ -12,8 +12,9 @@
  * or a new command, is open to discussion.
  */
 
-import React, {ReactNode} from "react";
-import { trimChars } from "@lib/string_util";
+import {trimChars}      from '@lib/string_util';
+import type {ReactNode} from 'react';
+import React            from 'react';
 
 // Property names are, of course, open to discussion
 // The hostname and current directory are critical to provide;
@@ -25,8 +26,6 @@ export interface PS1Data {
   cwd: string;
 }
 
-
-
 // Whether the implementation would look for `ps1`, `shellPrompt`, or another name
 // is, like much of this draft, open for discussion.
 export function ps1(data: PS1Data): string | ReactNode {
@@ -35,37 +34,36 @@ export function ps1(data: PS1Data): string | ReactNode {
   return React.createElement(PS1Element, {data: data});
 }
 
-function PS1Element({data}: {data: PS1Data}): React.ReactElement {
+function PS1Element({data}: { data: PS1Data }): React.ReactElement {
   const pathParts: string[] = trimChars(data.cwd, '/').split('/');
 
   return (
     <span>
       neo@{data.hostname}
-      <i className={'nf nf-ple-pixelated_squares_big'} />
+      <i className={'nf nf-ple-pixelated_squares_big'}/>
       {pathParts.map(part => (
-        <>{part}<i className={'nf nf-ple-honeycomb'} /></>
+        <>{part}<i className={'nf nf-ple-honeycomb'}/></>
       ))}
     </span>
-  )
+  );
 }
 
 function ps1_alternate(data: PS1Data): string {
   const pathParts = trimChars(data.cwd, '/').split('/');
 
-  const pleHoneycomb = ''
-  const plePixelatedSquaresBig = ''
+  const pleHoneycomb = '';
+  const plePixelatedSquaresBig = '';
 
   return `neo@${data.hostname}${plePixelatedSquaresBig}${pathParts.join(pleHoneycomb)}${pleHoneycomb}`;
 }
 
-
-
-export async function main(ns: NS): Promise<void> {
+export function main(ns: NS): void {
   const data: PS1Data = {
     hostname: ns.getHostname(),
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
     cwd: globalThis.Terminal.cwd() // Webpack exploit
-  }
-  // @ts-ignore Difference between the actual React type, and the NetscriptDefinitions type
+  };
+  // @ts-expect-error Difference between the actual React type, and the NetscriptDefinitions type
   ns.printRaw(ps1(data));
   ns.printRaw(ps1_alternate(data));
 }

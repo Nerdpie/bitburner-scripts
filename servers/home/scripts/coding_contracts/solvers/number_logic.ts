@@ -11,7 +11,7 @@ export function largestPrimeFactor(input: number): number {
       largestFactor = p;
       do {
         temp /= p;
-      } while ( temp % p === 0);
+      } while (temp % p === 0);
     }
   }
 
@@ -43,7 +43,7 @@ function squareRootHeronsMethod(input: bigint): bigint {
   let x = 1n;
 
   // This SHOULD provide us with bounds if the root would be a decimal value
-  while (!( x ** 2n <= input && (x + 1n) ** 2n > input)) {
+  while (!(x ** 2n <= input && (x + 1n) ** 2n > input)) {
     x = (x + (input / x)) / 2n;
     if (passes > maxPasses) {
       return -1n;
@@ -52,7 +52,7 @@ function squareRootHeronsMethod(input: bigint): bigint {
   }
 
   // If it isn't a perfect square, check which value is closer
-  if (absoluteValue(input - (x ** 2n)) > absoluteValue(input - ((x + 1n) ** 2n))){
+  if (absoluteValue(input - (x ** 2n)) > absoluteValue(input - ((x + 1n) ** 2n))) {
     x += 1n;
   }
 
@@ -60,7 +60,7 @@ function squareRootHeronsMethod(input: bigint): bigint {
 }
 
 function absoluteValue(n: bigint): bigint {
-  if (n > 0n) {return n}
+  if (n > 0n) {return n;}
 
   return 0n - n;
 }

@@ -1,4 +1,4 @@
-import {Run, setTailWindow} from "@settings"
+import {Run, setTailWindow} from '@settings';
 
 export async function main(ns: NS): Promise<void> {
   const config = Run;
@@ -8,7 +8,7 @@ export async function main(ns: NS): Promise<void> {
   const filteredFiles = ns.ls('home', '.js')
     .filter(file => !file.match(config.exclusionPattern));
 
-  const script: string = <string>await ns.prompt("Script path", {type: "select", choices: filteredFiles});
+  const script: string = <string>await ns.prompt('Script path', {type: 'select', choices: filteredFiles});
 
   if (script) {
     // Using `atExit` to work around the RAM usage of the run menu itself

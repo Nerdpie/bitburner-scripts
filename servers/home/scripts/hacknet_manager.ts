@@ -1,5 +1,5 @@
 // Derived from https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
-import {HacknetManager, setTailWindow} from "@settings"
+import {HacknetManager, setTailWindow} from '@settings';
 
 /**
  * This function automates the management of hacknet nodes in a game,
@@ -36,7 +36,7 @@ export async function main(ns: NS): Promise<void> {
 
   // Ensure we don't burn our cash before we get the dark web
   if (!ns.hasTorRouter()) {
-    ns.print('Tor router not yet purchased')
+    ns.print('Tor router not yet purchased');
 
     while (!ns.hasTorRouter()) {
       await ns.sleep(10 * 1000);
@@ -58,7 +58,7 @@ export async function main(ns: NS): Promise<void> {
         ns.hacknet.getCoreUpgradeCost(i, 1)
       ];
 
-      const new_cost: number = Math.min.apply(Math, upgrades);
+      const new_cost: number = Math.min(...upgrades);
       if (new_cost < min_cost) {
         min_cost = new_cost;
         node_index = i;
@@ -67,13 +67,13 @@ export async function main(ns: NS): Promise<void> {
     }
 
     if (MAX_PRICE <= min_cost) {
-      ns.printf("Max price (%s) exceeded: %s", ns.formatNumber(MAX_PRICE), ns.formatNumber(min_cost));
+      ns.printf('Max price (%s) exceeded: %s', ns.formatNumber(MAX_PRICE), ns.formatNumber(min_cost));
       break;
     }
 
     // Wait until there are sufficient funds for the selected upgrade.
-    while (ns.getServerMoneyAvailable("home") < min_cost * THRESHOLD) {
-      ns.printf("Node %d needs %s * %d for next upgrade.", node_index, ns.formatNumber(min_cost), THRESHOLD);
+    while (ns.getServerMoneyAvailable('home') < min_cost * THRESHOLD) {
+      ns.printf('Node %d needs %s * %d for next upgrade.', node_index, ns.formatNumber(min_cost), THRESHOLD);
       await ns.sleep(LOOP_DELAY);
     }
 
@@ -81,19 +81,19 @@ export async function main(ns: NS): Promise<void> {
     switch (upgrade_type) {
       case -1:
         ns.hacknet.purchaseNode();
-        ns.printf("Purchased a new hacknet node.");
+        ns.printf('Purchased a new hacknet node.');
         break;
       case 0:
         ns.hacknet.upgradeLevel(node_index, 1);
-        ns.printf("Upgraded node %d's level.", node_index);
+        ns.printf('Upgraded node %d\'s level.', node_index);
         break;
       case 1:
         ns.hacknet.upgradeRam(node_index, 1);
-        ns.printf("Upgraded node %d's ram.", node_index);
+        ns.printf('Upgraded node %d\'s ram.', node_index);
         break;
       case 2:
         ns.hacknet.upgradeCore(node_index, 1);
-        ns.printf("Upgraded node %d's cores.", node_index);
+        ns.printf('Upgraded node %d\'s cores.', node_index);
         break;
     }
 

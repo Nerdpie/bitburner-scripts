@@ -1,21 +1,20 @@
 /**
  * Modified from Guide posted by Zac Starfire
  * Found at https://steamcommunity.com/sharedfiles/filedetails/?id=2860828429
- * 
+ *
  * Nerdpie's tweaks:
  * Added `disableLog` block to clean up console
  * Added customized logging
  */
 
-import {AutocompleteData} from "NetscriptDefinitions";
+import {AutocompleteData} from 'NetscriptDefinitions';
 
 /** Helper function to write the money values */
-async function logMoney(ns: NS, target: string, moneyCurrent: number, moneyMax: number): Promise<void> {
+function logMoney(ns: NS, target: string, moneyCurrent: number, moneyMax: number): void {
   ns.printf('%s money: %s / %s', target, ns.formatNumber(moneyCurrent), ns.formatNumber(moneyMax));
 }
 
-
-export async function main(ns: NS):Promise<void> {
+export async function main(ns: NS): Promise<void> {
   const DISABLED_LOGS = [
     'getServerMoneyAvailable',
     'getServerMaxMoney',
@@ -39,18 +38,18 @@ export async function main(ns: NS):Promise<void> {
     securityLevelMin = ns.getServerMinSecurityLevel(target);
     securityLevelCurrent = ns.getServerSecurityLevel(target);
 
-    ns.printf("%s security: %s / %s", target, ns.formatNumber(securityLevelCurrent), ns.formatNumber(securityLevelMin));
+    ns.printf('%s security: %s / %s', target, ns.formatNumber(securityLevelCurrent), ns.formatNumber(securityLevelMin));
 
     while (securityLevelCurrent > securityLevelMin + 5) {
       await ns.weaken(target);
-      securityLevelCurrent = ns.getServerSecurityLevel(target)
+      securityLevelCurrent = ns.getServerSecurityLevel(target);
 
-      ns.printf("%s security weakened: %s / %s", target, ns.formatNumber(securityLevelCurrent), ns.formatNumber(securityLevelMin));
+      ns.printf('%s security weakened: %s / %s', target, ns.formatNumber(securityLevelCurrent), ns.formatNumber(securityLevelMin));
     }
 
     serverMoneyAvailable = ns.getServerMoneyAvailable(target);
     serverMoneyMax = ns.getServerMaxMoney(target);
-    await logMoney(ns, target, serverMoneyAvailable, serverMoneyMax);
+    logMoney(ns, target, serverMoneyAvailable, serverMoneyMax);
 
     // noinspection MagicNumberJS
     while (serverMoneyAvailable < (serverMoneyMax * 0.75)) {
@@ -58,17 +57,17 @@ export async function main(ns: NS):Promise<void> {
       serverMoneyAvailable = ns.getServerMoneyAvailable(target);
       serverMoneyMax = ns.getServerMaxMoney(target);
 
-      await logMoney(ns, target, serverMoneyAvailable, serverMoneyMax);
+      logMoney(ns, target, serverMoneyAvailable, serverMoneyMax);
     }
 
     await ns.hack(target);
-    serverMoneyAvailable = ns.getServerMoneyAvailable(target)
+    serverMoneyAvailable = ns.getServerMoneyAvailable(target);
     serverMoneyMax = ns.getServerMaxMoney(target);
 
-    await logMoney(ns, target, serverMoneyAvailable, serverMoneyMax);
+    logMoney(ns, target, serverMoneyAvailable, serverMoneyMax);
   }
 }
 
-export function autocomplete(data: AutocompleteData, _args: string[]):string[] {
+export function autocomplete(data: AutocompleteData): string[] {
   return data.servers;
 }

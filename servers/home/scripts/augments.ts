@@ -1,16 +1,17 @@
-import {exposeGameInternalObjects} from "@lib/exploits"
-import {Augments, setTailWindow} from "@settings"
-import {arrayUnique} from "@lib/array_util";
-import type {Augmentation} from "@/game_internal_types/Augmentation/Augmentation";
-import type {AugmentationName, FactionName} from "@enums";
-import type {Faction} from "@/game_internal_types/Faction/Faction";
-import type {PlayerObject} from "@/game_internal_types/PersonObjects/Player/PlayerObject";
-import {getAugRepMultiplier} from "@lib/bitnode_util";
-import {AugmentationCosts, getAugCost} from "@lib/game_internals/AugmentationHelpers"
-import {getFactionAugmentationsFiltered} from "@lib/game_internals/FactionHelpers";
+import type {Augmentation}                  from '@/game_internal_types/Augmentation/Augmentation';
+import type {Faction}                       from '@/game_internal_types/Faction/Faction';
+import type {PlayerObject}                  from '@/game_internal_types/PersonObjects/Player/PlayerObject';
+import type {AugmentationName, FactionName} from '@enums';
+import {arrayUnique}                        from '@lib/array_util';
+import {getAugRepMultiplier}                from '@lib/bitnode_util';
+import {exposeGameInternalObjects}          from '@lib/exploits';
+import type {AugmentationCosts}             from '@lib/game_internals/AugmentationHelpers';
+import {getAugCost}                         from '@lib/game_internals/AugmentationHelpers';
+import {getFactionAugmentationsFiltered}    from '@lib/game_internals/FactionHelpers';
+import {Augments, setTailWindow}            from '@settings';
 
 // Run on import, so these are visible regardless
-// Yes, this means side effects, if we have multiple instances etc,
+// Yes, this means side effects, if we have multiple instances etc.,
 // but they should all point to the same instances ANYWAY...
 if (!globalThis.Player) {
   exposeGameInternalObjects();
@@ -20,9 +21,11 @@ const factions = <Record<string, Faction>>globalThis.Factions;
 const player = <PlayerObject>globalThis.Player;
 const augs = <Record<AugmentationName, Augmentation>>globalThis.Augmentations;
 
+const NFG = <AugmentationName>'NeuroFlux Governor';
+
 const config = Augments;
 
-export async function main(ns: NS): Promise<void> {
+export function main(ns: NS): void {
   setTailWindow(ns, config);
 
   // TODO Add special-case handling of NFG; worth showing its rep & cash cost
@@ -37,6 +40,8 @@ export async function main(ns: NS): Promise<void> {
       factionRepNeeded(ns);
       break;
     default:
+      // This is a safeguard in case we add a new mode but do not properly implement it.
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       ns.print(`ERROR: Unknown augment config mode: ${config.mode}`);
   }
 }
@@ -45,7 +50,9 @@ export async function main(ns: NS): Promise<void> {
 Output functions
  */
 function factionsWithUnboughtUniques(ns: NS, includeSoA: boolean = false) {
-  ns.print("Facs w/unique augs to buy:")
+  const SOA = <FactionName>'Shadows of Anarchy';
+
+  ns.print('Facs w/unique augs to buy:');
 
   const gangAugs = getGangAugs(ns);
 
@@ -57,7 +64,7 @@ function factionsWithUnboughtUniques(ns: NS, includeSoA: boolean = false) {
     .filter(aug => aug.factions.length === 1)
     .filter(aug => !ownedAugNames.includes(aug.name))
     .filter(aug => !queuedAugNames.includes(aug.name))
-    .filter(aug => includeSoA || aug.factions[0] !== 'Shadows of Anarchy') // Ignore infiltration
+    .filter(aug => includeSoA || aug.factions[0] !== SOA) // Ignore infiltration
     .filter(aug => isEndgameFactionUnlocked(ns, aug.factions[0]));
 
   // If a gang has augs that would otherwise be uniques, focus the gang instead of the others;
@@ -77,14 +84,14 @@ function factionsWithUnboughtUniques(ns: NS, includeSoA: boolean = false) {
   const uniqueFactions = arrayUnique(augFactions).sort();
 
   if (uniqueFactions.length > 0) {
-    uniqueFactions.forEach(fac => ns.printf("%-27s - F%6s", fac, ns.formatNumber(factions[fac].favor, 1)));
+    uniqueFactions.forEach(fac => ns.printf('%-27s - F%6s', fac, ns.formatNumber(factions[fac].favor, 1)));
   } else {
-    ns.print("All bought!");
+    ns.print('All bought!');
   }
 }
 
 function showPurchasableAugs(ns: NS): void {
-  ns.print("Purchasable augs by price:")
+  ns.print('Purchasable augs by price:');
 
   const playerFacs = player.factions;
   const purchasableAugs = getPurchasableAugsWithGang(ns)
@@ -92,33 +99,33 @@ function showPurchasableAugs(ns: NS): void {
       // Only look at those where we have a faction with at least `repMargin` of the required rep
       // MEMO Leave `repNeeded` separate; otherwise, it will be recomputed for each candidate faction
       const repNeeded = aug.costs.repCost * config.repMargin;
-      return aug.factions.some(faction => repNeeded <= factions[faction].playerReputation)
+      return aug.factions.some(faction => repNeeded <= factions[faction].playerReputation);
     })
     .sort((a, b) => b.costs.moneyCost - a.costs.moneyCost);
 
   if (purchasableAugs.length === 0) {
-    ns.print("All bought!");
+    ns.print('All bought!');
     return;
   }
 
   purchasableAugs.forEach(a => {
-    ns.printf("%-25s - $%8s", truncateAugName(a.name), ns.formatNumber(a.costs.moneyCost))
-    ns.print(a.factions.filter(f => playerFacs.includes(f)).map(truncateFacName))
-  })
+    ns.printf('%-25s - $%8s', truncateAugName(a.name), ns.formatNumber(a.costs.moneyCost));
+    ns.print(a.factions.filter(f => playerFacs.includes(f)).map(truncateFacName));
+  });
 }
 
 function factionRepNeeded(ns: NS): void {
   const playerFacs = player.factions;
   const purchasableAugs = getPurchasableAugs();
 
-  ns.print("Add'l rep needed to buy augs:");
+  ns.print('Add\'l rep needed to buy augs:');
 
   if (!purchasableAugs || purchasableAugs.length === 0) {
     ns.print('All bought!');
     return;
   }
 
-  const repMultiplier = getAugRepMultiplier(ns)
+  const repMultiplier = getAugRepMultiplier(ns);
 
   function maxRepRequirementForFaction(faction: FactionName): number {
     const maxRep = purchasableAugs.filter(a => a.factions.includes(faction))
@@ -131,7 +138,7 @@ function factionRepNeeded(ns: NS): void {
 
   const facsWithAugs = playerFacs.filter(f => purchasableAugs.some(a => a.factions.includes(f)));
 
-  facsWithAugs.sort().forEach(f => ns.printf('%-16s - %6s', f, ns.formatNumber(maxRepRequirementForFaction(f), 1)))
+  facsWithAugs.sort().forEach(f => ns.printf('%-16s - %6s', f, ns.formatNumber(maxRepRequirementForFaction(f), 1)));
 }
 
 /*
@@ -141,27 +148,27 @@ Augment utility methods
 function truncateAugName(name: string): string {
   // noinspection SpellCheckingInspection
   return name
-    .replace("Embedded", "Embed")
-    .replace("Module", "Mod")
-    .replace("Artificial", "Arti")
-    .replace("Network", "Net")
-    .replace("Implant", "Impl")
-    .replace("Upgrade", "Upgd")
-    .replace("Signal", "Sig")
-    .replace("Processor", "Proc")
-    .replace("Netburner", "NB")
-    .replace("Accelerator", "Accel")
-    .replace("Cloaking", "Cloak")
-    .replace(" Gen ", " g")
-    .replace("Graphene", "Grphn")
-    .replace("Direct Memory Access", "DMA")
-    .replace("Direct", "Dir")
-    .replace("Memory", "Mem")
-    .replace("Direct-Neural", "Dir-Neur")
-    .replace("Enhanced", "Enh")
-    .replace("Modification", "Mod")
-    .replace("Interface", "Intf")
-    .replace("Optimization", "Opt")
+    .replace('Embedded', 'Embed')
+    .replace('Module', 'Mod')
+    .replace('Artificial', 'Arti')
+    .replace('Network', 'Net')
+    .replace('Implant', 'Impl')
+    .replace('Upgrade', 'Upgd')
+    .replace('Signal', 'Sig')
+    .replace('Processor', 'Proc')
+    .replace('Netburner', 'NB')
+    .replace('Accelerator', 'Accel')
+    .replace('Cloaking', 'Cloak')
+    .replace(' Gen ', ' g')
+    .replace('Graphene', 'Grphn')
+    .replace('Direct Memory Access', 'DMA')
+    .replace('Direct', 'Dir')
+    .replace('Memory', 'Mem')
+    .replace('Direct-Neural', 'Dir-Neur')
+    .replace('Enhanced', 'Enh')
+    .replace('Modification', 'Mod')
+    .replace('Interface', 'Intf')
+    .replace('Optimization', 'Opt');
 }
 
 /** @param {string} name */
@@ -188,15 +195,16 @@ function getGangAugs(ns: NS): AugmentationName[] {
   if (player.inGang()) {
     return getFactionAugmentationsFiltered(ns, player.getGangFaction());
   }
-
   return [];
 }
 
 function isEndgameFactionUnlocked(ns: NS, faction: FactionName): boolean {
-  // @ts-ignore - It's a string enum...
-  const endgameFactions: FactionName[] = ["Bladeburners", "Church of the Machine God"];
-  const MACHINE_GOD_NODE = 13
-  const BLADEBURNER_NODES = [6, 7]
+  // @ts-expect-error - It's a string enum...
+  const endgameFactions: FactionName[] = ['Bladeburners', 'Church of the Machine God'];
+  const CHURCH_MACHINE_GOD = <FactionName>'Church of the Machine God';
+  const BLADEBURNERS = <FactionName>'Bladeburners';
+  const MACHINE_GOD_NODE = 13;
+  const BLADEBURNER_NODES = [6, 7];
   if (!endgameFactions.includes(faction)) {
     return true;
   }
@@ -204,9 +212,9 @@ function isEndgameFactionUnlocked(ns: NS, faction: FactionName): boolean {
   // REFINE Check when `getResetInfo` is available
   const resetInfo = ns.getResetInfo();
   switch (faction) {
-    case "Church of the Machine God":
-      return resetInfo.ownedSF.has(MACHINE_GOD_NODE) || resetInfo.currentNode === MACHINE_GOD_NODE
-    case "Bladeburners":
+    case CHURCH_MACHINE_GOD:
+      return resetInfo.ownedSF.has(MACHINE_GOD_NODE) || resetInfo.currentNode === MACHINE_GOD_NODE;
+    case BLADEBURNERS:
       return BLADEBURNER_NODES.some(n => resetInfo.ownedSF.has(n) || resetInfo.currentNode === n);
   }
 }
@@ -219,7 +227,7 @@ function getPurchasableAugs(): Augmentation[] {
     .filter(a => a.factions.some(f => playerFacs.includes(f)))
     .filter(a => !ownedAugNames.includes(a.name))
     .filter(a => !queuedAugNames.includes(a.name))
-    .filter(a => 'NeuroFlux Governor' !== a.name)
+    .filter(a => NFG !== a.name);
 }
 
 type AugWrapper = { name: AugmentationName; factions: FactionName[]; costs: AugmentationCosts };
@@ -232,7 +240,7 @@ function getPurchasableAugsWithGang(ns: NS): AugWrapper[] {
   const filteredNames = arrayUnique(augNames).sort()
     .filter(a => !ownedAugNames.includes(a))
     .filter(a => !queuedAugNames.includes(a))
-    .filter(a => 'NeuroFlux Governor' !== a)
+    .filter(a => NFG !== a)
     .sort();
 
   const augments = filteredNames.map(name => augs[name]);
@@ -251,8 +259,8 @@ function getPurchasableAugsWithGang(ns: NS): AugWrapper[] {
       if (gangAugs.includes(w.name) && !w.factions.includes(gangFaction)) {
         w.factions.push(gangFaction);
       }
-    })
+    });
   }
 
-  return wrappers
+  return wrappers;
 }

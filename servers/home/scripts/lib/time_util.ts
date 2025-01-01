@@ -27,19 +27,6 @@ export class TimeSpan {
   private readonly minutePart: number;
   private readonly hourPart: number;
 
-  get milliseconds() {
-    return this.millisecondPart;
-  }
-  get seconds() {
-    return this.secondPart;
-  }
-  get minutes() {
-    return this.minutePart;
-  }
-  get hours() {
-    return this.hourPart;
-  }
-
   constructor(interval: Partial<Interval>) {
     // Since the Interval interface does NOT guarantee the range of values,
     // start by combining the values
@@ -70,20 +57,40 @@ export class TimeSpan {
     this.hourPart = remainder / MILLISECONDS_PER_HOUR;
   }
 
+  get milliseconds() {
+    return this.millisecondPart;
+  }
+
+  get seconds() {
+    return this.secondPart;
+  }
+
+  get minutes() {
+    return this.minutePart;
+  }
+
+  get hours() {
+    return this.hourPart;
+  }
+
   static fromMilliseconds(n: number) {
     return new TimeSpan({milliseconds: n});
   }
+
   static fromSeconds(n: number) {
     return new TimeSpan({seconds: n});
   }
+
   static fromMinutes(n: number) {
     return new TimeSpan({minutes: n});
   }
+
   static fromHours(n: number) {
     return new TimeSpan({hours: n});
   }
+
   static fromDates(laterDate: Date, earlierDate: Date) {
-    return this.fromMilliseconds(laterDate.valueOf() - earlierDate.valueOf())
+    return this.fromMilliseconds(laterDate.valueOf() - earlierDate.valueOf());
   }
 }
 
@@ -91,22 +98,21 @@ export class TimeSpan {
 //  don't have easy access to the Settings class...
 const TWO_DIGIT_FORMATTER = new Intl.NumberFormat(undefined, {minimumIntegerDigits: 2});
 // Used if we want to output the milliseconds as well
-// noinspection JSUnusedLocalSymbols
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const THREE_DIGIT_FORMATTER = new Intl.NumberFormat(undefined, {minimumIntegerDigits: 3});
 
 export function formatSeconds(interval: Partial<Interval>) {
-  const formatter = new Intl.NumberFormat()
   const timeSpan = new TimeSpan(interval);
 
   const parts: string[] = [];
   if (timeSpan.hours > 0) {
-    parts.push(`${timeSpan.hours}hr`)
+    parts.push(`${timeSpan.hours}hr`);
   }
-  if (timeSpan.minutes> 0) {
-    parts.push(`${timeSpan.minutes}min`)
+  if (timeSpan.minutes > 0) {
+    parts.push(`${timeSpan.minutes}min`);
   }
   if (timeSpan.seconds > 0) {
-    parts.push(`${timeSpan.seconds}sec`)
+    parts.push(`${timeSpan.seconds}sec`);
   }
 
   return parts.join(' ');

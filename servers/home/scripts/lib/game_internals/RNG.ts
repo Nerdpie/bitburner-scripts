@@ -1,11 +1,12 @@
 // Copied from bitburner-src/src/Casino/RNG.ts
-// noinspection DuplicatedCode - Ignoring the copy in CatLover's code,ReuseOfLocalVariableJS,MagicNumberJS,OverlyComplexArithmeticExpressionJS
+// noinspection DuplicatedCode - Ignoring the copy in CatLover's code
+// noinspection ReuseOfLocalVariableJS,MagicNumberJS,OverlyComplexArithmeticExpressionJS
 
 interface RNG {
   random(): number;
 }
 
-/*
+/**
  * very bad RNG, meant to be used as introduction to RNG manipulation. It has a
  * period of 1024.
  */
@@ -36,10 +37,11 @@ class RNG0 implements RNG {
 
 export const BadRNG: RNG0 = new RNG0();
 
-/*
+/**
  * Wichmann–Hill PRNG
  * The period is 6e12.
  */
+// noinspection SpellCheckingInspection
 export class WHRNG implements RNG {
   s1 = 0;
   s2 = 0;

@@ -12,7 +12,8 @@ This repository holds my scripts for the open-source hacking game, Bitburner.
 
 While it is encouraged to try your own scripts, if you want to use mine verbatim, follow these steps.
 
-1. Ensure that you have a new enough version of [Node.js](https://nodejs.org) installed; the template recommends at least v20.
+1. Ensure that you have a new enough version of [Node.js](https://nodejs.org) installed; the template recommends at
+   least v20.
 2. Clone this repository; how to do so depends upon your environment
 3. Open a terminal or console to the `bitburner-scripts` folder
 4. Run `npm install` to install the dependencies

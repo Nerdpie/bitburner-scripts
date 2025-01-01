@@ -1,7 +1,7 @@
-import {getAllServers} from "@lib/scan_servers";
-import {ContractWrapper} from "./contract_util";
-import {ContractDispatcher, setTailWindow} from "@settings";
-import {jsonReplacer, jsonReviver} from "@lib/insight_json";
+import {jsonReplacer, jsonReviver}         from '@lib/insight_json';
+import {getAllServers}                     from '@lib/scan_servers';
+import {ContractDispatcher, setTailWindow} from '@settings';
+import {ContractWrapper}                   from './contract_util';
 
 const LOG_FILE = '/logs/contracts.json';
 let failedEntries: ContractLogEntry[] = [];
@@ -13,7 +13,7 @@ function getAllContracts(ns: NS): ContractWrapper[] {
   servers.forEach(server => {
     ns.ls(server, '.cct').forEach((c) => {
       contracts.push(new ContractWrapper(ns, server, c));
-    })
+    });
   });
 
   return contracts;
@@ -21,21 +21,22 @@ function getAllContracts(ns: NS): ContractWrapper[] {
 
 async function attemptAndLog(ns: NS, contract: ContractWrapper) {
   // Log the time
-  ns.print(new Date().toLocaleTimeString([], {hourCycle: "h23"}));
-  ns.print(`Type: ${contract.type}`)
+  ns.print(new Date().toLocaleTimeString([], {hourCycle: 'h23'}));
+  ns.print(`Type: ${contract.type}`);
   const reward = await contract.attemptToSolve(ns);
   if (reward && reward.length > 0) {
-    ns.print(`Success - Reward: ${reward}`)
+    ns.print(`Success - Reward: ${reward}`);
   } else {
-    ns.print(`Failure - Incorrect solution`)
-    ns.alert(`Failed to solve: ${contract.type}`)
+    ns.print(`Failure - Incorrect solution`);
+    ns.alert(`Failed to solve: ${contract.type}`);
     failedEntries.push({
       Hostname: contract.host,
       ContractName: contract.filename,
       ContractType: contract.type,
       FailedTime: new Date(),
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       Data: contract.data
-    })
+    });
   }
 }
 
@@ -44,17 +45,18 @@ export async function main(ns: NS): Promise<void> {
     'scan',
     'sleep',
     'codingcontract.attempt'
-  ]
-  ns.disableLog('disableLog')
+  ];
+  ns.disableLog('disableLog');
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
   const logContents = ns.read(LOG_FILE);
   if (logContents && logContents.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     failedEntries = JSON.parse(logContents, jsonReviver);
   }
 
   setTailWindow(ns, ContractDispatcher, false);
-  ns.print(`Dispatcher started at ${new Date().toLocaleTimeString([], {hourCycle: "h23"})}`);
+  ns.print(`Dispatcher started at ${new Date().toLocaleTimeString([], {hourCycle: 'h23'})}`);
 
   // noinspection InfiniteLoopJS - Intended design
   while (true) {
@@ -100,26 +102,7 @@ interface ContractLogEntry {
   Hostname: string;
   ContractName: string;
   ContractType: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Data: any,
   FailedTime: Date,
-}
-
-
-function logEntrySerialize(entry: ContractLogEntry): string {
-  function replacer(key: string, value: any): any {
-    if (key === 'Data' && typeof value === 'bigint') {
-      return value.toString();
-    }
-    return value;
-  }
-
-  return JSON.stringify(entry, replacer);
-}
-
-function logEntryDeserialize(entry: string): ContractLogEntry {
-  function reviver(key: string, value: any): any {
-    return value;
-  }
-
-  return JSON.parse(entry, reviver)
 }

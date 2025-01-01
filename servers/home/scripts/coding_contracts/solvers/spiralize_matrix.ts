@@ -1,11 +1,11 @@
 function spiralRight(matrix: number[][], result: number[]): void {
   if (!matrix || matrix.length === 0) {
-    return
+    return;
   }
 
-  matrix[0]?.forEach(n => result.push(n))
+  matrix[0]?.forEach(n => result.push(n));
 
-  spiralDown(matrix.slice(1), result)
+  spiralDown(matrix.slice(1), result);
 }
 
 function spiralDown(matrix: number[][], result: number[]): void {
@@ -23,7 +23,7 @@ function spiralDown(matrix: number[][], result: number[]): void {
 
 function spiralLeft(matrix: number[][], result: number[]): void {
   if (!matrix || matrix.length === 0) {
-    return
+    return;
   }
 
   matrix.pop()?.reverse().forEach(n => result.push(n));
@@ -33,7 +33,7 @@ function spiralLeft(matrix: number[][], result: number[]): void {
 
 function spiralUp(matrix: number[][], result: number[]): void {
   if (!matrix || matrix.length === 0) {
-    return
+    return;
   }
 
   for (let i = matrix.length - 1; i >= 0; i--) {
@@ -43,7 +43,7 @@ function spiralUp(matrix: number[][], result: number[]): void {
     }
   }
 
-  spiralRight(matrix, result)
+  spiralRight(matrix, result);
 }
 
 /**
@@ -55,7 +55,7 @@ export function spiralizeMatrix(input: number[][]): number[] {
   }
 
   const result: number[] = [];
-  spiralRight(input, result)
+  spiralRight(input, result);
 
   return result;
 }

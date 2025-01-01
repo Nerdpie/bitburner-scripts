@@ -1,10 +1,11 @@
-import React, {ReactNode} from "react";
-import {Server} from "NetscriptDefinitions";
-import {NetTree, setTailWindow} from "@settings"
-import {ServerLink} from "@lib/ui/server_link";
+import {ServerLink}             from '@lib/ui/server_link';
+import {NetTree, setTailWindow} from '@settings';
+import type {Server}            from 'NetscriptDefinitions';
+import type {ReactNode}         from 'react';
+import React                    from 'react';
 
 /** @param {NS} ns */
-export async function main(ns: NS): Promise<void> {
+export function main(ns: NS): void {
   setTailWindow(ns, NetTree);
 
   ns.disableLog('disableLog');
@@ -23,6 +24,12 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
   const PLAYER_HACK_LEVEL = ns.getHackingLevel();
 
   class Node {
+    hostname: string;
+    children: Node[];
+    decorator: string;
+    branchDepth: number;
+    #server: Server;
+
     // I don't like this being a recursive constructor, but w/e...
     /**
      * @param {string} parent
@@ -42,45 +49,38 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
       if (this.children.length === 0) {
         this.branchDepth = 0;
       } else {
-        this.branchDepth = this.children.map(n => n.branchDepth).reduce((acc, bd) => Math.max(acc, bd)) + 1
+        this.branchDepth = this.children.map(n => n.branchDepth).reduce((acc, bd) => Math.max(acc, bd)) + 1;
       }
     }
 
-    #server: Server;
-    hostname: string;
-    children: Node[];
-    decorator: string;
-    branchDepth: number;
-
     get #canBackdoor(): boolean {
-      return this.#server.requiredHackingSkill <= PLAYER_HACK_LEVEL && !this.#server.purchasedByPlayer
+      return this.#server.requiredHackingSkill <= PLAYER_HACK_LEVEL && !this.#server.purchasedByPlayer;
     }
 
     statusDecorator(): string {
-      let decor = ''
+      let decor = '';
       if (this.#server.hasAdminRights) {
-        decor = ' (+'
+        decor = ' (+';
         // This line is a mixed bag; it's not TOO heinous, and the equivalent if-else is messy
         // noinspection NestedConditionalExpressionJS
-        decor += this.#server.backdoorInstalled ? '*' : this.#canBackdoor ? '!' : ''
-        decor += ')'
+        decor += this.#server.backdoorInstalled ? '*' : this.#canBackdoor ? '!' : '';
+        decor += ')';
       }
-      return decor
+      return decor;
     }
   }
 
   // TODO Revisit once we unlock hacknet SERVERS
-  const ignoreServer = (s: Server, d: number): boolean => {
+  function ignoreServer(s: Server, d: number): boolean {
     // noinspection OverlyComplexBooleanExpressionJS
-    return !all && s.purchasedByPlayer && s.hostname !== "home" || d > depth; /*|| (!all && s instanceof HacknetServer)*/
+    return !all && s.purchasedByPlayer && s.hostname !== 'home' || d > depth; /*|| (!all && s instanceof HacknetServer)*/
   }
 
   // MEMO Hard-coded 'home' since it was throwing errors...
   const root = new Node('home', ns.getServer('home'));
 
-
-  const printOutput = (node: Node, prefix: string[] = ["  "], last: boolean = true) => {
-    const titlePrefix = prefix.slice(0, prefix.length - 1).join("") + (last ? "┗ " : "┣ ");
+  function printOutput(node: Node, prefix: string[] = ['  '], last: boolean = true) {
+    const titlePrefix = prefix.slice(0, prefix.length - 1).join('') + (last ? '┗ ' : '┣ ');
 
     const REACT_ELEMENTS = true;
     if (REACT_ELEMENTS) {
@@ -88,11 +88,11 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
         dashes: titlePrefix,
         hostname: node.hostname,
         decorator: node.decorator
-      })
-      // @ts-ignore It is the right type, just a placeholder definition...
+      });
+      // @ts-expect-error It is the right type, just a placeholder definition...
       ns.printRaw(element);
     } else {
-      ns.print(titlePrefix + node.hostname + node.decorator + "\n");
+      ns.print(titlePrefix + node.hostname + node.decorator + '\n');
     }
 
     const server = ns.getServer(node.hostname);
@@ -104,9 +104,9 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
     node.children.sort((a, b) => a.hostname.localeCompare(b.hostname))
       .sort((a, b) => a.branchDepth - b.branchDepth)
       .forEach((n, i) =>
-        printOutput(n, [...prefix, i === node.children.length - 1 ? "  " : "┃ "], i === node.children.length - 1)
+        printOutput(n, [...prefix, i === node.children.length - 1 ? '  ' : '┃ '], i === node.children.length - 1)
       );
-  };
+  }
 
   printOutput(root);
 }

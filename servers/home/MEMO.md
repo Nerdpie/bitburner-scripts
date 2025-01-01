@@ -2,6 +2,7 @@
 Periodically run it with `git-pull.js --subfolder z_from_others/insight`
 
 Aliases for reference:
+
 ```shell
 alias s=scan-analyze
 alias c=connect

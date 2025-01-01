@@ -8,14 +8,14 @@ export function subarrayMaxSum(input: number[]): number {
 
     let curSum = input[i];
     if (maxSum < curSum) {
-      maxSum = curSum
+      maxSum = curSum;
     }
 
     for (let j = i + 1; j < input.length; j++) {
       curSum += input[j];
 
       if (maxSum < curSum) {
-        maxSum = curSum
+        maxSum = curSum;
       }
     }
   }

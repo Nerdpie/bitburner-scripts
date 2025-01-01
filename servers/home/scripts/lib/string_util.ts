@@ -8,7 +8,7 @@
  * @param str
  * @param chars
  */
-export function trimStartChars(str: string, chars: string):string {
+export function trimStartChars(str: string, chars: string): string {
   let index = 0;
   while (index < str.length && chars.includes(str.charAt(index))) {
     index++;
@@ -32,7 +32,7 @@ export function trimStartChars(str: string, chars: string):string {
  * @param str
  * @param chars
  */
-export function trimEndChars(str: string, chars: string):string {
+export function trimEndChars(str: string, chars: string): string {
   let index = str.length;
   while (index > 0 && chars.includes(str.charAt(index - 1))) {
     index--;
@@ -57,7 +57,7 @@ export function trimEndChars(str: string, chars: string):string {
  * @param chars
  * @see https://stackoverflow.com/a/77885632 for original source
  */
-export function trimChars(str: string, chars: string):string {
+export function trimChars(str: string, chars: string): string {
   let start = 0;
   let end = str.length;
 
@@ -71,7 +71,7 @@ export function trimChars(str: string, chars: string):string {
 
   // Already clean; don't bother running `substring`
   if (start === 0 && end === str.length) {
-    return str
+    return str;
   }
 
   // All characters should be trimmed
@@ -79,5 +79,5 @@ export function trimChars(str: string, chars: string):string {
     return '';
   }
 
-  return str.substring(start, end)
+  return str.substring(start, end);
 }

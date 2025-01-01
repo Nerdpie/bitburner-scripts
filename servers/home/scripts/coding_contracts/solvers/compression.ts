@@ -21,7 +21,7 @@ export function compression1(input: string): string {
     char = processing.charAt(0);
     count = 0;
     while (count < processing.length && processing.charAt(count) === char) {
-      count++
+      count++;
     }
 
     if (processing.length === count) {
@@ -29,17 +29,17 @@ export function compression1(input: string): string {
       processing = undefined;
     } else {
       // Remove the characters we just counted
-      processing = processing.substring(count)
+      processing = processing.substring(count);
     }
 
     // RLE can have run lengths of at most 9
     while (count > 9) {
       result += 9 + char;
-      count -= 9
+      count -= 9;
     }
     result += count + char;
 
-  } while (processing)
+  } while (processing);
 
   return result;
 }
@@ -92,11 +92,11 @@ export function compression2(input: string): string {
         length2--;
         copyFrom++;
       }
-      while (length2 > 0)
+      while (length2 > 0);
     }
   }
 
-  return result
+  return result;
 }
 
 // noinspection SpellCheckingInspection

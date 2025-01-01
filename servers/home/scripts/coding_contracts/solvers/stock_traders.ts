@@ -26,6 +26,11 @@ export function algoStockTrade2(input: number[]): number {
 }
 
 class StockTrade {
+  buyValue: number = 0;
+  buyIndex: number = 0;
+  sellValue: number = 0;
+  sellIndex: number = 0;
+
   constructor(buyValue: number, buyIndex: number, sellValue: number, sellIndex: number) {
     this.buyValue = buyValue;
     this.buyIndex = buyIndex;
@@ -33,17 +38,12 @@ class StockTrade {
     this.sellIndex = sellIndex;
   }
 
-  buyValue: number = 0;
-  buyIndex: number = 0;
-  sellValue: number = 0;
-  sellIndex: number = 0;
-
   get profit(): number {
-    return this.sellValue - this.buyValue
+    return this.sellValue - this.buyValue;
   }
 
   toString(): string {
-    return `[${this.buyIndex},${this.buyValue}] => [${this.sellIndex},${this.sellValue}] = ${this.profit}`
+    return `[${this.buyIndex},${this.buyValue}] => [${this.sellIndex},${this.sellValue}] = ${this.profit}`;
   }
 }
 
@@ -117,7 +117,7 @@ export function algoStockTrade4(input: [number, number[]], ns: NS): number {
         trades.push(new StockTrade(prices[i], i, prices[j], j));
       }
     }
-  })
+  });
 
   //trades.forEach(t => ns.print(t.toString()))
 
@@ -137,13 +137,13 @@ export function algoStockTrade4(input: [number, number[]], ns: NS): number {
           lastTradeValue = tempTrade.profit;
         }
 
-        tempTrade = sellAtIndex.pop()
+        tempTrade = sellAtIndex.pop();
       }
     }
 
   }
 
-  trades.forEach(t => ns.print(t.toString()))
+  trades.forEach(t => ns.print(t.toString()));
 
   // TODO Find the groups on overlapping trades
   // This will further segment the problem space
