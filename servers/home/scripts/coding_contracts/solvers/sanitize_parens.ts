@@ -131,7 +131,7 @@ function possibleLeftCombos(input: string, excessCount: number): string[] {
     }
   }
 
-  return temp.flatMap(s => possibleRightCombos(s, excessCount - 1))
+  return temp.flatMap(s => possibleLeftCombos(s, excessCount - 1));
 }
 
 // noinspection GrazieInspection - Grammar in sample description
