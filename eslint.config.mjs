@@ -5,12 +5,12 @@
 // Converted to ESLint flat config format
 
 // eslint-disable-next-line n/no-unpublished-import
-import eslint from '@eslint/js';
+import eslint              from '@eslint/js';
 // eslint-disable-next-line n/no-unpublished-import
 import eslintPluginImportX from 'eslint-plugin-import-x';
-import n from 'eslint-plugin-n';
+import n                   from 'eslint-plugin-n';
 // noinspection SpellCheckingInspection
-import tseslint from 'typescript-eslint';
+import tseslint            from 'typescript-eslint';
 
 export default tseslint.config(
   {
@@ -46,20 +46,16 @@ export default tseslint.config(
       '@typescript-eslint/no-var-requires': 'off',
       '@typescript-eslint/no-warning-comments': 'off',
       'block-scoped-var': 'error',
-      'eol-last': 'error',
       eqeqeq: 'error',
       'import-x/consistent-type-specifier-style': 'error',
       'import-x/first': 'error',
-      'import-x/order': [
+      'n/no-empty-function': 'off',
+      'n/no-extraneous-import': [
         'error',
         {
-          alphabetize: {
-            order: 'asc',
-            caseInsensitive: false,
-          },
-        },
+          'allowModules': ['NetscriptDefinitions']
+        }
       ],
-      'n/no-empty-function': 'off',
       'n/no-missing-import': 'off',
       'n/no-missing-require': 'off',
       'n/no-unsupported-features/es-syntax': 'off',
@@ -80,13 +76,6 @@ export default tseslint.config(
       'no-var': 'error',
       'prefer-arrow-callback': 'error',
       'prefer-const': 'error',
-      quotes: [
-        'warn',
-        'single',
-        {
-          avoidEscape: true,
-        },
-      ],
       'require-atomic-updates': 'off',
     },
   },
