@@ -4,6 +4,7 @@ import type {Terminal}                           from '@/game_internal_types/Ter
 import {BuiltinServers, ValidRamCapacity}        from '@lib/enum_and_limiter_definitions';
 import {exposeGameInternalObjects}               from '@lib/exploits';
 import {getAllServers}                           from '@lib/scan_servers';
+import {getTimeStamp}                            from '@lib/time_util';
 import {Deploy, ServerSelections, setTailWindow} from '@settings';
 import type {Server}                             from 'NetscriptDefinitions';
 
@@ -255,10 +256,7 @@ function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServers] {
 
   // REFINE Store a pre-computed formatter for this
   if (changedTarget) {
-    ns.printf(`[${new Date().toLocaleTimeString([], {
-      hour12: false,
-      hourCycle: 'h23'
-    })}] Now targeting: ${targetServer}`);
+    ns.printf(`[${getTimeStamp()}] Now targeting: ${targetServer}`);
   }
 
   return [changedTarget, targetServer === undefined, targetServer];
@@ -322,7 +320,7 @@ export async function main(ns: NS): Promise<void> {
     exposeGameInternalObjects();
   }
 
-  ns.printf('[%s] Starting', new Date().toLocaleTimeString([], {hour12: false, hourCycle: 'h23'}));
+  ns.printf('[%s] Starting', getTimeStamp());
 
   // noinspection InfiniteLoopJS - Intended design
   while (true) {

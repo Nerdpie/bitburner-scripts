@@ -1,10 +1,10 @@
-import type {Augmentation}   from '@/game_internal_types/Augmentation/Augmentation';
-import type {PlayerObject}   from '@/game_internal_types/PersonObjects/Player/PlayerObject';
-import type {CompanyWork}    from '@/game_internal_types/Work/CompanyWork';
-import type {FactionWork}    from '@/game_internal_types/Work/FactionWork';
-import type {Work, WorkType} from '@/game_internal_types/Work/Work';
-import type {JobName}        from '@enums';
-import {formatSecondsShort}  from '@lib/time_util';
+import type {Augmentation}                from '@/game_internal_types/Augmentation/Augmentation';
+import type {PlayerObject}                from '@/game_internal_types/PersonObjects/Player/PlayerObject';
+import type {CompanyWork}                 from '@/game_internal_types/Work/CompanyWork';
+import type {FactionWork}                 from '@/game_internal_types/Work/FactionWork';
+import type {Work, WorkType}              from '@/game_internal_types/Work/Work';
+import type {JobName}                     from '@enums';
+import {formatSecondsShort, getTimeStamp} from '@lib/time_util';
 
 export async function main(ns: NS): Promise<void> {
 
@@ -40,7 +40,7 @@ export async function main(ns: NS): Promise<void> {
       const values = [];
 
       headers.push('Time');
-      values.push(new Date().toLocaleTimeString([], {hour12: false, hourCycle: 'h23'}));
+      values.push(getTimeStamp());
 
       headers.push('SharePower');
       values.push(ns.formatNumber(ns.getSharePower()));

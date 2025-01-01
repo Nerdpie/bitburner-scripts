@@ -100,6 +100,7 @@ const TWO_DIGIT_FORMATTER = new Intl.NumberFormat(undefined, {minimumIntegerDigi
 // Used if we want to output the milliseconds as well
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const THREE_DIGIT_FORMATTER = new Intl.NumberFormat(undefined, {minimumIntegerDigits: 3});
+const TIMESTAMP_FORMATTER = new Intl.DateTimeFormat(undefined, {hourCycle: 'h23'});
 
 export function formatSeconds(interval: Partial<Interval>) {
   const timeSpan = new TimeSpan(interval);
@@ -129,4 +130,8 @@ export function formatSecondsShort(interval: Partial<Interval>) {
   parts.push(TWO_DIGIT_FORMATTER.format(timeSpan.seconds));
 
   return parts.join(':');
+}
+
+export function getTimeStamp(): string {
+  return TIMESTAMP_FORMATTER.format(new Date());
 }

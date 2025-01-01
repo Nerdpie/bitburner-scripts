@@ -1,5 +1,6 @@
 import {jsonReplacer, jsonReviver}         from '@lib/insight_json';
 import {getAllServers}                     from '@lib/scan_servers';
+import {getTimeStamp}                      from '@lib/time_util';
 import {ContractDispatcher, setTailWindow} from '@settings';
 import {ContractWrapper}                   from './contract_util';
 
@@ -21,7 +22,7 @@ function getAllContracts(ns: NS): ContractWrapper[] {
 
 async function attemptAndLog(ns: NS, contract: ContractWrapper) {
   // Log the time
-  ns.print(new Date().toLocaleTimeString([], {hourCycle: 'h23'}));
+  ns.print(getTimeStamp());
   ns.print(`Type: ${contract.type}`);
   const reward = await contract.attemptToSolve(ns);
   if (reward && reward.length > 0) {
@@ -56,7 +57,7 @@ export async function main(ns: NS): Promise<void> {
   }
 
   setTailWindow(ns, ContractDispatcher, false);
-  ns.print(`Dispatcher started at ${new Date().toLocaleTimeString([], {hourCycle: 'h23'})}`);
+  ns.print(`Dispatcher started at ${getTimeStamp()}`);
 
   // noinspection InfiniteLoopJS - Intended design
   while (true) {
