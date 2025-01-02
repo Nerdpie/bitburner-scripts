@@ -77,7 +77,7 @@ export async function main(ns: NS): Promise<void> {
         const gangInfo = ns.gang.getGangInformation();
 
         headers.push('=== Gang ===');
-        values.push(' ');
+        values.push(gangInfo.territory === 1 ? '💰#1💰' : ' ');
 
         headers.push('Respect');
         values.push(ns.formatNumber(gangInfo.respect));
@@ -88,10 +88,10 @@ export async function main(ns: NS): Promise<void> {
         headers.push('Power');
         values.push(ns.formatNumber(gangInfo.power));
 
-        headers.push('Territory');
-        values.push(ns.formatPercent(gangInfo.territory));
-
         if (gangInfo.territory < 1) {
+          headers.push('Territory');
+          values.push(ns.formatPercent(gangInfo.territory));
+
           headers.push('Clash Chance');
           values.push(ns.formatPercent(gangInfo.territoryClashChance));
         }

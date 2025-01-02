@@ -230,6 +230,7 @@ function sortBackdoorPriority(a: Server, b: Server): number {
  */
 function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServers] {
   const curHackingLevel = ns.getHackingLevel();
+  // REFINE This can cause issues if we WOULD change targets, but they haven't been backdoored yet
   // Short-circuit if our hacking level hasn't changed, and we have a target selected
   if (prevHackingLevel === curHackingLevel && prevTarget !== undefined) {
     return [false, false, prevTarget];
@@ -240,15 +241,14 @@ function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServers] {
   // At low levels, we want to hit Joe's Guns ASAP; usually level 11
   // Yes, if you try to evaluate EACH server, this may jump back down, but not with a proper list of good targets
   const targetLevel = curHackingLevel <= 30 ? curHackingLevel : Math.ceil(curHackingLevel / 2);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, targetServer] = TARGET_OPTIONS.map(n => ns.getServer(n))
+  const targetServer = TARGET_OPTIONS.map(n => ns.getServer(n))
     .filter(s => s.requiredHackingSkill <= targetLevel && s.backdoorInstalled)
-    .reduce((acc, cur) => {
+    .reduce((acc: [number, BuiltinServers], cur) => {
       if (acc[0] < cur.requiredHackingSkill) {
         return [cur.requiredHackingSkill, <BuiltinServers>cur.hostname];
       }
       return acc;
-    }, [0, <BuiltinServers>undefined]);
+    }, [0, <BuiltinServers>undefined])[1] as BuiltinServers;
 
   const changedTarget = targetServer !== prevTarget;
   prevTarget = targetServer;

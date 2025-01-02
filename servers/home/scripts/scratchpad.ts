@@ -10,10 +10,8 @@ import type {Player}               from 'NetscriptDefinitions';
 export function main(ns: NS): void {
   setTailWindow(ns, Scratchpad);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-explicit-any
-  const sprintf: (format: string, ...args: any[]) => string = globalThis.sprintf;
-
-  //ns.codingcontract.createDummyContract(CodingContractTypes["Algorithmic Stock Trader IV"])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sprintf = globalThis.sprintf as (format: string, ...args: any[]) => string;
 
   // Lame way to avoid having code purged from the scratchpad, but not executed
   const HUSH_IM_BUSY: number = -1;

@@ -5,6 +5,7 @@
 - Refine the code style (`.editorconfig`, `eslint.config.mjs`)
   - Prefer named functions over arrow functions assigned to variables
   - Prefer explicit `type` imports
+  - Migrate from Jetbrains-native inspections to ESLint (will help with suppression comment conflicts too)
 - Review the rest of the settings/definition files, e.g. `package.json`
 - Determine why some inspections get stuck so badly
 - Determine the code style, such as the order of class members (fields, constructors, etc.)
