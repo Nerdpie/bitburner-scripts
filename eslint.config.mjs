@@ -81,6 +81,16 @@ export default tseslint.config(
           property: 'only',
         },
       ],
+      'no-restricted-syntax': [
+        'error',
+        // From https://typescript-eslint.io/troubleshooting/faqs/general/#how-can-i-ban-specific-language-feature
+        // Use `#private` fields over the `private` modifier
+        // `#private` fields remain private at runtime
+        {
+          'selector': ':matches(PropertyDefinition, MethodDefinition)[accessibility="private"]',
+          'message': 'Use `#private` members instead.',
+        },
+      ],
       'no-trailing-spaces': 'error',
       'no-var': 'error',
       'prefer-arrow-callback': 'error',

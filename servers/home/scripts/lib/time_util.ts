@@ -22,10 +22,10 @@ export interface Interval {
 }
 
 export class TimeSpan {
-  private readonly millisecondPart: number;
-  private readonly secondPart: number;
-  private readonly minutePart: number;
-  private readonly hourPart: number;
+  readonly #millisecondPart: number;
+  readonly #secondPart: number;
+  readonly #minutePart: number;
+  readonly #hourPart: number;
 
   constructor(interval: Partial<Interval>) {
     // Since the Interval interface does NOT guarantee the range of values,
@@ -45,32 +45,32 @@ export class TimeSpan {
     }
 
     let remainder = totalMilliseconds;
-    this.millisecondPart = remainder % MILLISECONDS_PER_SECOND;
-    remainder -= this.millisecondPart;
+    this.#millisecondPart = remainder % MILLISECONDS_PER_SECOND;
+    remainder -= this.#millisecondPart;
 
-    this.secondPart = (remainder % MILLISECONDS_PER_MINUTE) / MILLISECONDS_PER_SECOND;
-    remainder -= this.secondPart * MILLISECONDS_PER_SECOND;
+    this.#secondPart = (remainder % MILLISECONDS_PER_MINUTE) / MILLISECONDS_PER_SECOND;
+    remainder -= this.#secondPart * MILLISECONDS_PER_SECOND;
 
-    this.minutePart = (remainder % MILLISECONDS_PER_HOUR) / MILLISECONDS_PER_MINUTE;
-    remainder -= this.minutePart * MILLISECONDS_PER_MINUTE;
+    this.#minutePart = (remainder % MILLISECONDS_PER_HOUR) / MILLISECONDS_PER_MINUTE;
+    remainder -= this.#minutePart * MILLISECONDS_PER_MINUTE;
 
-    this.hourPart = remainder / MILLISECONDS_PER_HOUR;
+    this.#hourPart = remainder / MILLISECONDS_PER_HOUR;
   }
 
   get milliseconds() {
-    return this.millisecondPart;
+    return this.#millisecondPart;
   }
 
   get seconds() {
-    return this.secondPart;
+    return this.#secondPart;
   }
 
   get minutes() {
-    return this.minutePart;
+    return this.#minutePart;
   }
 
   get hours() {
-    return this.hourPart;
+    return this.#hourPart;
   }
 
   static fromMilliseconds(n: number) {

@@ -18,11 +18,11 @@ interface DefaultScriptCtorParams {
 
 /** Holder for settings for default scripts to launch */
 class DefaultScript {
-  private readonly script: string;
-  private readonly collapse: CollapseState;
-  private readonly shouldRun: boolean;
-  private readonly threadOrOptions: number | RunOptions;
-  private readonly runArgs: string[];
+  readonly #script: string;
+  readonly #collapse: CollapseState;
+  readonly #shouldRun: boolean;
+  readonly #threadOrOptions: number | RunOptions;
+  readonly #runArgs: string[];
 
   /**
    * @param script
@@ -39,57 +39,57 @@ class DefaultScript {
                 args = [],
               }: DefaultScriptCtorParams) {
     if (script.charAt(0) === '/') {
-      this.script = script.substring(1);
+      this.#script = script.substring(1);
     } else {
-      this.script = script;
+      this.#script = script;
     }
-    this.collapse = collapse;
-    this.shouldRun = shouldRun;
-    this.threadOrOptions = threadOrOptions;
-    this.runArgs = args;
+    this.#collapse = collapse;
+    this.#shouldRun = shouldRun;
+    this.#threadOrOptions = threadOrOptions;
+    this.#runArgs = args;
   }
 
   /**
    * The `title` attribute used in tail windows
    * @private
    */
-  private get titleAttribute(): string {
+  get #titleAttribute(): string {
     // Derived from bitburner-src/src/Script/RunningScript.ts
-    if (this.runArgs.length < 1) {
-      return `${this.script} `;
+    if (this.#runArgs.length < 1) {
+      return `${this.#script} `;
     }
-    return `${this.script} ${this.runArgs.join(' ')}`;
+    return `${this.#script} ${this.#runArgs.join(' ')}`;
   }
 
   /** @param {NS} ns */
   ensureScriptRunning(ns: NS): void {
-    if (!this.shouldRun) {
-      ns.tprintf('Skipping: %s', this.script);
+    if (!this.#shouldRun) {
+      ns.tprintf('Skipping: %s', this.#script);
       return;
     }
 
     // Just eat the RAM cost; not sure what wasn't matching for `ns.ps`...
-    if (ns.isRunning(this.script, 'home', ...this.runArgs)) {
-      ns.tprintf('Already running: %s', this.script);
+    if (ns.isRunning(this.#script, 'home', ...this.#runArgs)) {
+      ns.tprintf('Already running: %s', this.#script);
 
     } else {
-      ns.tprintf('Not running: %s', this.script);
+      ns.tprintf('Not running: %s', this.#script);
 
       // Reset the existing tail windows
-      if (isTailOpen(this.titleAttribute)) {
-        closeTail(this.titleAttribute);
+      if (isTailOpen(this.#titleAttribute)) {
+        closeTail(this.#titleAttribute);
       }
 
-      ns.run(this.script, this.threadOrOptions, ...this.runArgs);
+      ns.run(this.#script, this.#threadOrOptions, ...this.#runArgs);
     }
   }
 
   async ensureTailState(ns: NS): Promise<void> {
-    if (!isTailOpen(this.titleAttribute)) {
-      if (this.collapse === CollapseState.Ignore) {
+    if (!isTailOpen(this.#titleAttribute)) {
+      if (this.#collapse === CollapseState.Ignore) {
         return;
       }
-      ns.tail(this.script, 'home', ...this.runArgs);
+      ns.tail(this.#script, 'home', ...this.#runArgs);
 
       // Ensure that the tail window has time to render before we try to act on it
       await ns.sleep(10);
@@ -97,12 +97,12 @@ class DefaultScript {
 
     // REFINE Have this also ensure the position of the tail windows
 
-    switch (this.collapse) {
+    switch (this.#collapse) {
       case CollapseState.Collapse:
-        collapseTail(this.titleAttribute);
+        collapseTail(this.#titleAttribute);
         break;
       case CollapseState.Expand:
-        expandTail(this.titleAttribute);
+        expandTail(this.#titleAttribute);
         break;
       case CollapseState.Ignore:
         break;
