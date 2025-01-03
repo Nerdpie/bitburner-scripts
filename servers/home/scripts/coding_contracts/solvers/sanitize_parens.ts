@@ -171,6 +171,9 @@ export function sanitizeParens(input: string): string[] {
   const countLeft = countCharInString(trimmed, '(');
   const countRight = countCharInString(trimmed, ')');
 
+  // FIXME Misses the case where we have an equal number of matchable parents, but not in pairs!
+  //  Sample input: "())a))))(()((())("
+  //  Resulting (invalid) output: ["()a)(()(())"]
   if (countLeft === countRight) {
     return [trimmed];
   }
