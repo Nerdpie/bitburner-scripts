@@ -51,8 +51,8 @@ export function getAugCost(ns: NS, aug: Augmentation): AugmentationCosts {
   const repMult = getAugRepMultiplier(ns);
   const costMult = getAugCostMultiplier(ns);
 
-  let moneyCost = aug.baseCost;
-  let repCost = aug.baseRepRequirement;
+  let moneyCost: number;
+  let repCost: number;
 
   const NFG = <AugmentationName>'NeuroFlux Governor';
 

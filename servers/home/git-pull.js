@@ -1,4 +1,5 @@
 /* eslint-disable */
+// @ts-nocheck
 // noinspection NonBlockStatementBodyJS,SpellCheckingInspection,JSCommentMatchesSignature,GrazieInspection,JSUnresolvedReference,EqualityComparisonWithCoercionJS
 
 let options;

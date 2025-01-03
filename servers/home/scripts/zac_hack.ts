@@ -21,7 +21,7 @@ export async function main(ns: NS): Promise<void> {
     'getServerMinSecurityLevel',
     'getServerSecurityLevel',
     'getServerMoneyAvailable',
-    'weaken'
+    'weaken',
   ];
 
   ns.disableLog('disableLog');

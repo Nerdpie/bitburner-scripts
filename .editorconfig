@@ -144,7 +144,7 @@ ij_typescript_class_decorator_wrap = split_into_lines
 ij_typescript_class_field_decorator_wrap = off
 ij_typescript_class_method_decorator_wrap = off
 ij_typescript_comma_on_new_line = false
-ij_typescript_enforce_trailing_comma = keep
+ij_typescript_enforce_trailing_comma = whenmultiline
 ij_typescript_field_prefix = _
 ij_typescript_file_name_style = relaxed
 ij_typescript_force_semicolon_style = true
@@ -215,7 +215,7 @@ ij_javascript_class_decorator_wrap = split_into_lines
 ij_javascript_class_field_decorator_wrap = off
 ij_javascript_class_method_decorator_wrap = off
 ij_javascript_comma_on_new_line = false
-ij_javascript_enforce_trailing_comma = keep
+ij_javascript_enforce_trailing_comma = whenmultiline
 ij_javascript_field_prefix = _
 ij_javascript_file_name_style = relaxed
 ij_javascript_force_quote_style = true
@@ -270,7 +270,7 @@ ij_javascript_use_semicolon_after_statement = true
 ij_javascript_var_declaration_wrap = normal
 
 [{*.har,*.jsb2,*.jsb3,*.json,*.jsonc,*.postman_collection,*.postman_environment,.babelrc,.eslintrc,.prettierrc,.stylelintrc,.ws-context,jest.config,mcmod.info,pack.mcmeta}]
-ij_json_array_wrapping = split_into_lines
+ij_json_array_wrapping = on_every_item
 ij_json_keep_blank_lines_in_code = 0
 ij_json_keep_indents_on_empty_lines = false
 ij_json_keep_line_breaks = true

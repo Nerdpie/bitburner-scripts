@@ -56,115 +56,115 @@ export interface SolverInfo {
 export const ContractSolvers: Record<CodingContractTypes, Required<SolverInfo>> = {
   'Algorithmic Stock Trader I': {
     function: algoStockTrade1,
-    finished: true
+    finished: true,
   },
   'Algorithmic Stock Trader II': {
     function: algoStockTrade2,
-    finished: true
+    finished: true,
   },
   'Algorithmic Stock Trader III': {
     function: algoStockTrade3,
-    finished: false
+    finished: false,
   },
   'Algorithmic Stock Trader IV': {
     function: algoStockTrade4,
-    finished: false
+    finished: false,
   },
   'Array Jumping Game II': {
     function: arrayJumpingGame2,
-    finished: false
+    finished: false,
   },
   'Array Jumping Game': {
     function: arrayJumpingGame,
-    finished: false
+    finished: false,
   },
   'Compression I: RLE Compression': {
     function: compression1,
-    finished: true
+    finished: true,
   },
   'Compression II: LZ Decompression': {
     function: compression2,
-    finished: true
+    finished: true,
   },
   'Compression III: LZ Compression': {
     function: compression3,
-    finished: false
+    finished: false,
   },
   'Encryption I: Caesar Cipher': {
     function: encryption1,
-    finished: true
+    finished: true,
   },
   'Encryption II: Vigenère Cipher': {
     function: encryption2,
-    finished: true
+    finished: true,
   },
   'Find All Valid Math Expressions': {
     function: findValidMathExpression,
-    finished: false
+    finished: false,
   },
   'Find Largest Prime Factor': {
     function: largestPrimeFactor,
-    finished: true
+    finished: true,
   },
   'Generate IP Addresses': {
     function: generateIPAddresses,
-    finished: false
+    finished: false,
   },
   'HammingCodes: Encoded Binary to Integer': {
     function: decodeHammingBinary,
-    finished: false
+    finished: false,
   },
   'HammingCodes: Integer to Encoded Binary': {
     function: encodeIntegerHamming,
-    finished: false
+    finished: false,
   },
   'Merge Overlapping Intervals': {
     function: mergeOverlappingPairs,
-    finished: true
+    finished: true,
   },
   'Minimum Path Sum in a Triangle': {
     function: minPathSumInTriangle,
-    finished: true
+    finished: true,
   },
   'Proper 2-Coloring of a Graph': {
     function: twoColorGraph,
-    finished: true
+    finished: true,
   },
   'Sanitize Parentheses in Expression': {
     function: sanitizeParens,
-    finished: true
+    finished: true,
   },
   'Shortest Path in a Grid': {
     function: shortestPath,
-    finished: true
+    finished: true,
   },
   'Spiralize Matrix': {
     function: spiralizeMatrix,
-    finished: true
+    finished: true,
   },
   'Square Root': {
     function: bigIntSquareRoot,
-    finished: true
+    finished: true,
   },
   'Subarray with Maximum Sum': {
     function: subarrayMaxSum,
-    finished: true
+    finished: true,
   },
   'Total Ways to Sum II': {
     function: waysToSum2,
-    finished: false
+    finished: false,
   },
   'Total Ways to Sum': {
     function: waysToSum1,
-    finished: false
+    finished: false,
   },
   'Unique Paths in a Grid I': {
     function: uniquePaths1,
-    finished: true
+    finished: true,
   },
   'Unique Paths in a Grid II': {
     function: uniquePaths2,
-    finished: true
+    finished: true,
   },
 };
 

@@ -12,6 +12,9 @@ export function mergeOverlappingPairs(input: [number, number][]): [number, numbe
   const merged: [number, number][] = [];
 
   let temp = sorted.pop();
+  if (!temp) {
+    return [];
+  }
   let lower = temp[0];
   let upper = temp[1];
 

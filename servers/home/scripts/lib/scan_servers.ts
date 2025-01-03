@@ -12,6 +12,10 @@ export function getAllServers(ns: NS): string[] {
 
   while (stack.length > 0) {
     const CURRENT = stack.pop();
+    if (!CURRENT) {
+      throw new Error('`pop` returned an undefined value for a non-empty stack!');
+    }
+
     if (!servers.includes(CURRENT)) {
       servers.push(CURRENT);
       stack.push(...ns.scan(CURRENT).filter(next => !servers.includes(next)));

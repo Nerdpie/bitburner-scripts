@@ -10,7 +10,7 @@ import type {Server}                             from 'NetscriptDefinitions';
 
 const config = Deploy;
 let prevHackingLevel = 0;
-let prevTarget: BuiltinServers = undefined;
+let prevTarget: BuiltinServers | undefined = undefined;
 
 function getAvailableTools(ns: NS): ((host: string) => void)[] {
   const PROGRAMS: ({ file: string; action: (host: string) => void })[] = [
@@ -23,7 +23,7 @@ function getAvailableTools(ns: NS): ((host: string) => void)[] {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     {file: 'HTTPWorm.exe', action: ns.httpworm},
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    {file: 'SQLInject.exe', action: ns.sqlinject}
+    {file: 'SQLInject.exe', action: ns.sqlinject},
   ];
 
   const availableTools: ((host: string) => void)[] = [];
@@ -50,6 +50,9 @@ function pwnServer(ns: NS, target: Server, tools: ((host: string) => void)[]) {
     openPorts++;
   });
 
+  if (!target.numOpenPortsRequired) {
+    throw new Error(`numOpenPortsRequired not defined on ${target.hostname}`);
+  }
   if (target.numOpenPortsRequired <= openPorts) {
     ns.nuke(target.hostname);
     //ns.printf('Target pwned: %s', target.hostname);
@@ -66,6 +69,10 @@ function pwnServer(ns: NS, target: Server, tools: ((host: string) => void)[]) {
  * @param {Server} server
  */
 function tryBackdoor(ns: NS, server: Server) {
+  if (!server.requiredHackingSkill) {
+    throw new Error(`Server with no specified hacking level: ${server.hostname}`);
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
   if (!config.hackTheWorld && server.hostname === BuiltinServers['w0r1d_d43m0n']) {
     if (server.requiredHackingSkill <= ns.getHackingLevel()) {
@@ -78,8 +85,7 @@ function tryBackdoor(ns: NS, server: Server) {
     && !server.purchasedByPlayer
     && server.requiredHackingSkill <= ns.getHackingLevel()) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const terminal: Terminal = globalThis.Terminal;
+      const terminal = globalThis.Terminal as Terminal;
       // Make sure the Terminal isn't busy with another action
       if (terminal.action === null) {
         terminal.connectToServer(server.hostname);
@@ -140,7 +146,7 @@ function buildCluster(ns: NS) {
 function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number): boolean {
   const PRICE = ns.getPurchasedServerCost(ramCapacity);
   for (let i = 0; i < count; i++) {
-    const serverName = prefix + i;
+    const serverName = prefix + i.toString();
     if (ns.serverExists(serverName)) {
       // Check if the server's RAM is at the current target
       if (ns.getServerMaxRam(serverName) < ramCapacity) {
@@ -179,8 +185,8 @@ function computeBackdoorScore(s: Server): number {
 
   // We only actually care about the first one to set the magnitude
   // While it doesn't HAVE to be an else-if tree, no need for the other comparison to run every loop...
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-  if (config.targetServer === name) {
+  // noinspection IfStatementWithTooManyBranchesJS
+  if (config.targetServer === name as BuiltinServers) {
     // MEMO Leaving the `targetServer` check for completeness, even though it isn't strictly needed
     //  Still going to check in the outer function to reduce overhead where practical.
     //  Yay, premature micro-optimizations!
@@ -211,12 +217,10 @@ function computeBackdoorScore(s: Server): number {
 
 function sortBackdoorPriority(a: Server, b: Server): number {
   // Make sure we hit our target server FIRST
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-  if (Deploy.targetServer === a.hostname) {
+  if (Deploy.targetServer === a.hostname as BuiltinServers) {
     return -1;
   }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-  if (Deploy.targetServer === b.hostname) {
+  if (Deploy.targetServer === b.hostname as BuiltinServers) {
     return 1;
   }
 
@@ -228,7 +232,7 @@ function sortBackdoorPriority(a: Server, b: Server): number {
  * @param ns
  * @return Tuple containing whether to reset scripts, whether to target self, and the target server
  */
-function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServers] {
+function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServers | undefined] {
   const curHackingLevel = ns.getHackingLevel();
   // REFINE This can cause issues if we WOULD change targets, but they haven't been backdoored yet
   // Short-circuit if our hacking level hasn't changed, and we have a target selected
@@ -242,13 +246,15 @@ function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServers] {
   // Yes, if you try to evaluate EACH server, this may jump back down, but not with a proper list of good targets
   const targetLevel = curHackingLevel <= 30 ? curHackingLevel : Math.ceil(curHackingLevel / 2);
   const targetServer = TARGET_OPTIONS.map(n => ns.getServer(n))
+    // @ts-expect-error Provided no mistakes in the config, all servers WILL have a `requiredHackingSkill`
     .filter(s => s.requiredHackingSkill <= targetLevel && s.backdoorInstalled)
     .reduce((acc: [number, BuiltinServers], cur) => {
+      // @ts-expect-error Provided no mistakes in the config, all servers WILL have a `requiredHackingSkill`
       if (acc[0] < cur.requiredHackingSkill) {
         return [cur.requiredHackingSkill, <BuiltinServers>cur.hostname];
       }
       return acc;
-    }, [0, <BuiltinServers>undefined])[1] as BuiltinServers;
+    }, [0, <BuiltinServers | undefined>undefined])[1] as BuiltinServers | undefined;
 
   const changedTarget = targetServer !== prevTarget;
   prevTarget = targetServer;
@@ -256,6 +262,7 @@ function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServers] {
 
   // REFINE Store a pre-computed formatter for this
   if (changedTarget) {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     ns.printf(`[${getTimeStamp()}] Now targeting: ${targetServer}`);
   }
 
@@ -285,7 +292,7 @@ export async function main(ns: NS): Promise<void> {
   //  Do most of the others need to be pulled from the config, or just computed?
   let targetSelf = config.targetSelf;
   // noinspection ES6ConvertLetToConst - Need to rework this to be dynamic ANYWAY...
-  let targetServer = config.targetServer;
+  let targetServer: BuiltinServers | undefined = config.targetServer;
   let resetScripts = config.resetScripts;
   let loopDelay = config.loopDelay;
 
@@ -308,7 +315,7 @@ export async function main(ns: NS): Promise<void> {
     '/scripts/zac_hack.js',
     '/scripts/weaken.js',
     '/scripts/grow.js',
-    '/scripts/share.js'
+    '/scripts/share.js',
   ];
 
   if (!config.dynamicTarget && !targetSelf && !ns.getServer(targetServer).backdoorInstalled) {
@@ -333,6 +340,10 @@ export async function main(ns: NS): Promise<void> {
       [resetScripts, targetSelf, targetServer] = getDynamicTarget(ns);
     }
 
+    if (!targetSelf && targetServer === undefined) {
+      throw new Error('Trying to target an undefined server!');
+    }
+
     const serverList = getAllServers(ns)
       .map(s => ns.getServer(s));
 
@@ -345,8 +356,7 @@ export async function main(ns: NS): Promise<void> {
     // REFINE Ideally, this would increase the delay sooner, and more gradually, but late into a run,
     //  high hacking stats can make backdoor installs FAST... and a proper batcher removes half of the need
     // If we've backdoored all servers (ignoring w0r1d_d43m0n), increase the loop delay
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-    if (nonPurchasedServers.filter(s => s.hostname !== BuiltinServers['w0r1d_d43m0n']).length === backdooredServers.length) {
+    if (nonPurchasedServers.filter(s => s.hostname as BuiltinServers !== BuiltinServers['w0r1d_d43m0n']).length === backdooredServers.length) {
       // noinspection MagicNumberJS - Five minutes
       loopDelay = 5 * 60 * 1000;
     }

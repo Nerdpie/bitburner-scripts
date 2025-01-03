@@ -29,19 +29,19 @@ export function findValidMathExpression(input: [string, number], ns: NS): string
  Input: digits = "105", target = 5
  Output: ["1*0+5", "10-5"]
    */
-const digits: string = <string>input[0];
-const target: number = <number>input[1];
+  const digits: string = input[0];
+  const target: number = input[1];
 
-/*
-Naive implementation:
+  /*
+  Naive implementation:
 
-Split `digits` into the individual characters
-Take the first character
-Build all possible permutations of another character (unless current is '0'!) or operator
-Evaluate the resulting expressions to see if they equal `target`
- */
+  Split `digits` into the individual characters
+  Take the first character
+  Build all possible permutations of another character (unless current is '0'!) or operator
+  Evaluate the resulting expressions to see if they equal `target`
+   */
 
-  return []
+  return [];
 }
 
 

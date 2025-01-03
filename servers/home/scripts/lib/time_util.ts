@@ -104,7 +104,7 @@ const TIMESTAMP_FORMATTER = new Intl.DateTimeFormat(undefined, {
   hour: '2-digit',
   minute: '2-digit',
   second: '2-digit',
-  hourCycle: 'h23'
+  hourCycle: 'h23',
 });
 
 export function formatSeconds(interval: Partial<Interval>) {
@@ -112,13 +112,13 @@ export function formatSeconds(interval: Partial<Interval>) {
 
   const parts: string[] = [];
   if (timeSpan.hours > 0) {
-    parts.push(`${timeSpan.hours}hr`);
+    parts.push(`${timeSpan.hours.toString()}hr`);
   }
   if (timeSpan.minutes > 0) {
-    parts.push(`${timeSpan.minutes}min`);
+    parts.push(`${timeSpan.minutes.toString()}min`);
   }
   if (timeSpan.seconds > 0) {
-    parts.push(`${timeSpan.seconds}sec`);
+    parts.push(`${timeSpan.seconds.toString()}sec`);
   }
 
   return parts.join(' ');

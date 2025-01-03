@@ -36,7 +36,7 @@ class DefaultScript {
                 collapse = CollapseState.Ignore,
                 shouldRun = true,
                 threadOrOptions = 1,
-                args = []
+                args = [],
               }: DefaultScriptCtorParams) {
     if (script.charAt(0) === '/') {
       this.script = script.substring(1);
@@ -55,10 +55,10 @@ class DefaultScript {
    */
   private get titleAttribute(): string {
     // Derived from bitburner-src/src/Script/RunningScript.ts
-    if (!this.runArgs || this.runArgs.length < 1) {
+    if (this.runArgs.length < 1) {
       return `${this.script} `;
     }
-    return `${this.script} ${this.runArgs?.join(' ')}`;
+    return `${this.script} ${this.runArgs.join(' ')}`;
   }
 
   /** @param {NS} ns */
@@ -138,7 +138,7 @@ function setCustomStyle() {
 }
 
 const FLAG_SCHEMA: FlagSchemaType = [
-  ['killall-scripts', false]
+  ['killall-scripts', false],
 ];
 
 export async function main(ns: NS): Promise<void> {

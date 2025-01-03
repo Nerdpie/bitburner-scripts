@@ -2,7 +2,11 @@ import type {Terminal}             from '@/game_internal_types/Terminal/Terminal
 import React                       from 'react';
 import {exposeGameInternalObjects} from '../exploits';
 
-export function ServerLink({dashes = '', hostname, decorator = ''}): React.ReactElement {
+export function ServerLink({dashes = '', hostname, decorator = ''}: {
+  dashes?: string | undefined,
+  hostname: string,
+  decorator?: string | undefined
+}): React.ReactElement {
   if (!globalThis.Terminal) {
     exposeGameInternalObjects();
   }
@@ -15,7 +19,6 @@ export function ServerLink({dashes = '', hostname, decorator = ''}): React.React
   return (
     <div className="MuiTypography-root MuiTypography-body1">
       {dashes}
-      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-argument */}
       <a onClick={() => terminal.connectToServer(hostname)}
          className="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways"
       >{hostname}</a>

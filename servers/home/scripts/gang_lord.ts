@@ -7,7 +7,7 @@ import {ascendMembers}                                   from './gangs/ascension
 import * as GEnums                                       from './gangs/gang_enums';
 
 const config = GangLord;
-let previousOtherGangInfo: GangOtherInfo;
+let previousOtherGangInfo: GangOtherInfo | undefined;
 let tickToNextTerritoryUpdate: number;
 
 if (!globalThis.Factions) {
@@ -72,7 +72,7 @@ function syncTerritoryCycle(ns: NS) {
   }
 }
 
-function isOtherGangInfoEqual(previous: GangOtherInfo, current: GangOtherInfo): boolean {
+function isOtherGangInfoEqual(previous: GangOtherInfo | undefined, current: GangOtherInfo): boolean {
   if (!previous) {
     return false;
   }
@@ -237,7 +237,7 @@ function isClashPossible(gangInfo: GangGenInfo): boolean {
 
 function mortalCombat(ns: NS) {
   const gangInfo = ns.gang.getGangInformation();
-  const otherGangs: GangOtherInfo = previousOtherGangInfo;
+  const otherGangs: GangOtherInfo | undefined = previousOtherGangInfo;
 
   // If we have all territory, no point for further clashes to process
   if (gangInfo.territory === 1) {
@@ -246,6 +246,10 @@ function mortalCombat(ns: NS) {
       ns.print('Victory is ours!');
     }
     return;
+  }
+
+  if (!otherGangs) {
+    throw new Error('Other gang info not retrieved before calling `mortalCombat`!');
   }
 
   let chanceTemp = 0.0;

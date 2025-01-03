@@ -36,7 +36,7 @@ async function attemptAndLog(ns: NS, contract: ContractWrapper) {
       ContractType: contract.type,
       FailedTime: new Date(),
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      Data: contract.data
+      Data: contract.data,
     });
   }
 }
@@ -45,7 +45,7 @@ export async function main(ns: NS): Promise<void> {
   const DISABLED_LOGS = [
     'scan',
     'sleep',
-    'codingcontract.attempt'
+    'codingcontract.attempt',
   ];
   ns.disableLog('disableLog');
   DISABLED_LOGS.forEach(log => ns.disableLog(log));

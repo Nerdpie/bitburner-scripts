@@ -14,7 +14,7 @@ import {HacknetManager, setTailWindow} from '@settings';
 export async function main(ns: NS): Promise<void> {
   // Log settings: Disable verbose logging for the specified function.
   const DISABLED_LOGS = ['getServerMoneyAvailable', 'sleep'];
-  DISABLED_LOGS.forEach(log => ns.disableLog(log));
+  DISABLED_LOGS.forEach(log => { ns.disableLog(log); });
 
   const config = HacknetManager;
   setTailWindow(ns, config);
@@ -55,7 +55,7 @@ export async function main(ns: NS): Promise<void> {
       const upgrades: number[] = [
         ns.hacknet.getLevelUpgradeCost(i, 1),
         ns.hacknet.getRamUpgradeCost(i, 1),
-        ns.hacknet.getCoreUpgradeCost(i, 1)
+        ns.hacknet.getCoreUpgradeCost(i, 1),
       ];
 
       const new_cost: number = Math.min(...upgrades);

@@ -1,5 +1,5 @@
 function spiralRight(matrix: number[][], result: number[]): void {
-  if (!matrix || matrix.length === 0) {
+  if (matrix.length === 0) {
     return;
   }
 
@@ -9,7 +9,7 @@ function spiralRight(matrix: number[][], result: number[]): void {
 }
 
 function spiralDown(matrix: number[][], result: number[]): void {
-  if (!matrix || matrix.length === 0) {
+  if (matrix.length === 0) {
     return;
   }
   for (let i = 0; i < matrix.length; i++) {
@@ -22,7 +22,7 @@ function spiralDown(matrix: number[][], result: number[]): void {
 }
 
 function spiralLeft(matrix: number[][], result: number[]): void {
-  if (!matrix || matrix.length === 0) {
+  if (matrix.length === 0) {
     return;
   }
 
@@ -32,7 +32,7 @@ function spiralLeft(matrix: number[][], result: number[]): void {
 }
 
 function spiralUp(matrix: number[][], result: number[]): void {
-  if (!matrix || matrix.length === 0) {
+  if (matrix.length === 0) {
     return;
   }
 

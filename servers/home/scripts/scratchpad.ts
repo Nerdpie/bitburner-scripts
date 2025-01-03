@@ -56,12 +56,10 @@ export function main(ns: NS): void {
     const doc = globalThis['document'];
     // TODO Either unlock Singularity, or implement this to auto-buy the Tor router
     // Find one of the 'technology' locations
-    // @ts-expect-error - `innerText` certainly appears to be valid...
-    const techStores = Array.from(doc.querySelectorAll(`span[class$='location']`)).filter(n => n.ariaLabel !== 'Travel Agency' && n.innerText === 'T');
+    const techStores = Array.from(doc.querySelectorAll<HTMLSpanElement>(`span[class$='location']`))
+      .filter(n => n.ariaLabel !== 'Travel Agency' && n.innerText === 'T');
 
-    if (techStores && techStores.length > 0) {
-      // @ts-expect-error - Again, that IS a valid method...
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    if (techStores.length > 0) {
       techStores[0].click();
     }
   }

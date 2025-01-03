@@ -17,9 +17,7 @@ export default tseslint.config(
     ignores: ['**/build/**', '**/dist/**', '**/node_modules/**', 'game_internal_types/**'],
   },
   eslint.configs.recommended,
-  tseslint.configs.recommended,
-  tseslint.configs.recommendedTypeChecked,
-  tseslint.configs.strict,
+  tseslint.configs.strictTypeChecked,
   n.configs['flat/recommended'],
   {
     plugins: {
@@ -39,9 +37,20 @@ export default tseslint.config(
       '@typescript-eslint/camelcase': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/no-confusing-void-expression': [
+        'error',
+        // I would prefer that it not exempt all arrow shorthand,
+        // only that in a context that doesn't expect a return,
+        // such as a forEach call...
+        {'ignoreArrowShorthand': true},
+      ],
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/no-unnecessary-condition': [
+        'error',
+        {'allowConstantLoopConditions': true},
+      ],
       '@typescript-eslint/no-use-before-define': 'off',
       '@typescript-eslint/no-var-requires': 'off',
       '@typescript-eslint/no-warning-comments': 'off',
@@ -53,8 +62,8 @@ export default tseslint.config(
       'n/no-extraneous-import': [
         'error',
         {
-          'allowModules': ['NetscriptDefinitions']
-        }
+          'allowModules': ['NetscriptDefinitions'],
+        },
       ],
       'n/no-missing-import': 'off',
       'n/no-missing-require': 'off',
@@ -83,5 +92,5 @@ export default tseslint.config(
     // disable type-aware linting on JS files
     files: ['**/*.js'],
     extends: [tseslint.configs.disableTypeChecked],
-  }
+  },
 );

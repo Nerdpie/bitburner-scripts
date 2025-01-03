@@ -39,7 +39,7 @@ class Vertex {
   }
 }
 
-export function twoColorGraph(input: [number, [[number, number]]]): number[] {
+export function twoColorGraph(input: [number, [[number, number]]]): (number | null)[] {
   /* Sample description:
   You are given the following data, representing a graph:
  [10,[[0,8],[0,6],[1,6],[4,9],[0,3],[1,8],[4,5],[0,2]]]
@@ -79,14 +79,14 @@ export function twoColorGraph(input: [number, [[number, number]]]): number[] {
 
   // Populate the list of neighbors
   edges.forEach(edge => {
-    const vertA = vertices.get(edge[0]);
-    const vertB = vertices.get(edge[1]);
+    const vertA = vertices.get(edge[0]) as Vertex;
+    const vertB = vertices.get(edge[1]) as Vertex;
     vertA.neighbors.add(vertB);
     vertB.neighbors.add(vertA);
   });
 
   // Our result will need to have a space for each POSSIBLE vertex
-  const result: number[] = Array<number>(numVertices).fill(null);
+  const result: (number | null)[] = Array<number | null>(numVertices).fill(null);
 
   // REFINE Adjust this to NOT rely on exceptions for code flow...
   try {
@@ -99,7 +99,8 @@ export function twoColorGraph(input: [number, [[number, number]]]): number[] {
       }
     });
   } catch (error) {
-    console.log('Two Color Graph error: ' + error);
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    console.log(`Two Color Graph error: ${error}`);
     return [];
   }
 

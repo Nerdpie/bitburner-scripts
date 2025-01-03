@@ -12,7 +12,7 @@ export async function main(ns: NS): Promise<void> {
   const DISABLED_LOGS = [
     'sleep',
     'go.makeMove',
-    'go.passTurn'
+    'go.passTurn',
   ];
   ns.disableLog('disableLog');
   DISABLED_LOGS.forEach(l => ns.disableLog(l));
@@ -20,9 +20,7 @@ export async function main(ns: NS): Promise<void> {
   /** Delay before processing the next move, in milliseconds */
   const LOOP_DELAY = config.loopDelay || 200;
 
-  let result: { type: 'move' | 'pass' | 'gameOver'; x: number; y: number; };
-  let x: number;
-  let y: number;
+  let result: { type: 'move' | 'pass' | 'gameOver'; x: number | null; y: number | null; };
 
   if (ns.go.getCurrentPlayer() === 'White') {
     await ns.go.opponentNextTurn(false);
@@ -31,7 +29,7 @@ export async function main(ns: NS): Promise<void> {
   // Have to fetch again, to determine if we need a new board
   if (ns.go.getCurrentPlayer() === 'None') {
     if (config.keepPlaying) {
-      ns.go.resetBoardState(<GoOpponent>config.faction, config.boardSize);
+      ns.go.resetBoardState(config.faction as GoOpponent, config.boardSize);
     } else {
       ns.print('Game needs reset');
     }
@@ -45,16 +43,12 @@ export async function main(ns: NS): Promise<void> {
       const [randX, randY] = getRandomMove(board, validMoves);
       // TODO: more move options
 
-      // Choose a move from our options (currently just "random move")
-      x = randX;
-      y = randY;
-
-      if (x === undefined) {
+      if (randX === undefined || randY === undefined) {
         // Pass turn if no moves are found
         result = await ns.go.passTurn();
       } else {
         // Play the selected move
-        result = await ns.go.makeMove(x, y);
+        result = await ns.go.makeMove(randX, randY);
       }
 
       // TODO How does the return from this compare to those above?
@@ -64,7 +58,7 @@ export async function main(ns: NS): Promise<void> {
       await ns.sleep(LOOP_DELAY);
 
       // Keep looping as long as the opponent is playing moves
-    } while (result?.type !== 'gameOver');
+    } while (result.type !== 'gameOver');
 
     ns.go.resetBoardState(<GoOpponent>config.faction, config.boardSize);
   } while (config.keepPlaying);
@@ -74,7 +68,7 @@ export async function main(ns: NS): Promise<void> {
 /**
  * Choose one of the empty points on the board at random to play
  */
-function getRandomMove(board: string[], validMoves: boolean[][]) {
+function getRandomMove(board: string[], validMoves: boolean[][]): [number, number] | [] {
   const moveOptions: [number, number][] = [];
   const size = board[0].length;
 
@@ -82,7 +76,7 @@ function getRandomMove(board: string[], validMoves: boolean[][]) {
   for (let x = 0; x < size; x++) {
     for (let y = 0; y < size; y++) {
       // Make sure the point is a valid move
-      const isValidMove = validMoves[x][y] === true;
+      const isValidMove = validMoves[x][y];
       // Leave some spaces to make it harder to capture our pieces.
       // We don't want to run out of empty node connections!
       const isNotReservedSpace = x % 2 === 1 || y % 2 === 1;

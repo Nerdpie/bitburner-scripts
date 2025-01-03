@@ -107,7 +107,7 @@ function findPath(grid: ZeroOrOne[][], visited: boolean[][], row: number, col: n
     U: findPath(grid, newVisited, row - 1, col, invalidPathLength),
     D: findPath(grid, newVisited, row + 1, col, invalidPathLength),
     L: findPath(grid, newVisited, row, col - 1, invalidPathLength),
-    R: findPath(grid, newVisited, row, col + 1, invalidPathLength)
+    R: findPath(grid, newVisited, row, col + 1, invalidPathLength),
   };
 
   let shortestPath: [string, number] = ['', invalidPathLength];

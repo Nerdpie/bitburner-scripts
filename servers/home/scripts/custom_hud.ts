@@ -2,14 +2,14 @@ import type {Augmentation}                from '@/game_internal_types/Augmentati
 import type {PlayerObject}                from '@/game_internal_types/PersonObjects/Player/PlayerObject';
 import type {CompanyWork}                 from '@/game_internal_types/Work/CompanyWork';
 import type {FactionWork}                 from '@/game_internal_types/Work/FactionWork';
-import type {Work, WorkType}              from '@/game_internal_types/Work/Work';
+import type {WorkType}                    from '@/game_internal_types/Work/Work';
 import type {JobName}                     from '@enums';
 import {formatSecondsShort, getTimeStamp} from '@lib/time_util';
 
 export async function main(ns: NS): Promise<void> {
 
   const DISABLED_LOGS = [
-    'sleep'
+    'sleep',
   ];
   ns.disableLog('disableLog');
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
@@ -36,8 +36,10 @@ export async function main(ns: NS): Promise<void> {
   // noinspection InfiniteLoopJS - Intended design for this script
   while (true) {
     try {
-      const headers = [];
-      const values = [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const headers: any[] = [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const values: any[] = [];
 
       headers.push('Time');
       values.push(getTimeStamp());
@@ -54,8 +56,8 @@ export async function main(ns: NS): Promise<void> {
         values.push(ns.getPlayer().numPeopleKilled);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
-      const currentWork: Work = globalThis.Player?.currentWork;
+      const player = globalThis.Player as PlayerObject | null;
+      const currentWork = player?.currentWork;
       if (currentWork) {
         const FACTION = <WorkType>'FACTION';
         const COMPANY = <WorkType>'COMPANY';

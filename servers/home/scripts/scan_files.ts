@@ -8,19 +8,19 @@ import type {AutocompleteData} from 'NetscriptDefinitions';
 
 function isIgnored(file: string) {
   const IGNORE_PATTERNS = [
-    'scripts/'
+    'scripts/',
   ];
   return IGNORE_PATTERNS.some(pat => file.match(pat));
 }
 
 const FLAGS_SCHEMA: FlagSchemaType = [
   ['includeHome', false],
-  ['scrape', false]
+  ['scrape', false],
 ];
 
 export function main(ns: NS) {
   const DISABLED_LOGS = [
-    'scan'
+    'scan',
   ];
 
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
@@ -30,7 +30,7 @@ export function main(ns: NS) {
   let servers = getAllServers(ns);
 
   if (!flags.includeHome) {
-    servers = servers.filter(s => !['home'].includes(s));
+    servers = servers.filter(s => 'home' !== s);
   }
 
   if (flags.scrape) {

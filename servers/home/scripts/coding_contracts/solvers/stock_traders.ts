@@ -43,6 +43,7 @@ class StockTrade {
   }
 
   toString(): string {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     return `[${this.buyIndex},${this.buyValue}] => [${this.sellIndex},${this.sellValue}] = ${this.profit}`;
   }
 }
@@ -60,6 +61,8 @@ export function algoStockTrade3(input: number[], ns: NS): number {
  * @param {NS} ns
  */
 export function algoStockTrade4(input: [number, number[]], ns: NS): number {
+  // This WILL be used for the final implementation
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const numTrades: number = input[0];
   const prices: number[] = input[1];
   let numPrices = prices.length;
@@ -125,7 +128,8 @@ export function algoStockTrade4(input: [number, number[]], ns: NS): number {
   for (let i = numPrices - 1; i > 0; i--) {
     const sellAtIndex: StockTrade[] = trades.filter(t => t.sellIndex === i).sort((a, b) => a.buyIndex - b.buyIndex);
 
-    if (sellAtIndex?.length > 0) {
+    if (sellAtIndex.length > 0) {
+      // @ts-expect-error We just ensured that there are elements in the array
       let lastTradeValue = sellAtIndex.pop().profit;
 
       let tempTrade = sellAtIndex.pop();
@@ -160,4 +164,6 @@ export function algoStockTrade4(input: [number, number[]], ns: NS): number {
   // From the tail end, ignore any trades with the upper day that have a lower profit
 
   // Determine the set of non-overlapping transactions with the highest value
+
+  return Number.NaN;
 }

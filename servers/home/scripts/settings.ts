@@ -6,21 +6,21 @@ export const ContractCalc: SettingsClasses.SettingsData = {
   y: 50,
   width: 450,
   height: 300,
-  tailTitle: 'Contract Calc'
+  tailTitle: 'Contract Calc',
 };
 export const Scratchpad: SettingsClasses.SettingsData = {
   x: 1250,
   y: 85,
   width: 450,
   height: 200,
-  tailTitle: 'Scratchpad'
+  tailTitle: 'Scratchpad',
 };
 export const ContractDispatcher: SettingsClasses.SettingsData = {
   x: 1250,
   y: 120,
   width: 450,
   height: 200,
-  tailTitle: 'Contract Dispatcher'
+  tailTitle: 'Contract Dispatcher',
 };
 // noinspection ConfusingFloatingPointLiteralJS
 export const GangLord: SettingsClasses.GangSettings = {
@@ -46,7 +46,7 @@ export const Run: SettingsClasses.RunSettings = {
   height: 200,
   tailTitle: 'Run Menu',
   // Negated lookahead match, so we can still invoke `exploits` to reload the objects
-  exclusionPattern: /solvers\/|lib\/(?!exploits)|Temp\/|gangs\/|logs\//
+  exclusionPattern: /solvers\/|lib\/(?!exploits)|Temp\/|gangs\/|logs\//,
 };
 export const Go: SettingsClasses.GoSettings = {
   x: 1500,
@@ -57,21 +57,21 @@ export const Go: SettingsClasses.GoSettings = {
   keepPlaying: true,
   loopDelay: 100,
   faction: GoFaction.Daedalus,
-  boardSize: 7
+  boardSize: 7,
 };
 export const NetTree: SettingsClasses.SettingsData = {
   x: 1375,
   y: 575,
   width: 525,
   height: 400,
-  tailTitle: 'Net Tree'
+  tailTitle: 'Net Tree',
 };
 export const Contracts: SettingsClasses.SettingsData = {
   x: 1500,
   y: 610,
   width: 400,
   height: 200,
-  tailTitle: 'Contract Scanner'
+  tailTitle: 'Contract Scanner',
 };
 export const Augments: SettingsClasses.AugmentsSettings = {
   x: 1500,
@@ -80,7 +80,7 @@ export const Augments: SettingsClasses.AugmentsSettings = {
   height: 200,
   tailTitle: 'Augments',
   repMargin: 0.9,
-  mode: 'uniques'
+  mode: 'uniques',
 };
 // noinspection ConfusingFloatingPointLiteralJS
 export const HacknetManager: SettingsClasses.HacknetSettings = {
@@ -91,7 +91,7 @@ export const HacknetManager: SettingsClasses.HacknetSettings = {
   tailTitle: 'Hacknet Manager',
   maxPrice: 1e6,
   loopDelay: 10 * 1000,
-  threshold: undefined
+  threshold: 1000,
 };
 // noinspection SpellCheckingInspection - In-game servers trigger this inspection...
 export const Deploy: SettingsClasses.DeploySettings = {
@@ -150,7 +150,7 @@ export const ServerSelections = {
     //'summit-uni',         // Uni - 4x cost,  3x exp
     // --Volhaven--
     //'millenium-fitness',  // Gym - 7x cost,  4x exp
-    'zb-institute'          // Uni - 5x cost,  4x exp
+    'zb-institute',         // Uni - 5x cost,  4x exp
   ],
   // Get a reduced rep threshold to join a company's faction and get promotions
   companyBackdoor: [
@@ -163,7 +163,7 @@ export const ServerSelections = {
     'kuai-gong',
     'megacorp',
     'nwo',
-    'omnitek'
+    'omnitek',
   ],
 };
 
@@ -172,7 +172,7 @@ export const BackdoorConcat: string[] =
     ServerSelections.factionsBackdoor,
     ServerSelections.classesBackdoor,
     ServerSelections.goodTargets,
-    ServerSelections.companyBackdoor
+    ServerSelections.companyBackdoor,
   );
 
 // MEMO Yes, this arguably should be in `tail_helpers.ts`; however, most programs already import this, but not that

@@ -120,7 +120,7 @@ function factionRepNeeded(ns: NS): void {
 
   ns.print('Add\'l rep needed to buy augs:');
 
-  if (!purchasableAugs || purchasableAugs.length === 0) {
+  if (purchasableAugs.length === 0) {
     ns.print('All bought!');
     return;
   }
@@ -217,6 +217,8 @@ function isEndgameFactionUnlocked(ns: NS, faction: FactionName): boolean {
     case BLADEBURNERS:
       return BLADEBURNER_NODES.some(n => resetInfo.ownedSF.has(n) || resetInfo.currentNode === n);
   }
+
+  throw new Error(`Faction not properly handled: ${faction}`);
 }
 
 function getPurchasableAugs(): Augmentation[] {
@@ -248,7 +250,7 @@ function getPurchasableAugsWithGang(ns: NS): AugWrapper[] {
   const wrappers = augments.map((aug): AugWrapper => ({
     name: aug.name,
     factions: aug.factions.slice(),
-    costs: getAugCost(ns, aug)
+    costs: getAugCost(ns, aug),
   }));
 
   if (player.inGang()) {

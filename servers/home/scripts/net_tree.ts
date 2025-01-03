@@ -42,7 +42,6 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
       this.children = ns.scan(server.hostname)
         .filter((h: string) => h !== parent)
         .map((s: string) => ns.getServer(s))
-        .filter((v: Server) => !!v)
         .filter((v: Server) => !ignoreServer(v, depth))
         .map((h: Server) => new Node(server.hostname, h, depth + 1));
       this.decorator = this.statusDecorator();
@@ -54,7 +53,13 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
     }
 
     get #canBackdoor(): boolean {
-      return this.#server.requiredHackingSkill <= PLAYER_HACK_LEVEL && !this.#server.purchasedByPlayer;
+      if (this.#server.purchasedByPlayer) {
+        return false;
+      }
+      if (this.#server.requiredHackingSkill === undefined) {
+        throw new Error(`requiredHackingSkill not set on ${this.#server.hostname}`);
+      }
+      return this.#server.requiredHackingSkill <= PLAYER_HACK_LEVEL;
     }
 
     statusDecorator(): string {
@@ -82,29 +87,19 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
   function printOutput(node: Node, prefix: string[] = ['  '], last: boolean = true) {
     const titlePrefix = prefix.slice(0, prefix.length - 1).join('') + (last ? '┗ ' : '┣ ');
 
-    const REACT_ELEMENTS = true;
-    if (REACT_ELEMENTS) {
-      const element: ReactNode = React.createElement(ServerLink, {
-        dashes: titlePrefix,
-        hostname: node.hostname,
-        decorator: node.decorator
-      });
-      // @ts-expect-error It is the right type, just a placeholder definition...
-      ns.printRaw(element);
-    } else {
-      ns.print(titlePrefix + node.hostname + node.decorator + '\n');
-    }
-
-    const server = ns.getServer(node.hostname);
-    if (!server) {
-      return;
-    }
+    const element: ReactNode = React.createElement(ServerLink, {
+      dashes: titlePrefix,
+      hostname: node.hostname,
+      decorator: node.decorator,
+    });
+    // @ts-expect-error It is the right type, just a placeholder definition...
+    ns.printRaw(element);
 
     // Sort display by branch depth (shallowest first), then by hostname
     node.children.sort((a, b) => a.hostname.localeCompare(b.hostname))
       .sort((a, b) => a.branchDepth - b.branchDepth)
       .forEach((n, i) =>
-        printOutput(n, [...prefix, i === node.children.length - 1 ? '  ' : '┃ '], i === node.children.length - 1)
+        printOutput(n, [...prefix, i === node.children.length - 1 ? '  ' : '┃ '], i === node.children.length - 1),
       );
   }
 

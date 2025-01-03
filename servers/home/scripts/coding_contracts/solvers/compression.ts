@@ -11,7 +11,7 @@ export function compression1(input: string): string {
   // Count how many in a row
   // If >9, subtract 9 and repeat
 
-  let processing: string = input;
+  let processing: string | null = input;
   let result: string = '';
 
   let char: string;
@@ -26,7 +26,7 @@ export function compression1(input: string): string {
 
     if (processing.length === count) {
       // We counted to the end of the string
-      processing = undefined;
+      processing = null;
     } else {
       // Remove the characters we just counted
       processing = processing.substring(count);
@@ -34,10 +34,10 @@ export function compression1(input: string): string {
 
     // RLE can have run lengths of at most 9
     while (count > 9) {
-      result += 9 + char;
+      result += '9' + char;
       count -= 9;
     }
-    result += count + char;
+    result += count.toString() + char;
 
   } while (processing);
 

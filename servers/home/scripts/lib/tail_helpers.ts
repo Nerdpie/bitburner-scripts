@@ -11,11 +11,14 @@ function findButtonAndClick(scriptTitle: string, buttonTitle: string) {
 
   // Find the heading element
   const heading = doc.querySelector(`h6[title='${scriptTitle}']`);
-  const button = heading?.parentElement.querySelector(`button[title='${buttonTitle}']`);
+  if (!heading) { return; }
+  if (!heading.parentElement) {
+    throw new Error(`Tail window heading does not have a parent element!\nTitle attribute: ${scriptTitle}`);
+  }
+
+  const button = heading.parentElement.querySelector<HTMLButtonElement>(`button[title='${buttonTitle}']`);
 
   if (button) {
-    // @ts-expect-error  Yes, there IS a `click` function...
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     button.click();
   }
 }

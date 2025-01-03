@@ -61,7 +61,7 @@ export function main(ns: NS): void {
   const data: PS1Data = {
     hostname: ns.getHostname(),
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-    cwd: globalThis.Terminal.cwd() // Webpack exploit
+    cwd: globalThis.Terminal.cwd(), // Webpack exploit
   };
   // @ts-expect-error Difference between the actual React type, and the NetscriptDefinitions type
   ns.printRaw(ps1(data));

@@ -12,7 +12,7 @@ export function main(ns: NS): void {
   setTailWindow(ns, Contracts);
 
   const DISABLED_LOGS = [
-    'scan'
+    'scan',
   ];
   ns.disableLog('disableLog');
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
@@ -26,7 +26,7 @@ export function main(ns: NS): void {
 
     if (files.length > 0) {
       const element: ReactNode = React.createElement(ServerLink, {
-        hostname: server
+        hostname: server,
       });
       // @ts-expect-error It is the right type, just a placeholder definition...
       ns.printRaw(element);

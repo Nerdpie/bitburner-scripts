@@ -20,7 +20,7 @@ export async function main(ns: NS): Promise<void> {
   // Not run from our 'run menu', nor from a tail window; use args
   const type = ns.args[0];
 
-  if (type !== null && typeof type === 'string') {
+  if (typeof type === 'string') {
     const contractType = type.replace(/_/g, ' ');
     ns.codingcontract.createDummyContract(contractType);
   } else {

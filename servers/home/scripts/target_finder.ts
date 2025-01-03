@@ -9,13 +9,14 @@ if (!globalThis.NSNumbers) {
 }
 
 // TODO Just reimplement the format functions in our own code...
-// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
-const formatNumber: (n: number, fractionalDigits?: number, suffixStart?: number, isInteger?: boolean) => string = globalThis.NSNumbers.formatNumber;
-// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
-const formatPercent: (n: number, fractionalDigits?: number, suffixStart?: number) => string = globalThis.NSNumbers.formatPercent;
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+const formatNumber = globalThis.NSNumbers.formatNumber as (n: number, fractionalDigits?: number, suffixStart?: number, isInteger?: boolean) => string;
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+const formatPercent = globalThis.NSNumbers.formatPercent as (n: number, fractionalDigits?: number, suffixStart?: number) => string;
 
 const player = <PlayerObject>globalThis.Player;
 
+// TODO If we keep using this script, evaluate converting this from a class to just functions that act on `Server` objects
 // I would have preferred being able to just take a `Server` object
 // and extend it, but I have to touch every property either way...
 class ServerTargeting {
@@ -30,23 +31,25 @@ class ServerTargeting {
 
   get hostname(): string { return this.#server.hostname; }
 
+  get isPurchased(): boolean { return this.#server.purchasedByPlayer; }
+
   get haveAdmin(): boolean { return this.#server.hasAdminRights; }
 
-  get haveBackdoor(): boolean { return this.#server.backdoorInstalled; }
+  get haveBackdoor(): boolean { return this.#server.backdoorInstalled ?? false; }
 
-  get canBackdoor(): boolean { return this.#server.backdoorInstalled || this.#server.requiredHackingSkill <= player.skills.hacking; }
+  get canBackdoor(): boolean { return this.haveBackdoor || this.levelRequired <= player.skills.hacking; }
 
-  get securityLevel(): number { return this.#server.hackDifficulty; }
+  get securityLevel(): number { return this.#server.hackDifficulty ?? 0; }
 
-  get securityMin(): number { return this.#server.minDifficulty; }
+  get securityMin(): number { return this.#server.minDifficulty ?? 0; }
 
   get levelRequired(): number { return this.#server.requiredHackingSkill ?? 0; }
 
-  get moneyAvailable(): number { return this.#server.moneyAvailable; }
+  get moneyAvailable(): number { return this.#server.moneyAvailable ?? 0; }
 
-  get moneyMax(): number { return this.#server.moneyMax; }
+  get moneyMax(): number { return this.#server.moneyMax ?? 0; }
 
-  get canHaveMoney(): boolean { return this.#server.moneyMax > 0; }
+  get canHaveMoney(): boolean { return this.moneyMax > 0; }
 
   static compareServer(a: ServerTargeting, b: ServerTargeting): number {
     // Sort by security, then money
@@ -70,16 +73,17 @@ class ServerTargeting {
   }
 
   toString(): string {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
-    return globalThis.sprintf('%-18s HackLvl %4d BD %s MinSec %2s CurSec %6.3f  Value %8s / %8s ( %6s )',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sprintf = globalThis.sprintf as (format: string, ...args: any[]) => string;
+    return sprintf('%-18s HackLvl %4d BD %s MinSec %2s CurSec %6.3f  Value %8s / %8s ( %6s )',
       this.#server.hostname,
-      this.#server.requiredHackingSkill ?? 0,
+      this.levelRequired,
       this.haveBackdoor ? 'Y' : 'N',
       this.#server.minDifficulty,
       this.#server.hackDifficulty,
-      formatNumber(this.#server.moneyAvailable),
-      formatNumber(this.#server.moneyMax),
-      formatPercent(this.#server.moneyAvailable / this.#server.moneyMax));
+      formatNumber(this.moneyAvailable),
+      formatNumber(this.moneyMax),
+      formatPercent(this.moneyAvailable / this.moneyMax));
   }
 }
 
@@ -98,7 +102,7 @@ export function main(ns: NS): void {
     'getServerMoneyAvailable',
     'scp',
     'scan',
-    'exec'
+    'exec',
   ];
 
   const LEVEL_THRESHOLD = <boolean>flags.all ? 0 : 950;
@@ -111,6 +115,7 @@ export function main(ns: NS): void {
   const servers = getAllServers(ns);
 
   servers.map(s => new ServerTargeting(ns.getServer(s)))
+    .filter(s => !s.isPurchased)
     .filter(s => s.haveAdmin)
     .filter(s => s.canBackdoor)
     .filter(s => s.canHaveMoney)

@@ -29,6 +29,8 @@ export function getFactionAugmentationsFiltered(ns: NS, faction: Faction): Augme
       augs.push(Augmentations['The Red Pill']);
     }
 
+    // Yes, it's an implicit cast; that's how it's implemented in the game itself
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const rng = SFC32RNG(`BN${player.bitNodeN}.${player.activeSourceFileLvl(player.bitNodeN)}`);
     // Remove faction-unique augs that don't belong to this faction
     const uniqueFilter = (a: Augmentation): boolean => {
