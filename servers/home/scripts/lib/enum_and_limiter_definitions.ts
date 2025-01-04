@@ -4,7 +4,7 @@ export type ZeroOrOne = 0 | 1;
 
 /** Valid board sizes for IPvGo */
 // noinspection MagicNumberJS
-export type GoBoardSizes = 5 | 7 | 9 | 13;
+export type GoBoardSize = 5 | 7 | 9 | 13;
 
 /** Valid RAM capacities are powers of 2, from 2^1 to 2^20 */
 // noinspection MagicNumberJS
@@ -30,7 +30,7 @@ export type ValidRamCapacity =
   | 524288
   | 1048576;
 
-export type AugmentsModes = "purchasable" | "uniques" | "rep";
+export type AugmentsMode = "purchasable" | "uniques" | "rep";
 
 export type DeployMode = "hgw" | "share";
 
@@ -60,7 +60,7 @@ export enum GoFaction {
     "No AI" = "No AI",
 }
 
-export enum BuiltinServers {
+export enum BuiltinServer {
   // noinspection SpellCheckingInspection
   "home" = "home",
   "darkweb" = "darkweb",

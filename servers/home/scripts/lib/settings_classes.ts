@@ -17,7 +17,7 @@ export interface GoSettings extends SettingsData {
   keepPlaying: boolean;
   loopDelay: number;
   faction: EnumsAndTypes.GoFaction;
-  boardSize: EnumsAndTypes.GoBoardSizes;
+  boardSize: EnumsAndTypes.GoBoardSize;
 }
 
 export interface GangSettings extends SettingsData {
@@ -35,7 +35,7 @@ export interface GangSettings extends SettingsData {
 
 export interface AugmentsSettings extends SettingsData {
   repMargin: number;
-  mode: EnumsAndTypes.AugmentsModes;
+  mode: EnumsAndTypes.AugmentsMode;
 }
 
 export interface HacknetSettings extends SettingsData {
@@ -49,7 +49,7 @@ export interface DeploySettings extends SettingsData {
   resetScripts: boolean;
   dynamicTarget: boolean;
   targetSelf: boolean;
-  targetServer: EnumsAndTypes.BuiltinServers;
+  targetServer: EnumsAndTypes.BuiltinServer;
   loopDelay: number;
   ramCapacity: EnumsAndTypes.ValidRamCapacity;
   purchaseThreshold: number;

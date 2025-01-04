@@ -1,7 +1,7 @@
 // Based originally on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 
 import type {Terminal}                                   from "@/game_internal_types/Terminal/Terminal";
-import {BuiltinServers, ValidRamCapacity}                from "@lib/enum_and_limiter_definitions";
+import {BuiltinServer, ValidRamCapacity}                 from "@lib/enum_and_limiter_definitions";
 import {exposeGameInternalObjects}                       from "@lib/exploits";
 import {getAllServers}                                   from "@lib/scan_servers";
 import {assertBackdoorInstalled, assertServerProperties} from "@lib/server_util";
@@ -11,7 +11,7 @@ import type {Server}                                     from "NetscriptDefiniti
 
 const config = Deploy;
 let prevHackingLevel = 0;
-let prevTarget: BuiltinServers | undefined = undefined;
+let prevTarget: BuiltinServer | undefined = undefined;
 
 function getAvailableTools(ns: NS): ((host: string) => void)[] {
   const PROGRAMS: ({ file: string; action: (host: string) => void })[] = [
@@ -67,10 +67,10 @@ function pwnServer(ns: NS, target: Required<Server>, tools: ((host: string) => v
  * @param {Server} server
  */
 function tryBackdoor(ns: NS, server: Required<Server>) {
-  // MEMO BuiltinServers is a string enum, and hostnames are always exposed as a string
-  if (!config.hackTheWorld && server.hostname === BuiltinServers["w0r1d_d43m0n"] as string) {
+  // MEMO BuiltinServer is a string enum, and hostnames are always exposed as a string
+  if (!config.hackTheWorld && server.hostname === BuiltinServer["w0r1d_d43m0n"] as string) {
     if (server.requiredHackingSkill <= ns.getHackingLevel()) {
-      ns.printf("Can backdoor: %s", BuiltinServers["w0r1d_d43m0n"]);
+      ns.printf("Can backdoor: %s", BuiltinServer["w0r1d_d43m0n"]);
     }
     return;
   }
@@ -181,7 +181,7 @@ function computeBackdoorScore(s: Server): number {
   // We only actually care about the first one to set the magnitude
   // While it doesn't HAVE to be an else-if tree, no need for the other comparison to run every loop...
   // noinspection IfStatementWithTooManyBranchesJS
-  if (config.targetServer === name as BuiltinServers) {
+  if (config.targetServer === name as BuiltinServer) {
     // MEMO Leaving the `targetServer` check for completeness, even though it isn't strictly needed
     //  Still going to check in the outer function to reduce overhead where practical.
     //  Yay, premature micro-optimizations!
@@ -212,10 +212,10 @@ function computeBackdoorScore(s: Server): number {
 
 function sortBackdoorPriority(a: Server, b: Server): number {
   // Make sure we hit our target server FIRST
-  if (Deploy.targetServer === a.hostname as BuiltinServers) {
+  if (Deploy.targetServer === a.hostname as BuiltinServer) {
     return -1;
   }
-  if (Deploy.targetServer === b.hostname as BuiltinServers) {
+  if (Deploy.targetServer === b.hostname as BuiltinServer) {
     return 1;
   }
 
@@ -227,7 +227,7 @@ function sortBackdoorPriority(a: Server, b: Server): number {
  * @param ns
  * @return Tuple containing whether to reset scripts, whether to target self, and the target server
  */
-function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServers | undefined] {
+function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServer | undefined] {
   const curHackingLevel = ns.getHackingLevel();
   // REFINE This can cause issues if we WOULD change targets, but they haven't been backdoored yet
   // Short-circuit if our hacking level hasn't changed, and we have a target selected
@@ -242,12 +242,12 @@ function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServers | undefined
   const targetLevel = curHackingLevel <= 30 ? curHackingLevel : Math.ceil(curHackingLevel / 2);
   const targetServer = TARGET_OPTIONS.map(n => assertServerProperties(ns.getServer(n)))
     .filter(s => s.requiredHackingSkill <= targetLevel && s.backdoorInstalled)
-    .reduce((acc: [number, BuiltinServers], cur) => {
+    .reduce((acc: [number, BuiltinServer], cur) => {
       if (acc[0] < cur.requiredHackingSkill) {
-        return [cur.requiredHackingSkill, <BuiltinServers>cur.hostname];
+        return [cur.requiredHackingSkill, <BuiltinServer>cur.hostname];
       }
       return acc;
-    }, [0, <BuiltinServers | undefined>undefined])[1] as BuiltinServers | undefined;
+    }, [0, <BuiltinServer | undefined>undefined])[1] as BuiltinServer | undefined;
 
   const changedTarget = targetServer !== prevTarget;
   prevTarget = targetServer;
@@ -285,7 +285,7 @@ export async function main(ns: NS): Promise<void> {
   //  Do most of the others need to be pulled from the config, or just computed?
   let targetSelf = config.targetSelf;
   // noinspection ES6ConvertLetToConst - Need to rework this to be dynamic ANYWAY...
-  let targetServer: BuiltinServers | undefined = config.targetServer;
+  let targetServer: BuiltinServer | undefined = config.targetServer;
   let resetScripts = config.resetScripts;
   let loopDelay = config.loopDelay;
 
@@ -350,7 +350,7 @@ export async function main(ns: NS): Promise<void> {
     // REFINE Ideally, this would increase the delay sooner, and more gradually, but late into a run,
     //  high hacking stats can make backdoor installs FAST... and a proper batcher removes half of the need
     // If we've backdoored all servers (ignoring w0r1d_d43m0n), increase the loop delay
-    if (nonPurchasedServers.filter(s => s.hostname as BuiltinServers !== BuiltinServers["w0r1d_d43m0n"]).length === backdooredServers.length) {
+    if (nonPurchasedServers.filter(s => s.hostname as BuiltinServer !== BuiltinServer["w0r1d_d43m0n"]).length === backdooredServers.length) {
       // noinspection MagicNumberJS - Five minutes
       loopDelay = 5 * 60 * 1000;
     }

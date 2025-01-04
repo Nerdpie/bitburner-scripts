@@ -15,7 +15,7 @@ import {twoColorGraph}                                                      from
 import {findValidMathExpression, generateIPAddresses}                       from "./solvers/valid_expressions";
 import {waysToSum1, waysToSum2}                                             from "./solvers/ways_to_sum";
 
-export enum CodingContractTypes {
+export enum CodingContractType {
   // noinspection JSNonASCIINames - These MUST match the names from in-game
   "Find Largest Prime Factor" = "Find Largest Prime Factor",
   "Subarray with Maximum Sum" = "Subarray with Maximum Sum",
@@ -53,7 +53,7 @@ export interface SolverInfo {
 }
 
 // noinspection JSNonASCIINames - These MUST match the names from in-game
-export const ContractSolvers: Record<CodingContractTypes, Required<SolverInfo>> = {
+export const ContractSolver: Record<CodingContractType, Required<SolverInfo>> = {
   "Algorithmic Stock Trader I": {
     function: algoStockTrade1,
     finished: true,
@@ -186,7 +186,7 @@ export class ContractWrapper {
     this.data = ns.codingcontract.getData(filename, host);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    this.solver = ContractSolvers[this.type];
+    this.solver = ContractSolver[this.type];
   }
 
   get #isSolverAsync(): boolean {

@@ -1,5 +1,5 @@
-import {BuiltinServers, GoFaction} from "@lib/enum_and_limiter_definitions";
-import * as SettingsClasses        from "@lib/settings_classes";
+import {BuiltinServer, GoFaction} from "@lib/enum_and_limiter_definitions";
+import * as SettingsClasses       from "@lib/settings_classes";
 
 export const ContractCalc: SettingsClasses.SettingsData = {
   x: 1250,
@@ -105,7 +105,7 @@ export const Deploy: SettingsClasses.DeploySettings = {
   resetScripts: true,
   dynamicTarget: true,
   targetSelf: false,
-  targetServer: BuiltinServers["joesguns"],
+  targetServer: BuiltinServer["joesguns"],
   loopDelay: 15 * 1000,
   ramCapacity: 2048,
   purchaseThreshold: 100,
