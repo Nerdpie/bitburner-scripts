@@ -21,7 +21,7 @@ export function trimStartChars(str: string, chars: string): string {
 
   // All characters should be trimmed
   if (index === str.length) {
-    return '';
+    return "";
   }
 
   return str.substring(index);
@@ -45,7 +45,7 @@ export function trimEndChars(str: string, chars: string): string {
 
   // All characters should be trimmed
   if (index === 0) {
-    return '';
+    return "";
   }
 
   return str.substring(0, index);
@@ -76,7 +76,7 @@ export function trimChars(str: string, chars: string): string {
 
   // All characters should be trimmed
   if (start === end) {
-    return '';
+    return "";
   }
 
   return str.substring(start, end);

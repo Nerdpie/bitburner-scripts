@@ -1,16 +1,16 @@
-import {assertRequiredHackingSkill, tryBackdoorInstalled} from '@lib/server_util';
-import {ServerLink}                                       from '@lib/ui/server_link';
-import {NetTree, setTailWindow}                           from '@settings';
-import type {Server}                                      from 'NetscriptDefinitions';
-import type {ReactNode}                                   from 'react';
-import React                                              from 'react';
+import {assertRequiredHackingSkill, tryBackdoorInstalled} from "@lib/server_util";
+import {ServerLink}                                       from "@lib/ui/server_link";
+import {NetTree, setTailWindow}                           from "@settings";
+import type {Server}                                      from "NetscriptDefinitions";
+import type {ReactNode}                                   from "react";
+import React                                              from "react";
 
 /** @param {NS} ns */
 export function main(ns: NS): void {
   setTailWindow(ns, NetTree);
 
-  ns.disableLog('disableLog');
-  ns.disableLog('scan');
+  ns.disableLog("disableLog");
+  ns.disableLog("scan");
   scanAnalyzeInternals(ns, Number.MAX_SAFE_INTEGER);
 }
 
@@ -21,7 +21,7 @@ export function main(ns: NS): void {
  * @param {boolean} all
  */
 function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): void {
-  ns.disableLog('getHackingLevel');
+  ns.disableLog("getHackingLevel");
   const PLAYER_HACK_LEVEL = ns.getHackingLevel();
 
   class Node {
@@ -61,13 +61,13 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
     }
 
     statusDecorator(): string {
-      let decor = '';
+      let decor = "";
       if (this.#server.hasAdminRights) {
-        decor = ' (+';
+        decor = " (+";
         // This line is a mixed bag; it's not TOO heinous, and the equivalent if-else is messy
         // noinspection NestedConditionalExpressionJS
-        decor += tryBackdoorInstalled(this.#server) ? '*' : this.#canBackdoor ? '!' : '';
-        decor += ')';
+        decor += tryBackdoorInstalled(this.#server) ? "*" : this.#canBackdoor ? "!" : "";
+        decor += ")";
       }
       return decor;
     }
@@ -76,14 +76,14 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
   // TODO Revisit once we unlock hacknet SERVERS
   function ignoreServer(s: Server, d: number): boolean {
     // noinspection OverlyComplexBooleanExpressionJS
-    return !all && s.purchasedByPlayer && s.hostname !== 'home' || d > depth; /*|| (!all && s instanceof HacknetServer)*/
+    return !all && s.purchasedByPlayer && s.hostname !== "home" || d > depth; /*|| (!all && s instanceof HacknetServer)*/
   }
 
   // MEMO Hard-coded 'home' since it was throwing errors...
-  const root = new Node('home', ns.getServer('home'));
+  const root = new Node("home", ns.getServer("home"));
 
-  function printOutput(node: Node, prefix: string[] = ['  '], last: boolean = true) {
-    const titlePrefix = prefix.slice(0, prefix.length - 1).join('') + (last ? '┗ ' : '┣ ');
+  function printOutput(node: Node, prefix: string[] = ["  "], last: boolean = true) {
+    const titlePrefix = prefix.slice(0, prefix.length - 1).join("") + (last ? "┗ " : "┣ ");
 
     const element: ReactNode = React.createElement(ServerLink, {
       dashes: titlePrefix,
@@ -97,7 +97,7 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
     node.children.sort((a, b) => a.hostname.localeCompare(b.hostname))
       .sort((a, b) => a.branchDepth - b.branchDepth)
       .forEach((n, i) =>
-        printOutput(n, [...prefix, i === node.children.length - 1 ? '  ' : '┃ '], i === node.children.length - 1),
+        printOutput(n, [...prefix, i === node.children.length - 1 ? "  " : "┃ "], i === node.children.length - 1),
       );
   }
 

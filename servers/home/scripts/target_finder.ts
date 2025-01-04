@@ -1,8 +1,8 @@
-import type {PlayerObject}         from '@/game_internal_types/PersonObjects/Player/PlayerObject';
-import {exposeGameInternalObjects} from '@lib/exploits';
-import {getAllServers}             from '@lib/scan_servers';
-import {ServerSelections}          from '@settings';
-import type {Server}               from 'NetscriptDefinitions';
+import type {PlayerObject}         from "@/game_internal_types/PersonObjects/Player/PlayerObject";
+import {exposeGameInternalObjects} from "@lib/exploits";
+import {getAllServers}             from "@lib/scan_servers";
+import {ServerSelections}          from "@settings";
+import type {Server}               from "NetscriptDefinitions";
 
 if (!globalThis.NSNumbers) {
   exposeGameInternalObjects();
@@ -75,10 +75,10 @@ class ServerTargeting {
   toString(): string {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sprintf = globalThis.sprintf as (format: string, ...args: any[]) => string;
-    return sprintf('%-18s HackLvl %4d BD %s MinSec %2s CurSec %6.3f  Value %8s / %8s ( %6s )',
+    return sprintf("%-18s HackLvl %4d BD %s MinSec %2s CurSec %6.3f  Value %8s / %8s ( %6s )",
       this.#server.hostname,
       this.levelRequired,
-      this.haveBackdoor ? 'Y' : 'N',
+      this.haveBackdoor ? "Y" : "N",
       this.#server.minDifficulty,
       this.#server.hackDifficulty,
       formatNumber(this.moneyAvailable),
@@ -89,26 +89,26 @@ class ServerTargeting {
 
 export function main(ns: NS): void {
 
-  const flags = ns.flags([['all', false]]);
+  const flags = ns.flags([["all", false]]);
 
   const DISABLED_LOGS = [
-    'getServerRequiredHackingLevel',
-    'getHackingLevel',
-    'getServerNumPortsRequired',
-    'getScriptRam',
-    'getServerMaxRam',
-    'getServerUsedRam',
-    'getServerMinSecurityLevel',
-    'getServerMoneyAvailable',
-    'scp',
-    'scan',
-    'exec',
+    "getServerRequiredHackingLevel",
+    "getHackingLevel",
+    "getServerNumPortsRequired",
+    "getScriptRam",
+    "getServerMaxRam",
+    "getServerUsedRam",
+    "getServerMinSecurityLevel",
+    "getServerMoneyAvailable",
+    "scp",
+    "scan",
+    "exec",
   ];
 
   const LEVEL_THRESHOLD = <boolean>flags.all ? 0 : 950;
   const MINIMUM_LEVEL_REQUIRED = Math.min(LEVEL_THRESHOLD, player.skills.hacking * 0.4);
 
-  ns.disableLog('disableLog');
+  ns.disableLog("disableLog");
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
 
@@ -125,6 +125,6 @@ export function main(ns: NS): void {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     .sort(ServerTargeting.compareServer)
     .forEach(s => {
-      ns.tprintf('%s', s.toString());
+      ns.tprintf("%s", s.toString());
     });
 }

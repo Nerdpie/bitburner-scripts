@@ -1,26 +1,26 @@
-import {BuiltinServers, GoFaction} from '@lib/enum_and_limiter_definitions';
-import * as SettingsClasses        from '@lib/settings_classes';
+import {BuiltinServers, GoFaction} from "@lib/enum_and_limiter_definitions";
+import * as SettingsClasses        from "@lib/settings_classes";
 
 export const ContractCalc: SettingsClasses.SettingsData = {
   x: 1250,
   y: 50,
   width: 450,
   height: 300,
-  tailTitle: 'Contract Calc',
+  tailTitle: "Contract Calc",
 };
 export const Scratchpad: SettingsClasses.SettingsData = {
   x: 1250,
   y: 85,
   width: 450,
   height: 200,
-  tailTitle: 'Scratchpad',
+  tailTitle: "Scratchpad",
 };
 export const ContractDispatcher: SettingsClasses.SettingsData = {
   x: 1250,
   y: 120,
   width: 450,
   height: 200,
-  tailTitle: 'Contract Dispatcher',
+  tailTitle: "Contract Dispatcher",
 };
 // noinspection ConfusingFloatingPointLiteralJS
 export const GangLord: SettingsClasses.GangSettings = {
@@ -28,9 +28,9 @@ export const GangLord: SettingsClasses.GangSettings = {
   y: 155,
   width: 450,
   height: 200,
-  tailTitle: 'Gang Lord',
+  tailTitle: "Gang Lord",
   maxRep: 1e7, // 10 million
-  mode: 'rep',
+  mode: "rep",
   wantedPenaltyThreshold: 0.90,
   territoryWarfareThreshold: 0.60,
   memberWarfareThreshold: 600,
@@ -44,7 +44,7 @@ export const Run: SettingsClasses.RunSettings = {
   y: 190,
   width: 200,
   height: 200,
-  tailTitle: 'Run Menu',
+  tailTitle: "Run Menu",
   // Negated lookahead match, so we can still invoke `exploits` to reload the objects
   exclusionPattern: /solvers\/|lib\/(?!exploits)|Temp\/|gangs\/|logs\//,
 };
@@ -53,7 +53,7 @@ export const Go: SettingsClasses.GoSettings = {
   y: 190,
   width: 200,
   height: 200,
-  tailTitle: 'IPvGo AI',
+  tailTitle: "IPvGo AI",
   keepPlaying: true,
   loopDelay: 100,
   faction: GoFaction.Daedalus,
@@ -64,23 +64,23 @@ export const NetTree: SettingsClasses.SettingsData = {
   y: 575,
   width: 525,
   height: 400,
-  tailTitle: 'Net Tree',
+  tailTitle: "Net Tree",
 };
 export const Contracts: SettingsClasses.SettingsData = {
   x: 1500,
   y: 610,
   width: 400,
   height: 200,
-  tailTitle: 'Contract Scanner',
+  tailTitle: "Contract Scanner",
 };
 export const Augments: SettingsClasses.AugmentsSettings = {
   x: 1500,
   y: 645,
   width: 400,
   height: 200,
-  tailTitle: 'Augments',
+  tailTitle: "Augments",
   repMargin: 0.9,
-  mode: 'uniques',
+  mode: "uniques",
 };
 // noinspection ConfusingFloatingPointLiteralJS
 export const HacknetManager: SettingsClasses.HacknetSettings = {
@@ -88,7 +88,7 @@ export const HacknetManager: SettingsClasses.HacknetSettings = {
   y: 750,
   width: 400,
   height: 200,
-  tailTitle: 'Hacknet Manager',
+  tailTitle: "Hacknet Manager",
   maxPrice: 1e6,
   loopDelay: 10 * 1000,
   threshold: 1000,
@@ -99,12 +99,12 @@ export const Deploy: SettingsClasses.DeploySettings = {
   y: 785,
   width: 400,
   height: 200,
-  tailTitle: 'Deploy Orchestrator',
-  mode: 'hgw',
+  tailTitle: "Deploy Orchestrator",
+  mode: "hgw",
   resetScripts: true,
   dynamicTarget: true,
   targetSelf: false,
-  targetServer: BuiltinServers['joesguns'],
+  targetServer: BuiltinServers["joesguns"],
   loopDelay: 15 * 1000,
   ramCapacity: 2048,
   // Adjust per-run; previously used 5, 3, 2, 3
@@ -121,28 +121,28 @@ export const Deploy: SettingsClasses.DeploySettings = {
 // noinspection SpellCheckingInspection - In-game servers have irregular names
 export const ServerSelections = {
   alwaysBackdoor: [
-    'w0r1d_d43m0n', // Control via Deploy.hackTheWorld
+    "w0r1d_d43m0n", // Control via Deploy.hackTheWorld
   ],
   factionsBackdoor: [
     // Special servers (core factions, etc.)
-    'CSEC',         // CyberSec
-    'avmnite-02h',  // NiteSec
-    'I.I.I.I',      // The Black Hand
-    'run4theh111z', // BitRunners
-    '.',            // The Dark Army
-    'The-Cave',     // Daedalus
+    "CSEC",         // CyberSec
+    "avmnite-02h",  // NiteSec
+    "I.I.I.I",      // The Black Hand
+    "run4theh111z", // BitRunners
+    ".",            // The Dark Army
+    "The-Cave",     // Daedalus
   ],
   goodTargets: [
-    'n00dles',      // Stupid easy early-game target for basic cash
-    'joesguns',     // Apparently can be `grow`-farmed for exp?
-    'phantasy',
-    'rho-construction',
+    "n00dles",      // Stupid easy early-game target for basic cash
+    "joesguns",     // Apparently can be `grow`-farmed for exp?
+    "phantasy",
+    "rho-construction",
   ],
   // Get a 10% discount if a venue is backdoored
   classesBackdoor: [
     // --Sector 12--
     //'iron-gym',           // Gym - 1x cost,  1x exp
-    'powerhouse-fitness',   // Gym - 20x cost, 10x exp
+    "powerhouse-fitness",   // Gym - 20x cost, 10x exp
     //'rothman-uni',        // Uni - 3x cost,  2x exp
     // --Aevum--
     //'crush-fitness',      // Gym - 3x cost,  2x exp
@@ -150,20 +150,20 @@ export const ServerSelections = {
     //'summit-uni',         // Uni - 4x cost,  3x exp
     // --Volhaven--
     //'millenium-fitness',  // Gym - 7x cost,  4x exp
-    'zb-institute',         // Uni - 5x cost,  4x exp
+    "zb-institute",         // Uni - 5x cost,  4x exp
   ],
   // Get a reduced rep threshold to join a company's faction and get promotions
   companyBackdoor: [
-    'b-and-a',
-    'blade',
-    'clarkinc',
-    'ecorp',
-    'fulcrumassets', // Fulcrum Secret Technologies
-    'fulcrumtech',
-    'kuai-gong',
-    'megacorp',
-    'nwo',
-    'omnitek',
+    "b-and-a",
+    "blade",
+    "clarkinc",
+    "ecorp",
+    "fulcrumassets", // Fulcrum Secret Technologies
+    "fulcrumtech",
+    "kuai-gong",
+    "megacorp",
+    "nwo",
+    "omnitek",
   ],
 };
 

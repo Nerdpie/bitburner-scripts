@@ -1,4 +1,4 @@
-import {sprintf, vsprintf} from 'sprintf-js';
+import {sprintf, vsprintf} from "sprintf-js";
 
 /**
  * Add any methods that are available globally to this definition;

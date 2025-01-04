@@ -15,7 +15,7 @@ function shouldAscendGangster(ns: NS, member: string): boolean {
 
 // Credit: Mysteyes. https://discord.com/channels/415207508303544321/415207923506216971/940379724214075442
 function calculateAscendThreshold(ns: NS, member: string) {
-  const mult = ns.gang.getMemberInformation(member)['str_asc_mult'];
+  const mult = ns.gang.getMemberInformation(member)["str_asc_mult"];
   if (mult < 1.632) {
     return 1.6326;
   }

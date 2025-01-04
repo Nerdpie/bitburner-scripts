@@ -1,6 +1,6 @@
 // 2-coloring of a graph
-import {arrayUnique}  from '@lib/array_util';
-import {comparePairs} from '@lib/comparators';
+import {arrayUnique}  from "@lib/array_util";
+import {comparePairs} from "@lib/comparators";
 
 class Vertex {
   id: number;
@@ -19,7 +19,7 @@ class Vertex {
 
   setColor(c: 0 | 1) {
     if (this.#color !== -1 && this.#color !== c) {
-      throw new Error('Could not set a conflicting color!');
+      throw new Error("Could not set a conflicting color!");
     }
 
     this.#color = c;

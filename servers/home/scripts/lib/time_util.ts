@@ -101,10 +101,10 @@ const TWO_DIGIT_FORMATTER = new Intl.NumberFormat(undefined, {minimumIntegerDigi
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const THREE_DIGIT_FORMATTER = new Intl.NumberFormat(undefined, {minimumIntegerDigits: 3});
 const TIMESTAMP_FORMATTER = new Intl.DateTimeFormat(undefined, {
-  hour: '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
-  hourCycle: 'h23',
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hourCycle: "h23",
 });
 
 export function formatSeconds(interval: Partial<Interval>) {
@@ -121,7 +121,7 @@ export function formatSeconds(interval: Partial<Interval>) {
     parts.push(`${timeSpan.seconds.toString()}sec`);
   }
 
-  return parts.join(' ');
+  return parts.join(" ");
 }
 
 export function formatSecondsShort(interval: Partial<Interval>) {
@@ -134,7 +134,7 @@ export function formatSecondsShort(interval: Partial<Interval>) {
   parts.push(TWO_DIGIT_FORMATTER.format(timeSpan.minutes));
   parts.push(TWO_DIGIT_FORMATTER.format(timeSpan.seconds));
 
-  return parts.join(':');
+  return parts.join(":");
 }
 
 export function getTimeStamp(): string {

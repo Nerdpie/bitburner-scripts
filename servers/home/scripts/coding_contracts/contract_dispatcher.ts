@@ -1,10 +1,10 @@
-import {jsonReplacer, jsonReviver}         from '@lib/insight_json';
-import {getAllServers}                     from '@lib/scan_servers';
-import {getTimeStamp}                      from '@lib/time_util';
-import {ContractDispatcher, setTailWindow} from '@settings';
-import {ContractWrapper}                   from './contract_util';
+import {jsonReplacer, jsonReviver}         from "@lib/insight_json";
+import {getAllServers}                     from "@lib/scan_servers";
+import {getTimeStamp}                      from "@lib/time_util";
+import {ContractDispatcher, setTailWindow} from "@settings";
+import {ContractWrapper}                   from "./contract_util";
 
-const LOG_FILE = '/logs/contracts.json';
+const LOG_FILE = "/logs/contracts.json";
 let failedEntries: ContractLogEntry[] = [];
 
 function getAllContracts(ns: NS): ContractWrapper[] {
@@ -12,7 +12,7 @@ function getAllContracts(ns: NS): ContractWrapper[] {
   const contracts: ContractWrapper[] = [];
 
   servers.forEach(server => {
-    ns.ls(server, '.cct').forEach((c) => {
+    ns.ls(server, ".cct").forEach((c) => {
       contracts.push(new ContractWrapper(ns, server, c));
     });
   });
@@ -43,11 +43,11 @@ async function attemptAndLog(ns: NS, contract: ContractWrapper) {
 
 export async function main(ns: NS): Promise<void> {
   const DISABLED_LOGS = [
-    'scan',
-    'sleep',
-    'codingcontract.attempt',
+    "scan",
+    "sleep",
+    "codingcontract.attempt",
   ];
-  ns.disableLog('disableLog');
+  ns.disableLog("disableLog");
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
   const logContents = ns.read(LOG_FILE);
@@ -71,7 +71,7 @@ export async function main(ns: NS): Promise<void> {
 
     // Store the failed attempts
     if (failedEntries.length > 0) {
-      ns.write(LOG_FILE, JSON.stringify(failedEntries, jsonReplacer), 'w');
+      ns.write(LOG_FILE, JSON.stringify(failedEntries, jsonReplacer), "w");
     }
 
     // TODO Check the assumptions and bounds for all contracts

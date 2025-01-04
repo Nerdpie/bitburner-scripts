@@ -1,10 +1,10 @@
-import type {Faction}                                    from '@/game_internal_types/Faction/Faction';
-import type {FactionName}                                from '@enums';
-import {exposeGameInternalObjects}                       from '@lib/exploits';
-import {GangLord, setTailWindow}                         from '@settings';
-import type {GangGenInfo, GangMemberInfo, GangOtherInfo} from 'NetscriptDefinitions';
-import {ascendMembers}                                   from './gangs/ascension';
-import * as GEnums                                       from './gangs/gang_enums';
+import type {Faction}                                    from "@/game_internal_types/Faction/Faction";
+import type {FactionName}                                from "@enums";
+import {exposeGameInternalObjects}                       from "@lib/exploits";
+import {GangLord, setTailWindow}                         from "@settings";
+import type {GangGenInfo, GangMemberInfo, GangOtherInfo} from "NetscriptDefinitions";
+import {ascendMembers}                                   from "./gangs/ascension";
+import * as GEnums                                       from "./gangs/gang_enums";
 
 const config = GangLord;
 let previousOtherGangInfo: GangOtherInfo | undefined;
@@ -18,13 +18,13 @@ const factions = <Record<FactionName, Faction>>globalThis.Factions;
 
 export async function main(ns: NS): Promise<void> {
   const DISABLED_LOGS = [
-    'gang.setMemberTask',
-    'gang.recruitMember',
-    'getServerMoneyAvailable',
-    'gang.purchaseEquipment',
-    'gang.setTerritoryWarfare',
+    "gang.setMemberTask",
+    "gang.recruitMember",
+    "getServerMoneyAvailable",
+    "gang.purchaseEquipment",
+    "gang.setTerritoryWarfare",
   ];
-  ns.disableLog('disableLog');
+  ns.disableLog("disableLog");
   DISABLED_LOGS.forEach(log => {
     ns.disableLog(log);
   });
@@ -32,7 +32,7 @@ export async function main(ns: NS): Promise<void> {
   setTailWindow(ns, config);
 
   if (!ns.gang.inGang()) {
-    ns.tprint('Not yet in a gang!');
+    ns.tprint("Not yet in a gang!");
     return;
   }
 
@@ -101,31 +101,31 @@ function generateMemberName(ns: NS): string {
   // Names I used in the first gang, before letting the script use numbers:
   // noinspection SpellCheckingInspection - Using names, so... to be expected
   const starterNames = [
-    'Jim-Bob',
-    'Billy-Bob',
-    'Fred',
-    'Cleetus',
-    'Red',
-    'Goob',
-    'Goodie',
-    'Two',
-    'Shoes',
+    "Jim-Bob",
+    "Billy-Bob",
+    "Fred",
+    "Cleetus",
+    "Red",
+    "Goob",
+    "Goodie",
+    "Two",
+    "Shoes",
   ];
 
   // Names found at https://tagvault.org/blog/redneck-hillbilly-names/
   // noinspection SpellCheckingInspection - Using names, so... to be expected
   const moreNames = [
-    'Gomer',
-    'Bubba',
-    'Earl',
-    'Clem',
-    'Flint',
-    'Jed',
-    'Festus',
-    'Jasper',
-    'Sarge',
-    'Buford',
-    'Leroy',
+    "Gomer",
+    "Bubba",
+    "Earl",
+    "Clem",
+    "Flint",
+    "Jed",
+    "Festus",
+    "Jasper",
+    "Sarge",
+    "Buford",
+    "Leroy",
   ];
 
   const usedNames = ns.gang.getMemberNames();
@@ -139,11 +139,11 @@ function equipMembers(ns: NS) {
   // TODO Extend this to prioritize more carefully and leave a buffer of on-hand cash
 
   // Get the augments first
-  equipAllOfType(ns, members, GEnums.GangAugment, 'augmentations');
-  equipAllOfType(ns, members, GEnums.GangWeapon, 'upgrades');
-  equipAllOfType(ns, members, GEnums.GangArmor, 'upgrades');
-  equipAllOfType(ns, members, GEnums.GangVehicle, 'upgrades');
-  equipAllOfType(ns, members, GEnums.GangRootkit, 'upgrades');
+  equipAllOfType(ns, members, GEnums.GangAugment, "augmentations");
+  equipAllOfType(ns, members, GEnums.GangWeapon, "upgrades");
+  equipAllOfType(ns, members, GEnums.GangArmor, "upgrades");
+  equipAllOfType(ns, members, GEnums.GangVehicle, "upgrades");
+  equipAllOfType(ns, members, GEnums.GangRootkit, "upgrades");
 }
 
 type GangEquip =
@@ -153,11 +153,11 @@ type GangEquip =
   | typeof GEnums.GangVehicle
   | typeof GEnums.GangRootkit;
 
-function equipAllOfType(ns: NS, members: GangMemberInfo[], type: GangEquip, slot: 'augmentations' | 'upgrades') {
+function equipAllOfType(ns: NS, members: GangMemberInfo[], type: GangEquip, slot: "augmentations" | "upgrades") {
   for (const equipment in type) {
     const equipPrice = ns.gang.getEquipmentCost(equipment);
     members.forEach(member => {
-      if (!member[slot].includes(equipment) && equipPrice < ns.getServerMoneyAvailable('home')) {
+      if (!member[slot].includes(equipment) && equipPrice < ns.getServerMoneyAvailable("home")) {
         const success = ns.gang.purchaseEquipment(member.name, equipment);
 
         if (success) {
@@ -181,7 +181,7 @@ function assignAll(ns: NS) {
   const reduceWantedLevel = config.wantedPenaltyThreshold > gangInfo.wantedPenalty && gangInfo.respect > config.vigilanteRespectThreshold && gangInfo.wantedLevel > 1;
   if (reduceWantedLevel && tickToNextTerritoryUpdate !== 0) {
     members.forEach(member => {
-      ns.gang.setMemberTask(member, GEnums.GangMisc['Vigilante Justice']);
+      ns.gang.setMemberTask(member, GEnums.GangMisc["Vigilante Justice"]);
     });
   } else {
     members.forEach(member => {
@@ -195,15 +195,15 @@ function bestTaskForMember(ns: NS, gangInfo: GangGenInfo, member: string): GEnum
 
   // Is it time to flash mob, and is the member at risk if they do so?
   if (tickToNextTerritoryUpdate === 0 && (memberInfo.def >= config.memberWarfareThreshold || !isClashPossible(gangInfo))) {
-    return GEnums.GangMisc['Territory Warfare'];
+    return GEnums.GangMisc["Territory Warfare"];
   }
 
   // Early gains are slow; bootstrap it
   if (memberInfo.def < config.memberMinTraining) {
-    return GEnums.GangTraining['Train Combat'];
+    return GEnums.GangTraining["Train Combat"];
   }
 
-  const focusRep = config.mode === 'rep'
+  const focusRep = config.mode === "rep"
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     && (factions[gangInfo.faction].playerReputation < config.targetFactionRep || gangInfo.respect < config.targetGangRespect);
 
@@ -212,8 +212,8 @@ function bestTaskForMember(ns: NS, gangInfo: GangGenInfo, member: string): GEnum
   const gainFunction = focusRep ? ns.formulas.gang.respectGain : ns.formulas.gang.moneyGain;
 
   // Default to training combat
-  let bestTask: [GEnums.GangTask, number] = [GEnums.GangTraining['Train Combat'], 0];
-  if (ns.fileExists('Formulas.exe', 'home')) {
+  let bestTask: [GEnums.GangTask, number] = [GEnums.GangTraining["Train Combat"], 0];
+  if (ns.fileExists("Formulas.exe", "home")) {
     for (const task in GEnums.GangEarning) {
       const taskStats = ns.gang.getTaskStats(task);
       const gain = gainFunction(gangInfo, memberInfo, taskStats);
@@ -225,7 +225,7 @@ function bestTaskForMember(ns: NS, gangInfo: GangGenInfo, member: string): GEnum
     }
   } else {
     // FIXME Determine an ACTUAL formula for this, not assigning arbitrarily...
-    bestTask = [GEnums.GangEarning['Run a Con'], 5];
+    bestTask = [GEnums.GangEarning["Run a Con"], 5];
   }
 
   return bestTask[0];
@@ -243,13 +243,13 @@ function mortalCombat(ns: NS) {
   if (gangInfo.territory === 1) {
     if (gangInfo.territoryWarfareEngaged) {
       ns.gang.setTerritoryWarfare(false);
-      ns.print('Victory is ours!');
+      ns.print("Victory is ours!");
     }
     return;
   }
 
   if (!otherGangs) {
-    throw new Error('Other gang info not retrieved before calling `mortalCombat`!');
+    throw new Error("Other gang info not retrieved before calling `mortalCombat`!");
   }
 
   let chanceTemp = 0.0;
@@ -268,10 +268,10 @@ function mortalCombat(ns: NS) {
   if (avgChance < config.territoryWarfareThreshold) {
     if (gangInfo.territoryWarfareEngaged) {
       ns.gang.setTerritoryWarfare(false);
-      ns.print('Retreat!');
+      ns.print("Retreat!");
     }
   } else if (!gangInfo.territoryWarfareEngaged) {
     ns.gang.setTerritoryWarfare(true);
-    ns.print('Attack!');
+    ns.print("Attack!");
   }
 }

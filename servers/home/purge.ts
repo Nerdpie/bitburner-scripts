@@ -19,7 +19,7 @@ export function main(ns: NS): void {
   }
 
   // REFINE May want to do several passes, depending upon how 'directories' are handled.
-  const allFiles = ns.ls('home');
+  const allFiles = ns.ls("home");
   allFiles.filter(file => !isExcluded(file))
     .forEach((file) => {ns.rm(file);});
 }

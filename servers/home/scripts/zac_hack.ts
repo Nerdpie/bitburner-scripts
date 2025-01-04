@@ -7,24 +7,24 @@
  * Added customized logging
  */
 
-import {AutocompleteData} from 'NetscriptDefinitions';
+import {AutocompleteData} from "NetscriptDefinitions";
 
 /** Helper function to write the money values */
 function logMoney(ns: NS, target: string, moneyCurrent: number, moneyMax: number): void {
-  ns.printf('%s money: %s / %s', target, ns.formatNumber(moneyCurrent), ns.formatNumber(moneyMax));
+  ns.printf("%s money: %s / %s", target, ns.formatNumber(moneyCurrent), ns.formatNumber(moneyMax));
 }
 
 export async function main(ns: NS): Promise<void> {
   const DISABLED_LOGS = [
-    'getServerMoneyAvailable',
-    'getServerMaxMoney',
-    'getServerMinSecurityLevel',
-    'getServerSecurityLevel',
-    'getServerMoneyAvailable',
-    'weaken',
+    "getServerMoneyAvailable",
+    "getServerMaxMoney",
+    "getServerMinSecurityLevel",
+    "getServerSecurityLevel",
+    "getServerMoneyAvailable",
+    "weaken",
   ];
 
-  ns.disableLog('disableLog');
+  ns.disableLog("disableLog");
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
   const target: string = <string>ns.args[0];
@@ -38,13 +38,13 @@ export async function main(ns: NS): Promise<void> {
     securityLevelMin = ns.getServerMinSecurityLevel(target);
     securityLevelCurrent = ns.getServerSecurityLevel(target);
 
-    ns.printf('%s security: %s / %s', target, ns.formatNumber(securityLevelCurrent), ns.formatNumber(securityLevelMin));
+    ns.printf("%s security: %s / %s", target, ns.formatNumber(securityLevelCurrent), ns.formatNumber(securityLevelMin));
 
     while (securityLevelCurrent > securityLevelMin + 5) {
       await ns.weaken(target);
       securityLevelCurrent = ns.getServerSecurityLevel(target);
 
-      ns.printf('%s security weakened: %s / %s', target, ns.formatNumber(securityLevelCurrent), ns.formatNumber(securityLevelMin));
+      ns.printf("%s security weakened: %s / %s", target, ns.formatNumber(securityLevelCurrent), ns.formatNumber(securityLevelMin));
     }
 
     serverMoneyAvailable = ns.getServerMoneyAvailable(target);

@@ -1,5 +1,5 @@
-import {newMultidimensionalArray} from '@lib/array_util';
-import type {ZeroOrOne}           from '@lib/enum_and_limiter_definitions';
+import {newMultidimensionalArray} from "@lib/array_util";
+import type {ZeroOrOne}           from "@lib/enum_and_limiter_definitions";
 
 // FIXME This works, but it locks up Firefox's JS runtime due to the recursion...
 //  Possible approach: multidimensional array, start in bottom right,
@@ -55,7 +55,7 @@ You are located in the top-left corner of the following grid:
   const result = findPath(input, visited, 0, 0, invalidPathLength);
 
   if (result[1] >= invalidPathLength) {
-    return '';
+    return "";
   }
 
   return result[0];
@@ -67,27 +67,27 @@ function findPath(grid: ZeroOrOne[][], visited: boolean[][], row: number, col: n
 
   // We're in the destination
   if (row === grid.length - 1 && col === grid[0].length - 1) {
-    return ['', 0];
+    return ["", 0];
   }
 
   // Check the row for out-of-bounds
   if (row < 0 || row > grid.length - 1) {
-    return ['', invalidPathLength];
+    return ["", invalidPathLength];
   }
 
   // Check the column for out-of-bounds
   if (col < 0 || col > grid[0].length - 1) {
-    return ['', invalidPathLength];
+    return ["", invalidPathLength];
   }
 
   // Check if this position was already visited, e.g. we're looping
   if (visited[row][col]) {
-    return ['', invalidPathLength];
+    return ["", invalidPathLength];
   }
 
   // Check if this position is blocked
   if (grid[row][col] === 1) {
-    return ['', invalidPathLength];
+    return ["", invalidPathLength];
   }
 
   // Yes, this can result in a lot of objects being created and discarded
@@ -103,15 +103,15 @@ function findPath(grid: ZeroOrOne[][], visited: boolean[][], row: number, col: n
 
   // MEMO Tried writing a version that was iterable using `map` and `reduce`; it wasn't any cleaner to read
   // Get the path and path length for each direction; the recursive call handles the bounds checks
-  const subPaths: Record<'U' | 'D' | 'L' | 'R', [string, number]> = {
+  const subPaths: Record<"U" | "D" | "L" | "R", [string, number]> = {
     U: findPath(grid, newVisited, row - 1, col, invalidPathLength),
     D: findPath(grid, newVisited, row + 1, col, invalidPathLength),
     L: findPath(grid, newVisited, row, col - 1, invalidPathLength),
     R: findPath(grid, newVisited, row, col + 1, invalidPathLength),
   };
 
-  let shortestPath: [string, number] = ['', invalidPathLength];
-  let direction: string = '';
+  let shortestPath: [string, number] = ["", invalidPathLength];
+  let direction: string = "";
   for (const path in subPaths) {
     // TODO Check why this error occurs; these should be bounded to valid values...
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

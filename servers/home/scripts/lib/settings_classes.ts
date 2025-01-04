@@ -1,6 +1,6 @@
-import * as EnumsAndTypes from '@lib/enum_and_limiter_definitions';
-import {BuiltinServers}   from '@lib/enum_and_limiter_definitions';
-import {TailProperties}   from 'NetscriptDefinitions';
+import * as EnumsAndTypes from "@lib/enum_and_limiter_definitions";
+import {BuiltinServers}   from "@lib/enum_and_limiter_definitions";
+import {TailProperties}   from "NetscriptDefinitions";
 
 export interface SettingsData extends TailProperties {
   x: number;

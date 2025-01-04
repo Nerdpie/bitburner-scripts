@@ -100,7 +100,7 @@ export function algoStockTrade4(input: [number, number[]], ns: NS): number {
   }
 
   if (numPrices <= 1) {
-    ns.print('All lose money');
+    ns.print("All lose money");
     return 0;
   }
 

@@ -1,26 +1,26 @@
-import {arrayUnique}                  from '@lib/array_util';
-import {trimEndChars, trimStartChars} from '@lib/string_util';
+import {arrayUnique}                  from "@lib/array_util";
+import {trimEndChars, trimStartChars} from "@lib/string_util";
 
 function cleanUnmatchableRightParens(input: string) {
   // Check for any right parens that CANNOT match
   // e.g. ())a) => ()a)
   let countLeft = 0;
   let countRight = 0;
-  let temp = '';
+  let temp = "";
   for (let i = 0; i < input.length; i++) {
     const char = input.charAt(i);
     switch (char) {
-      case ')':
+      case ")":
         // Are there enough left parens
         if (countRight < countLeft) {
           countRight++;
-          temp += ')';
+          temp += ")";
         }
         break;
-      case '(':
+      case "(":
         countLeft++;
         countRight = 0; // Avoid removing valid options
-        temp += '(';
+        temp += "(";
         break;
       default:
         countRight = 0; // Avoid removing valid options
@@ -35,21 +35,21 @@ function cleanUnmatchableLeftParens(input: string) {
   // e.g. (a(() => (a()
   let countLeft = 0;
   let countRight = 0;
-  let temp = '';
+  let temp = "";
   for (let i = input.length - 1; i >= 0; i--) {
     const char = input.charAt(i);
     switch (char) {
-      case '(':
+      case "(":
         // Are there enough right parens
         if (countLeft < countRight) {
           countLeft++;
-          temp = '(' + temp;
+          temp = "(" + temp;
         }
         break;
-      case ')':
+      case ")":
         countRight++;
         countLeft = 0; // Avoid removing valid options
-        temp = ')' + temp;
+        temp = ")" + temp;
         break;
       default:
         countLeft = 0; // Avoid removing valid options
@@ -75,10 +75,10 @@ function isValidParens(input: string): boolean {
   for (let i = 0; i < input.length; i++) {
     const char = input.charAt(i);
     switch (char) {
-      case '(':
+      case "(":
         countLeft++;
         break;
-      case ')':
+      case ")":
         if (countLeft <= 0) {
           return false;
         }
@@ -99,7 +99,7 @@ function possibleRightCombos(input: string, excessCount: number): string[] {
 
   const temp: string[] = [];
   for (let i = 0; i < input.length; i++) {
-    if (input[i] === ')') {
+    if (input[i] === ")") {
       // We CANNOT have a valid string with a right paren at the start,
       // so skipping the additional check
       if (i === input.length - 1) {
@@ -120,7 +120,7 @@ function possibleLeftCombos(input: string, excessCount: number): string[] {
 
   const temp: string[] = [];
   for (let i = input.length - 1; i >= 0; i--) {
-    if (input[i] === '(') {
+    if (input[i] === "(") {
       // We CANNOT have a valid string with a left paren at the end,
       // so skipping the additional check
       if (i === 0) {
@@ -163,13 +163,13 @@ export function sanitizeParens(input: string): string[] {
   let trimmed: string = input;
 
   // Remove any parens that CANNOT match
-  trimmed = trimStartChars(trimmed, ')');
-  trimmed = trimEndChars(trimmed, '(');
+  trimmed = trimStartChars(trimmed, ")");
+  trimmed = trimEndChars(trimmed, "(");
   trimmed = cleanUnmatchableRightParens(trimmed);
   trimmed = cleanUnmatchableLeftParens(trimmed);
 
-  const countLeft = countCharInString(trimmed, '(');
-  const countRight = countCharInString(trimmed, ')');
+  const countLeft = countCharInString(trimmed, "(");
+  const countRight = countCharInString(trimmed, ")");
 
   // FIXME Misses the case where we have an equal number of matchable parents, but not in pairs!
   //  Sample input: "())a))))(()((())("

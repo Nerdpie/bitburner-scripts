@@ -50,7 +50,7 @@ Return the ciphertext as uppercase string. Spaces remains the same.
   const plaintext: string = input[0];
   const offset: number = input[1];
 
-  let result = '';
+  let result = "";
   for (let i = 0; i < plaintext.length; i++) {
     result += rotN(plaintext[i], offset);
   }
@@ -100,7 +100,7 @@ If your solution is an empty string, you must leave the text box empty. Do not u
   const plaintext = input[0];
   const keyword = input[1];
   const keywordOffsets: number[] = Array<number>(keyword.length);
-  let result = '';
+  let result = "";
 
   for (let i = 0; i < keyword.length; i++) {
     keywordOffsets[i] = keyword.charCodeAt(i) - ASCII_LETTER_A;

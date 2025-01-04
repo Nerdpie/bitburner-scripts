@@ -1,13 +1,13 @@
 // Based originally on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 
-import type {Terminal}                                   from '@/game_internal_types/Terminal/Terminal';
-import {BuiltinServers, ValidRamCapacity}                from '@lib/enum_and_limiter_definitions';
-import {exposeGameInternalObjects}                       from '@lib/exploits';
-import {getAllServers}                                   from '@lib/scan_servers';
-import {assertBackdoorInstalled, assertServerProperties} from '@lib/server_util';
-import {getTimeStamp}                                    from '@lib/time_util';
-import {Deploy, ServerSelections, setTailWindow}         from '@settings';
-import type {Server}                                     from 'NetscriptDefinitions';
+import type {Terminal}                                   from "@/game_internal_types/Terminal/Terminal";
+import {BuiltinServers, ValidRamCapacity}                from "@lib/enum_and_limiter_definitions";
+import {exposeGameInternalObjects}                       from "@lib/exploits";
+import {getAllServers}                                   from "@lib/scan_servers";
+import {assertBackdoorInstalled, assertServerProperties} from "@lib/server_util";
+import {getTimeStamp}                                    from "@lib/time_util";
+import {Deploy, ServerSelections, setTailWindow}         from "@settings";
+import type {Server}                                     from "NetscriptDefinitions";
 
 const config = Deploy;
 let prevHackingLevel = 0;
@@ -16,15 +16,15 @@ let prevTarget: BuiltinServers | undefined = undefined;
 function getAvailableTools(ns: NS): ((host: string) => void)[] {
   const PROGRAMS: ({ file: string; action: (host: string) => void })[] = [
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    {file: 'BruteSSH.exe', action: ns.brutessh},
+    {file: "BruteSSH.exe", action: ns.brutessh},
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    {file: 'FTPCrack.exe', action: ns.ftpcrack},
+    {file: "FTPCrack.exe", action: ns.ftpcrack},
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    {file: 'RelaySMTP.exe', action: ns.relaysmtp},
+    {file: "RelaySMTP.exe", action: ns.relaysmtp},
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    {file: 'HTTPWorm.exe', action: ns.httpworm},
+    {file: "HTTPWorm.exe", action: ns.httpworm},
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    {file: 'SQLInject.exe', action: ns.sqlinject},
+    {file: "SQLInject.exe", action: ns.sqlinject},
   ];
 
   const availableTools: ((host: string) => void)[] = [];
@@ -68,9 +68,9 @@ function pwnServer(ns: NS, target: Required<Server>, tools: ((host: string) => v
  */
 function tryBackdoor(ns: NS, server: Required<Server>) {
   // MEMO BuiltinServers is a string enum, and hostnames are always exposed as a string
-  if (!config.hackTheWorld && server.hostname === BuiltinServers['w0r1d_d43m0n'] as string) {
+  if (!config.hackTheWorld && server.hostname === BuiltinServers["w0r1d_d43m0n"] as string) {
     if (server.requiredHackingSkill <= ns.getHackingLevel()) {
-      ns.printf('Can backdoor: %s', BuiltinServers['w0r1d_d43m0n']);
+      ns.printf("Can backdoor: %s", BuiltinServers["w0r1d_d43m0n"]);
     }
     return;
   }
@@ -83,7 +83,7 @@ function tryBackdoor(ns: NS, server: Required<Server>) {
       // Make sure the Terminal isn't busy with another action
       if (terminal.action === null) {
         terminal.connectToServer(server.hostname);
-        terminal.executeCommands('backdoor');
+        terminal.executeCommands("backdoor");
       }
     } catch {
       // We'll backdoor it eventually
@@ -95,7 +95,7 @@ function execScript(ns: NS, server: Server, script: string, targetServer?: strin
   const ramCost = ns.getScriptRam(script, server.hostname);
 
   let ramAvailable = server.maxRam - server.ramUsed;
-  if ('home' === server.hostname) {
+  if ("home" === server.hostname) {
     ramAvailable -= config.homeReservedRam;
   }
 
@@ -123,10 +123,10 @@ function buildCluster(ns: NS) {
     }
     ramCapacity = 2 ** targetCapacityExponent;
   } while (ramCapacity <= config.ramCapacity &&
-  buyServers(ns, 'cluster-', config.clusterCount, ramCapacity) &&
-  buyServers(ns, 'weaken-', config.weakenCount, ramCapacity) &&
-  buyServers(ns, 'grow-', config.growCount, ramCapacity) &&
-  buyServers(ns, 'share-', config.shareCount, ramCapacity));
+  buyServers(ns, "cluster-", config.clusterCount, ramCapacity) &&
+  buyServers(ns, "weaken-", config.weakenCount, ramCapacity) &&
+  buyServers(ns, "grow-", config.growCount, ramCapacity) &&
+  buyServers(ns, "share-", config.shareCount, ramCapacity));
 }
 
 /**
@@ -144,13 +144,13 @@ function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number):
     if (ns.serverExists(serverName)) {
       // Check if the server's RAM is at the current target
       if (ns.getServerMaxRam(serverName) < ramCapacity) {
-        if (ns.getServerMoneyAvailable('home') < ns.getPurchasedServerUpgradeCost(serverName, ramCapacity)) {
+        if (ns.getServerMoneyAvailable("home") < ns.getPurchasedServerUpgradeCost(serverName, ramCapacity)) {
           return false;
         }
         ns.upgradePurchasedServer(serverName, ramCapacity);
       }
     } else {
-      if (ns.getServerMoneyAvailable('home') < PRICE) {
+      if (ns.getServerMoneyAvailable("home") < PRICE) {
         return false;
       }
       ns.purchaseServer(serverName, ramCapacity);
@@ -274,8 +274,8 @@ export async function main(ns: NS): Promise<void> {
 
   setTailWindow(ns, config);
 
-  ns.disableLog('disableLog'); // Ironic, no?
-  ns.disableLog('ALL');
+  ns.disableLog("disableLog"); // Ironic, no?
+  ns.disableLog("ALL");
 
   let tools: ((host: string) => void)[];
   let script: string;
@@ -289,29 +289,29 @@ export async function main(ns: NS): Promise<void> {
   let loopDelay = config.loopDelay;
 
   switch (config.mode) {
-    case 'share':
-      script = '/scripts/share.js';
+    case "share":
+      script = "/scripts/share.js";
       break;
-    case 'hgw':
-      script = '/scripts/zac_hack.js';
+    case "hgw":
+      script = "/scripts/zac_hack.js";
       break;
     default:
       // `config.mode` is highlighted due to value narrowing
       // Leave it here in case we add a new option and don't fully implement it
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       ns.print(`WARNING: Invalid mode '${config.mode}' - defaulting to 'hgw'`);
-      script = '/scripts/zac_hack.js';
+      script = "/scripts/zac_hack.js";
   }
 
   const filesToCopy = [
-    '/scripts/zac_hack.js',
-    '/scripts/weaken.js',
-    '/scripts/grow.js',
-    '/scripts/share.js',
+    "/scripts/zac_hack.js",
+    "/scripts/weaken.js",
+    "/scripts/grow.js",
+    "/scripts/share.js",
   ];
 
   if (!config.dynamicTarget && !targetSelf && !assertBackdoorInstalled(ns.getServer(targetServer))) {
-    ns.printf('Target server not yet pwned - %s', targetServer);
+    ns.printf("Target server not yet pwned - %s", targetServer);
     targetSelf = true;
   }
 
@@ -319,7 +319,7 @@ export async function main(ns: NS): Promise<void> {
     exposeGameInternalObjects();
   }
 
-  ns.printf('[%s] Starting', getTimeStamp());
+  ns.printf("[%s] Starting", getTimeStamp());
 
   // noinspection InfiniteLoopJS - Intended design
   while (true) {
@@ -333,7 +333,7 @@ export async function main(ns: NS): Promise<void> {
     }
 
     if (!targetSelf && targetServer === undefined) {
-      throw new Error('Trying to target an undefined server!');
+      throw new Error("Trying to target an undefined server!");
     }
 
     const serverList = getAllServers(ns)
@@ -349,7 +349,7 @@ export async function main(ns: NS): Promise<void> {
     // REFINE Ideally, this would increase the delay sooner, and more gradually, but late into a run,
     //  high hacking stats can make backdoor installs FAST... and a proper batcher removes half of the need
     // If we've backdoored all servers (ignoring w0r1d_d43m0n), increase the loop delay
-    if (nonPurchasedServers.filter(s => s.hostname as BuiltinServers !== BuiltinServers['w0r1d_d43m0n']).length === backdooredServers.length) {
+    if (nonPurchasedServers.filter(s => s.hostname as BuiltinServers !== BuiltinServers["w0r1d_d43m0n"]).length === backdooredServers.length) {
       // noinspection MagicNumberJS - Five minutes
       loopDelay = 5 * 60 * 1000;
     }
@@ -371,19 +371,19 @@ export async function main(ns: NS): Promise<void> {
       });
 
     // Manage scripts on `home`
-    const home = ns.getServer('home');
+    const home = ns.getServer("home");
     if (resetScripts) {
-      ns.scriptKill('/scripts/zac_hack.js', 'home');
-      ns.scriptKill('/scripts/share.js', 'home');
+      ns.scriptKill("/scripts/zac_hack.js", "home");
+      ns.scriptKill("/scripts/share.js", "home");
     }
     if (targetSelf) {
-      execScript(ns, home, '/scripts/share.js');
+      execScript(ns, home, "/scripts/share.js");
     } else {
       execScript(ns, home, script, targetServer);
     }
 
     // Manage purchased servers
-    serverList.filter(s => s.purchasedByPlayer && s.hostname !== 'home')
+    serverList.filter(s => s.purchasedByPlayer && s.hostname !== "home")
       .forEach(s => {
         if (resetScripts) {
           ns.killall(s.hostname);
@@ -395,19 +395,19 @@ export async function main(ns: NS): Promise<void> {
           //  Iterating servers and min-maxing grow-weaken
           // Will want to use a proper port-based manager technique so
           //  target can change w/o having to reset the scripts
-          execScript(ns, s, '/scripts/share.js');
+          execScript(ns, s, "/scripts/share.js");
         } else {
-          switch (s.hostname.split('-')[0]) { // Check the hostname's prefix
-            case 'weaken':
-              execScript(ns, s, '/scripts/weaken.js', targetServer);
+          switch (s.hostname.split("-")[0]) { // Check the hostname's prefix
+            case "weaken":
+              execScript(ns, s, "/scripts/weaken.js", targetServer);
               break;
-            case 'grow':
-              execScript(ns, s, '/scripts/grow.js', targetServer);
+            case "grow":
+              execScript(ns, s, "/scripts/grow.js", targetServer);
               break;
-            case 'share':
-              execScript(ns, s, '/scripts/share.js');
+            case "share":
+              execScript(ns, s, "/scripts/share.js");
               break;
-            case 'cluster':
+            case "cluster":
               execScript(ns, s, script, targetServer);
               break;
             default:

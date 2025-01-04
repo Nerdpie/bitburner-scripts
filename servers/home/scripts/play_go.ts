@@ -1,5 +1,5 @@
-import {Go, setTailWindow} from '@settings';
-import type {GoOpponent}   from 'NetscriptDefinitions';
+import {Go, setTailWindow} from "@settings";
+import type {GoOpponent}   from "NetscriptDefinitions";
 
 /**
  * Basic IPvGo script derived from https://github.com/bitburner-official/bitburner-src/blob/dev/src/Documentation/doc/programming/go_algorithms.md
@@ -10,28 +10,28 @@ export async function main(ns: NS): Promise<void> {
   setTailWindow(ns, config);
 
   const DISABLED_LOGS = [
-    'sleep',
-    'go.makeMove',
-    'go.passTurn',
+    "sleep",
+    "go.makeMove",
+    "go.passTurn",
   ];
-  ns.disableLog('disableLog');
+  ns.disableLog("disableLog");
   DISABLED_LOGS.forEach(l => ns.disableLog(l));
 
   /** Delay before processing the next move, in milliseconds */
   const LOOP_DELAY = config.loopDelay || 200;
 
-  let result: { type: 'move' | 'pass' | 'gameOver'; x: number | null; y: number | null; };
+  let result: { type: "move" | "pass" | "gameOver"; x: number | null; y: number | null; };
 
-  if (ns.go.getCurrentPlayer() === 'White') {
+  if (ns.go.getCurrentPlayer() === "White") {
     await ns.go.opponentNextTurn(false);
   }
 
   // Have to fetch again, to determine if we need a new board
-  if (ns.go.getCurrentPlayer() === 'None') {
+  if (ns.go.getCurrentPlayer() === "None") {
     if (config.keepPlaying) {
       ns.go.resetBoardState(config.faction as GoOpponent, config.boardSize);
     } else {
-      ns.print('Game needs reset');
+      ns.print("Game needs reset");
     }
   }
 
@@ -58,7 +58,7 @@ export async function main(ns: NS): Promise<void> {
       await ns.sleep(LOOP_DELAY);
 
       // Keep looping as long as the opponent is playing moves
-    } while (result.type !== 'gameOver');
+    } while (result.type !== "gameOver");
 
     ns.go.resetBoardState(<GoOpponent>config.faction, config.boardSize);
   } while (config.keepPlaying);

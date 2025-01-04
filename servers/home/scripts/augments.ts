@@ -1,14 +1,14 @@
-import type {Augmentation}                  from '@/game_internal_types/Augmentation/Augmentation';
-import type {Faction}                       from '@/game_internal_types/Faction/Faction';
-import type {PlayerObject}                  from '@/game_internal_types/PersonObjects/Player/PlayerObject';
-import type {AugmentationName, FactionName} from '@enums';
-import {arrayUnique}                        from '@lib/array_util';
-import {getAugRepMultiplier}                from '@lib/bitnode_util';
-import {exposeGameInternalObjects}          from '@lib/exploits';
-import type {AugmentationCosts}             from '@lib/game_internals/AugmentationHelpers';
-import {getAugCost}                         from '@lib/game_internals/AugmentationHelpers';
-import {getFactionAugmentationsFiltered}    from '@lib/game_internals/FactionHelpers';
-import {Augments, setTailWindow}            from '@settings';
+import type {Augmentation}                  from "@/game_internal_types/Augmentation/Augmentation";
+import type {Faction}                       from "@/game_internal_types/Faction/Faction";
+import type {PlayerObject}                  from "@/game_internal_types/PersonObjects/Player/PlayerObject";
+import type {AugmentationName, FactionName} from "@enums";
+import {arrayUnique}                        from "@lib/array_util";
+import {getAugRepMultiplier}                from "@lib/bitnode_util";
+import {exposeGameInternalObjects}          from "@lib/exploits";
+import type {AugmentationCosts}             from "@lib/game_internals/AugmentationHelpers";
+import {getAugCost}                         from "@lib/game_internals/AugmentationHelpers";
+import {getFactionAugmentationsFiltered}    from "@lib/game_internals/FactionHelpers";
+import {Augments, setTailWindow}            from "@settings";
 
 // Run on import, so these are visible regardless
 // Yes, this means side effects, if we have multiple instances etc.,
@@ -21,7 +21,7 @@ const factions = <Record<string, Faction>>globalThis.Factions;
 const player = <PlayerObject>globalThis.Player;
 const augs = <Record<AugmentationName, Augmentation>>globalThis.Augmentations;
 
-const NFG = <AugmentationName>'NeuroFlux Governor';
+const NFG = <AugmentationName>"NeuroFlux Governor";
 
 const config = Augments;
 
@@ -30,13 +30,13 @@ export function main(ns: NS): void {
 
   // TODO Add special-case handling of NFG; worth showing its rep & cash cost
   switch (config.mode) {
-    case 'purchasable':
+    case "purchasable":
       showPurchasableAugs(ns);
       break;
-    case 'uniques':
+    case "uniques":
       factionsWithUnboughtUniques(ns);
       break;
-    case 'rep':
+    case "rep":
       factionRepNeeded(ns);
       break;
     default:
@@ -50,9 +50,9 @@ export function main(ns: NS): void {
 Output functions
  */
 function factionsWithUnboughtUniques(ns: NS, includeSoA: boolean = false) {
-  const SOA = <FactionName>'Shadows of Anarchy';
+  const SOA = <FactionName>"Shadows of Anarchy";
 
-  ns.print('Facs w/unique augs to buy:');
+  ns.print("Facs w/unique augs to buy:");
 
   const gangAugs = getGangAugs(ns);
 
@@ -84,14 +84,14 @@ function factionsWithUnboughtUniques(ns: NS, includeSoA: boolean = false) {
   const uniqueFactions = arrayUnique(augFactions).sort();
 
   if (uniqueFactions.length > 0) {
-    uniqueFactions.forEach(fac => ns.printf('%-27s - F%6s', fac, ns.formatNumber(factions[fac].favor, 1)));
+    uniqueFactions.forEach(fac => ns.printf("%-27s - F%6s", fac, ns.formatNumber(factions[fac].favor, 1)));
   } else {
-    ns.print('All bought!');
+    ns.print("All bought!");
   }
 }
 
 function showPurchasableAugs(ns: NS): void {
-  ns.print('Purchasable augs by price:');
+  ns.print("Purchasable augs by price:");
 
   const playerFacs = player.factions;
   const purchasableAugs = getPurchasableAugsWithGang(ns)
@@ -104,12 +104,12 @@ function showPurchasableAugs(ns: NS): void {
     .sort((a, b) => b.costs.moneyCost - a.costs.moneyCost);
 
   if (purchasableAugs.length === 0) {
-    ns.print('All bought!');
+    ns.print("All bought!");
     return;
   }
 
   purchasableAugs.forEach(a => {
-    ns.printf('%-25s - $%8s', truncateAugName(a.name), ns.formatNumber(a.costs.moneyCost));
+    ns.printf("%-25s - $%8s", truncateAugName(a.name), ns.formatNumber(a.costs.moneyCost));
     ns.print(a.factions.filter(f => playerFacs.includes(f)).map(truncateFacName));
   });
 }
@@ -118,10 +118,10 @@ function factionRepNeeded(ns: NS): void {
   const playerFacs = player.factions;
   const purchasableAugs = getPurchasableAugs();
 
-  ns.print('Add\'l rep needed to buy augs:');
+  ns.print("Add'l rep needed to buy augs:");
 
   if (purchasableAugs.length === 0) {
-    ns.print('All bought!');
+    ns.print("All bought!");
     return;
   }
 
@@ -138,7 +138,7 @@ function factionRepNeeded(ns: NS): void {
 
   const facsWithAugs = playerFacs.filter(f => purchasableAugs.some(a => a.factions.includes(f)));
 
-  facsWithAugs.sort().forEach(f => ns.printf('%-16s - %6s', f, ns.formatNumber(maxRepRequirementForFaction(f), 1)));
+  facsWithAugs.sort().forEach(f => ns.printf("%-16s - %6s", f, ns.formatNumber(maxRepRequirementForFaction(f), 1)));
 }
 
 /*
@@ -148,44 +148,44 @@ Augment utility methods
 function truncateAugName(name: string): string {
   // noinspection SpellCheckingInspection
   return name
-    .replace('Embedded', 'Embed')
-    .replace('Module', 'Mod')
-    .replace('Artificial', 'Arti')
-    .replace('Network', 'Net')
-    .replace('Implant', 'Impl')
-    .replace('Upgrade', 'Upgd')
-    .replace('Signal', 'Sig')
-    .replace('Processor', 'Proc')
-    .replace('Netburner', 'NB')
-    .replace('Accelerator', 'Accel')
-    .replace('Cloaking', 'Cloak')
-    .replace(' Gen ', ' g')
-    .replace('Graphene', 'Grphn')
-    .replace('Direct Memory Access', 'DMA')
-    .replace('Direct', 'Dir')
-    .replace('Memory', 'Mem')
-    .replace('Direct-Neural', 'Dir-Neur')
-    .replace('Enhanced', 'Enh')
-    .replace('Modification', 'Mod')
-    .replace('Interface', 'Intf')
-    .replace('Optimization', 'Opt');
+    .replace("Embedded", "Embed")
+    .replace("Module", "Mod")
+    .replace("Artificial", "Arti")
+    .replace("Network", "Net")
+    .replace("Implant", "Impl")
+    .replace("Upgrade", "Upgd")
+    .replace("Signal", "Sig")
+    .replace("Processor", "Proc")
+    .replace("Netburner", "NB")
+    .replace("Accelerator", "Accel")
+    .replace("Cloaking", "Cloak")
+    .replace(" Gen ", " g")
+    .replace("Graphene", "Grphn")
+    .replace("Direct Memory Access", "DMA")
+    .replace("Direct", "Dir")
+    .replace("Memory", "Mem")
+    .replace("Direct-Neural", "Dir-Neur")
+    .replace("Enhanced", "Enh")
+    .replace("Modification", "Mod")
+    .replace("Interface", "Intf")
+    .replace("Optimization", "Opt");
 }
 
 /** @param {string} name */
 function truncateFacName(name: string): string {
   switch (name) {
-    case 'Clarke Incorporated':
-      return 'Clarke';
-    case 'Bachman & Associates':
-      return 'BnA';
-    case 'OmniTek Incorporated':
-      return 'OmniTek';
-    case 'Shadows of Anarchy':
-      return 'SoA';
-    case 'Speakers for the Dead':
-      return 'Spk4Ded';
-    case 'Blade Industries':
-      return 'Blade';
+    case "Clarke Incorporated":
+      return "Clarke";
+    case "Bachman & Associates":
+      return "BnA";
+    case "OmniTek Incorporated":
+      return "OmniTek";
+    case "Shadows of Anarchy":
+      return "SoA";
+    case "Speakers for the Dead":
+      return "Spk4Ded";
+    case "Blade Industries":
+      return "Blade";
     default:
       return name;
   }
@@ -200,9 +200,9 @@ function getGangAugs(ns: NS): AugmentationName[] {
 
 function isEndgameFactionUnlocked(ns: NS, faction: FactionName): boolean {
   // @ts-expect-error - It's a string enum...
-  const endgameFactions: FactionName[] = ['Bladeburners', 'Church of the Machine God'];
-  const CHURCH_MACHINE_GOD = <FactionName>'Church of the Machine God';
-  const BLADEBURNERS = <FactionName>'Bladeburners';
+  const endgameFactions: FactionName[] = ["Bladeburners", "Church of the Machine God"];
+  const CHURCH_MACHINE_GOD = <FactionName>"Church of the Machine God";
+  const BLADEBURNERS = <FactionName>"Bladeburners";
   const MACHINE_GOD_NODE = 13;
   const BLADEBURNER_NODES = [6, 7];
   if (!endgameFactions.includes(faction)) {

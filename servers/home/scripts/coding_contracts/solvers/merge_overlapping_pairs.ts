@@ -1,4 +1,4 @@
-import {comparePairs} from '@lib/comparators';
+import {comparePairs} from "@lib/comparators";
 
 /**
  * @param {[number,number][]} input

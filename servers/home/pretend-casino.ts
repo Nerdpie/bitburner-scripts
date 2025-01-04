@@ -1,6 +1,6 @@
-import {PlayerObject}              from '@/game_internal_types/PersonObjects/Player/PlayerObject';
-import {CityName}                  from '@enums';
-import {exposeGameInternalObjects} from '@lib/exploits';
+import {PlayerObject}              from "@/game_internal_types/PersonObjects/Player/PlayerObject";
+import {CityName}                  from "@enums";
+import {exposeGameInternalObjects} from "@lib/exploits";
 
 export function main(ns: NS) {
   if (!globalThis.Player) {
@@ -20,14 +20,14 @@ export function main(ns: NS) {
     return;
   }
 
-  const cityAevum = <CityName>'Aevum';
+  const cityAevum = <CityName>"Aevum";
 
   if (player.city !== cityAevum) {
     if (player.money < TRAVEL_COST) {
-      ns.tprint('ERROR: Insufficient funds to travel!');
+      ns.tprint("ERROR: Insufficient funds to travel!");
       return;
     }
     player.travel(cityAevum);
   }
-  player.gainMoney(MAX_CASINO_MONEY - casinoMoney, 'casino');
+  player.gainMoney(MAX_CASINO_MONEY - casinoMoney, "casino");
 }

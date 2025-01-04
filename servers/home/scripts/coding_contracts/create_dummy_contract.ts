@@ -1,4 +1,4 @@
-import {CodingContractTypes} from './contract_util';
+import {CodingContractTypes} from "./contract_util";
 
 export async function main(ns: NS): Promise<void> {
   if (ns.self().parent !== 0) {
@@ -7,8 +7,8 @@ export async function main(ns: NS): Promise<void> {
   }
 
   if (ns.self().tailProperties) {
-    const contractType = <string>await ns.prompt('Contract type:', {
-      type: 'select',
+    const contractType = <string>await ns.prompt("Contract type:", {
+      type: "select",
       choices: Object.keys(CodingContractTypes).toSorted(),
     });
     if (contractType) {
@@ -20,8 +20,8 @@ export async function main(ns: NS): Promise<void> {
   // Not run from our 'run menu', nor from a tail window; use args
   const type = ns.args[0];
 
-  if (typeof type === 'string') {
-    const contractType = type.replace(/_/g, ' ');
+  if (typeof type === "string") {
+    const contractType = type.replace(/_/g, " ");
     ns.codingcontract.createDummyContract(contractType);
   } else {
     ns.tprintf(`ERROR: Please specify a string for the contract type`);
@@ -29,5 +29,5 @@ export async function main(ns: NS): Promise<void> {
 }
 
 export function autocomplete(): string[] {
-  return Object.keys(CodingContractTypes).toSorted().map(t => t.replace(/ /g, '_'));
+  return Object.keys(CodingContractTypes).toSorted().map(t => t.replace(/ /g, "_"));
 }

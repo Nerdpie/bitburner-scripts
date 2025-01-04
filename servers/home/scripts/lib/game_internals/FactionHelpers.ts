@@ -1,11 +1,11 @@
 // Derived from bitburner-src/src/Faction/FactionHelpers.tsx
-import type {Augmentation}         from '@/game_internal_types/Augmentation/Augmentation';
-import type {Faction}              from '@/game_internal_types/Faction/Faction';
-import type {PlayerObject}         from '@/game_internal_types/PersonObjects/Player/PlayerObject';
-import type {AugmentationName}     from '@enums';
-import {getGangUniqueAug}          from '../bitnode_util';
-import {exposeGameInternalObjects} from '../exploits';
-import {SFC32RNG}                  from './RNG';
+import type {Augmentation}         from "@/game_internal_types/Augmentation/Augmentation";
+import type {Faction}              from "@/game_internal_types/Faction/Faction";
+import type {PlayerObject}         from "@/game_internal_types/PersonObjects/Player/PlayerObject";
+import type {AugmentationName}     from "@enums";
+import {getGangUniqueAug}          from "../bitnode_util";
+import {exposeGameInternalObjects} from "../exploits";
+import {SFC32RNG}                  from "./RNG";
 
 export function getFactionAugmentationsFiltered(ns: NS, faction: Faction): AugmentationName[] {
   if (!globalThis.Player) {
@@ -19,14 +19,14 @@ export function getFactionAugmentationsFiltered(ns: NS, faction: Faction): Augme
   if (player.hasGangWith(faction.name)) {
     let augs = Object.values(Augmentations);
 
-    const VIOLET_CONGRUITY = <AugmentationName>'violet Congruity Implant';
+    const VIOLET_CONGRUITY = <AugmentationName>"violet Congruity Implant";
 
     // Remove special augs
     augs = augs.filter((a) => !a.isSpecial && a.name !== VIOLET_CONGRUITY);
 
     if (player.bitNodeN === 2) {
       // TRP is not available outside BN2 for Gangs
-      augs.push(Augmentations['The Red Pill']);
+      augs.push(Augmentations["The Red Pill"]);
     }
 
     // Yes, it's an implicit cast; that's how it's implemented in the game itself

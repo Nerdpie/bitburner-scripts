@@ -5,25 +5,25 @@
 // Converted to ESLint flat config format
 
 // eslint-disable-next-line n/no-unpublished-import
-import eslint              from '@eslint/js';
+import eslint              from "@eslint/js";
 // eslint-disable-next-line n/no-unpublished-import
-import eslintPluginImportX from 'eslint-plugin-import-x';
-import n                   from 'eslint-plugin-n';
+import eslintPluginImportX from "eslint-plugin-import-x";
+import n                   from "eslint-plugin-n";
 // noinspection SpellCheckingInspection
-import tseslint            from 'typescript-eslint';
+import tseslint            from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ['**/build/**', '**/dist/**', '**/node_modules/**', 'game_internal_types/**'],
+    ignores: ["**/build/**", "**/dist/**", "**/node_modules/**", "game_internal_types/**"],
   },
   eslint.configs.recommended,
   tseslint.configs.strictTypeChecked,
-  n.configs['flat/recommended'],
+  n.configs["flat/recommended"],
   {
     plugins: {
-      '@typescript-eslint': tseslint.plugin,
+      "@typescript-eslint": tseslint.plugin,
       n: n,
-      'import-x': eslintPluginImportX,
+      "import-x": eslintPluginImportX,
     },
     languageOptions: {
       parser: tseslint.parser,
@@ -32,82 +32,82 @@ export default tseslint.config(
       },
     },
     rules: {
-      '@typescript-eslint/ban-ts-comment': 'warn',
-      '@typescript-eslint/ban-types': 'off',
-      '@typescript-eslint/camelcase': 'off',
-      '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@typescript-eslint/no-confusing-void-expression': [
-        'error',
+      "@typescript-eslint/ban-ts-comment": "warn",
+      "@typescript-eslint/ban-types": "off",
+      "@typescript-eslint/camelcase": "off",
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/no-confusing-void-expression": [
+        "error",
         // I would prefer that it not exempt all arrow shorthand,
         // only that in a context that doesn't expect a return,
         // such as a forEach call...
-        {'ignoreArrowShorthand': true},
+        {"ignoreArrowShorthand": true},
       ],
-      '@typescript-eslint/no-empty-function': 'off',
-      '@typescript-eslint/no-floating-promises': 'error',
-      '@typescript-eslint/no-non-null-assertion': 'off',
-      '@typescript-eslint/no-unnecessary-condition': [
-        'error',
-        {'allowConstantLoopConditions': true},
+      "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/no-non-null-assertion": "off",
+      "@typescript-eslint/no-unnecessary-condition": [
+        "error",
+        {"allowConstantLoopConditions": true},
       ],
-      '@typescript-eslint/no-use-before-define': 'off',
-      '@typescript-eslint/no-var-requires': 'off',
-      '@typescript-eslint/no-warning-comments': 'off',
-      '@typescript-eslint/strict-boolean-expressions': [
-        'error',
+      "@typescript-eslint/no-use-before-define": "off",
+      "@typescript-eslint/no-var-requires": "off",
+      "@typescript-eslint/no-warning-comments": "off",
+      "@typescript-eslint/strict-boolean-expressions": [
+        "error",
         {
           // If we don't do this, our checks for `exposeGameInternalObjects` will all be flagged
-          'allowAny': true,
+          "allowAny": true,
         },
       ],
-      'block-scoped-var': 'error',
-      eqeqeq: 'error',
-      'import-x/consistent-type-specifier-style': 'error',
-      'import-x/first': 'error',
-      'n/no-empty-function': 'off',
-      'n/no-extraneous-import': [
-        'error',
+      "block-scoped-var": "error",
+      eqeqeq: "error",
+      "import-x/consistent-type-specifier-style": "error",
+      "import-x/first": "error",
+      "n/no-empty-function": "off",
+      "n/no-extraneous-import": [
+        "error",
         {
-          'allowModules': ['NetscriptDefinitions'],
+          "allowModules": ["NetscriptDefinitions"],
         },
       ],
-      'n/no-missing-import': 'off',
-      'n/no-missing-require': 'off',
-      'n/no-unsupported-features/es-syntax': 'off',
-      'n/shebang': 'off',
-      'no-dupe-class-members': 'off',
-      'no-restricted-properties': [
-        'error',
+      "n/no-missing-import": "off",
+      "n/no-missing-require": "off",
+      "n/no-unsupported-features/es-syntax": "off",
+      "n/shebang": "off",
+      "no-dupe-class-members": "off",
+      "no-restricted-properties": [
+        "error",
         {
-          object: 'describe',
-          property: 'only',
+          object: "describe",
+          property: "only",
         },
         {
-          object: 'it',
-          property: 'only',
+          object: "it",
+          property: "only",
         },
       ],
-      'no-restricted-syntax': [
-        'error',
+      "no-restricted-syntax": [
+        "error",
         // From https://typescript-eslint.io/troubleshooting/faqs/general/#how-can-i-ban-specific-language-feature
         // Use `#private` fields over the `private` modifier
         // `#private` fields remain private at runtime
         {
-          'selector': ':matches(PropertyDefinition, MethodDefinition)[accessibility="private"]',
-          'message': 'Use `#private` members instead.',
+          "selector": ":matches(PropertyDefinition, MethodDefinition)[accessibility=\"private\"]",
+          "message": "Use `#private` members instead.",
         },
       ],
-      'no-trailing-spaces': 'error',
-      'no-var': 'error',
-      'prefer-arrow-callback': 'error',
-      'prefer-const': 'error',
-      'require-atomic-updates': 'off',
+      "no-trailing-spaces": "error",
+      "no-var": "error",
+      "prefer-arrow-callback": "error",
+      "prefer-const": "error",
+      "require-atomic-updates": "off",
     },
   },
   {
     // disable type-aware linting on JS files
-    files: ['**/*.js'],
+    files: ["**/*.js"],
     extends: [tseslint.configs.disableTypeChecked],
   },
 );

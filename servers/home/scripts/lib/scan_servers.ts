@@ -5,15 +5,15 @@
  * @returns {string[]} An array of unique server names.
  */
 export function getAllServers(ns: NS): string[] {
-  const oldLogStatus = ns.isLogEnabled('scan');
-  ns.disableLog('scan');
+  const oldLogStatus = ns.isLogEnabled("scan");
+  ns.disableLog("scan");
   const servers: string[] = [];
-  const stack = ['home'];
+  const stack = ["home"];
 
   while (stack.length > 0) {
     const CURRENT = stack.pop();
     if (CURRENT === undefined) {
-      throw new Error('`pop` returned an undefined value for a non-empty stack!');
+      throw new Error("`pop` returned an undefined value for a non-empty stack!");
     }
 
     if (!servers.includes(CURRENT)) {
@@ -23,7 +23,7 @@ export function getAllServers(ns: NS): string[] {
   }
 
   if (oldLogStatus) {
-    ns.enableLog('scan');
+    ns.enableLog("scan");
   }
   return servers;
 }

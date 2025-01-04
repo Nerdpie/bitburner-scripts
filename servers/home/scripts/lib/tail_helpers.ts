@@ -7,7 +7,7 @@ export enum CollapseState {
 }
 
 function findButtonAndClick(scriptTitle: string, buttonTitle: string) {
-  const doc: Document = globalThis['document'];
+  const doc: Document = globalThis["document"];
 
   // Find the heading element
   const heading = doc.querySelector(`h6[title='${scriptTitle}']`);
@@ -24,19 +24,19 @@ function findButtonAndClick(scriptTitle: string, buttonTitle: string) {
 }
 
 export function collapseTail(scriptTitle: string): void {
-  findButtonAndClick(scriptTitle, 'Collapse');
+  findButtonAndClick(scriptTitle, "Collapse");
 }
 
 export function expandTail(scriptTitle: string): void {
-  findButtonAndClick(scriptTitle, 'Expand');
+  findButtonAndClick(scriptTitle, "Expand");
 }
 
 export function closeTail(scriptTitle: string): void {
-  findButtonAndClick(scriptTitle, 'Close window');
+  findButtonAndClick(scriptTitle, "Close window");
 }
 
 export function isTailOpen(scriptTitle: string): boolean {
-  const doc: Document = globalThis['document'];
+  const doc: Document = globalThis["document"];
 
   // Find the heading element
   const heading = doc.querySelector(`h6[title='${scriptTitle}']`);

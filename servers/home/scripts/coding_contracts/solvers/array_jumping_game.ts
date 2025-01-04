@@ -24,7 +24,7 @@ determine whether you are able to reach the last index.
  */
 export function arrayJumpingGame2(input: number[]) {
   if (input.length === 0) {
-    throw new Error('Undefined behavior: no jumps defined');
+    throw new Error("Undefined behavior: no jumps defined");
   }
 
   let workArray = input.slice();

@@ -3,10 +3,10 @@
  *
  */
 
-import {exposeGameInternalObjects}                                      from '@lib/exploits';
-import {parseAutocompleteFlags, parseNsFlags}                           from '@lib/flags_util';
-import {closeTail, CollapseState, collapseTail, expandTail, isTailOpen} from '@lib/tail_helpers';
-import type {AutocompleteData, RunOptions}                              from 'NetscriptDefinitions';
+import {exposeGameInternalObjects}                                      from "@lib/exploits";
+import {parseAutocompleteFlags, parseNsFlags}                           from "@lib/flags_util";
+import {closeTail, CollapseState, collapseTail, expandTail, isTailOpen} from "@lib/tail_helpers";
+import type {AutocompleteData, RunOptions}                              from "NetscriptDefinitions";
 
 interface DefaultScriptCtorParams {
   script: string;
@@ -38,7 +38,7 @@ class DefaultScript {
                 threadOrOptions = 1,
                 args = [],
               }: DefaultScriptCtorParams) {
-    if (script.charAt(0) === '/') {
+    if (script.charAt(0) === "/") {
       this.#script = script.substring(1);
     } else {
       this.#script = script;
@@ -58,22 +58,22 @@ class DefaultScript {
     if (this.#runArgs.length < 1) {
       return `${this.#script} `;
     }
-    return `${this.#script} ${this.#runArgs.join(' ')}`;
+    return `${this.#script} ${this.#runArgs.join(" ")}`;
   }
 
   /** @param {NS} ns */
   ensureScriptRunning(ns: NS): void {
     if (!this.#shouldRun) {
-      ns.tprintf('Skipping: %s', this.#script);
+      ns.tprintf("Skipping: %s", this.#script);
       return;
     }
 
     // Just eat the RAM cost; not sure what wasn't matching for `ns.ps`...
-    if (ns.isRunning(this.#script, 'home', ...this.#runArgs)) {
-      ns.tprintf('Already running: %s', this.#script);
+    if (ns.isRunning(this.#script, "home", ...this.#runArgs)) {
+      ns.tprintf("Already running: %s", this.#script);
 
     } else {
-      ns.tprintf('Not running: %s', this.#script);
+      ns.tprintf("Not running: %s", this.#script);
 
       // Reset the existing tail windows
       if (isTailOpen(this.#titleAttribute)) {
@@ -89,7 +89,7 @@ class DefaultScript {
       if (this.#collapse === CollapseState.Ignore) {
         return;
       }
-      ns.tail(this.#script, 'home', ...this.#runArgs);
+      ns.tail(this.#script, "home", ...this.#runArgs);
 
       // Ensure that the tail window has time to render before we try to act on it
       await ns.sleep(10);
@@ -112,14 +112,14 @@ class DefaultScript {
 
 function setCustomStyle() {
 
-  const doc: Document = globalThis['document'];
-  const styleId = 'nerdpie-css';
+  const doc: Document = globalThis["document"];
+  const styleId = "nerdpie-css";
   let customStyle = doc.getElementById(styleId);
 
   // Ensure the style element is generated; if it already exists, we'll just reset the contents
   if (!customStyle) {
-    customStyle = doc.body.appendChild(doc.createElement('style'));
-    customStyle.id = 'nerdpie-css';
+    customStyle = doc.body.appendChild(doc.createElement("style"));
+    customStyle.id = "nerdpie-css";
   }
   // noinspection CssUnusedSymbol,SpellCheckingInspection
   // language=CSS
@@ -138,18 +138,18 @@ function setCustomStyle() {
 }
 
 const FLAG_SCHEMA = {
-  'killall-scripts': false,
+  "killall-scripts": false,
 };
 
 export async function main(ns: NS): Promise<void> {
-  if (ns.getHostname() !== 'home') {
+  if (ns.getHostname() !== "home") {
     ns.tprint(`ERROR: Init must only be run on 'home'!`);
     return;
   }
 
   const flags = parseNsFlags(ns, FLAG_SCHEMA);
 
-  if (flags['killall-scripts']) {
+  if (flags["killall-scripts"]) {
     const self = ns.self();
     ns.ps().filter(p => p.pid !== self.pid)
       .forEach(p => ns.kill(p.pid));
@@ -163,16 +163,16 @@ export async function main(ns: NS): Promise<void> {
 
   // TODO Determine any other conditions to limit other scripts being run, such as RAM capacity
   const scripts = [
-    new DefaultScript({script: '/scripts/custom_hud.js'}),
-    new DefaultScript({script: '/scripts/scan_files.js', args: ['--scrape']}),
-    new DefaultScript({script: '/scripts/coding_contracts/contract_dispatcher.js', collapse: CollapseState.Collapse}),
-    new DefaultScript({script: '/scripts/scan_contracts.js', collapse: CollapseState.Collapse}),
-    new DefaultScript({script: '/scripts/augments.js', collapse: CollapseState.Collapse}),
+    new DefaultScript({script: "/scripts/custom_hud.js"}),
+    new DefaultScript({script: "/scripts/scan_files.js", args: ["--scrape"]}),
+    new DefaultScript({script: "/scripts/coding_contracts/contract_dispatcher.js", collapse: CollapseState.Collapse}),
+    new DefaultScript({script: "/scripts/scan_contracts.js", collapse: CollapseState.Collapse}),
+    new DefaultScript({script: "/scripts/augments.js", collapse: CollapseState.Collapse}),
     //new DefaultScript({script : "/scripts/net_tree.js", collapse : CollapseState.Collapse}),
-    new DefaultScript({script: '/scripts/run_menu.js', collapse: CollapseState.Collapse}),
-    new DefaultScript({script: '/z_from_others/insight/go.js'}),
-    new DefaultScript({script: '/scripts/gang_lord.js', collapse: CollapseState.Collapse, shouldRun: ns.gang.inGang()}),
-    new DefaultScript({script: '/scripts/deploy.js', collapse: CollapseState.Expand}),
+    new DefaultScript({script: "/scripts/run_menu.js", collapse: CollapseState.Collapse}),
+    new DefaultScript({script: "/z_from_others/insight/go.js"}),
+    new DefaultScript({script: "/scripts/gang_lord.js", collapse: CollapseState.Collapse, shouldRun: ns.gang.inGang()}),
+    new DefaultScript({script: "/scripts/deploy.js", collapse: CollapseState.Expand}),
   ];
 
   scripts.forEach(s => s.ensureScriptRunning(ns));

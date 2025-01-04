@@ -1,12 +1,12 @@
 // Derived from bitburner-src/src/Augmentations/AugmentationHelpers.ts
 // noinspection MagicNumberJS
 
-import type {Augmentation}                         from '@/game_internal_types/Augmentation/Augmentation';
-import type {PlayerObject}                         from '@/game_internal_types/PersonObjects/Player/PlayerObject';
-import type {AugmentationName}                     from '@enums';
-import {getAugCostMultiplier, getAugRepMultiplier} from '../bitnode_util';
-import {exposeGameInternalObjects}                 from '../exploits';
-import {CONSTANTS}                                 from './Constants';
+import type {Augmentation}                         from "@/game_internal_types/Augmentation/Augmentation";
+import type {PlayerObject}                         from "@/game_internal_types/PersonObjects/Player/PlayerObject";
+import type {AugmentationName}                     from "@enums";
+import {getAugCostMultiplier, getAugRepMultiplier} from "../bitnode_util";
+import {exposeGameInternalObjects}                 from "../exploits";
+import {CONSTANTS}                                 from "./Constants";
 
 if (!globalThis.Player) {
   exposeGameInternalObjects();
@@ -15,15 +15,15 @@ if (!globalThis.Player) {
 const player = <PlayerObject>globalThis.Player;
 
 const soaAugmentationNames = [
-  'SoA - Beauty of Aphrodite',
-  'SoA - Chaos of Dionysus',
-  'SoA - Flood of Poseidon',
-  'SoA - Hunt of Artemis',
-  'SoA - Knowledge of Apollo',
-  'SoA - Might of Ares',
-  'SoA - Trickery of Hermes',
-  'SoA - phyzical WKS harmonizer',
-  'SoA - Wisdom of Athena',
+  "SoA - Beauty of Aphrodite",
+  "SoA - Chaos of Dionysus",
+  "SoA - Flood of Poseidon",
+  "SoA - Hunt of Artemis",
+  "SoA - Knowledge of Apollo",
+  "SoA - Might of Ares",
+  "SoA - Trickery of Hermes",
+  "SoA - phyzical WKS harmonizer",
+  "SoA - Wisdom of Athena",
 ];
 
 export function getBaseAugmentationPriceMultiplier(): number {
@@ -38,8 +38,8 @@ export function getGenericAugmentationPriceMultiplier(): number {
 }
 
 export function isRepeatableAug(aug: Augmentation | string): boolean {
-  const augName = typeof aug === 'string' ? aug : aug.name;
-  return augName === 'NeuroFlux Governor';
+  const augName = typeof aug === "string" ? aug : aug.name;
+  return augName === "NeuroFlux Governor";
 }
 
 export interface AugmentationCosts {
@@ -54,7 +54,7 @@ export function getAugCost(ns: NS, aug: Augmentation): AugmentationCosts {
   let moneyCost: number;
   let repCost: number;
 
-  const NFG = <AugmentationName>'NeuroFlux Governor';
+  const NFG = <AugmentationName>"NeuroFlux Governor";
 
   if (aug.name === NFG) {
     const multiplier = Math.pow(CONSTANTS.NeuroFluxGovernorLevelMult, aug.getLevel());

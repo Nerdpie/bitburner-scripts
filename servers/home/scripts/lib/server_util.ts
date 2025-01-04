@@ -1,4 +1,4 @@
-import {Server} from 'NetscriptDefinitions';
+import {Server} from "NetscriptDefinitions";
 
 /*
 While the return values of the `assert` functions can be ignored, using them as traditional `assert` methods,
@@ -15,15 +15,15 @@ export function assertServerProperties(server: Server): Required<Server> {
   but should be present on any non-purchased server:
    */
   const OPTIONAL_PROPERTIES_TO_CHECK = [
-    'baseDifficulty',
-    'hackDifficulty',
-    'minDifficulty',
-    'moneyAvailable',
-    'moneyMax',
-    'numOpenPortsRequired',
-    'openPortCount',
-    'requiredHackingSkill',
-    'serverGrowth',
+    "baseDifficulty",
+    "hackDifficulty",
+    "minDifficulty",
+    "moneyAvailable",
+    "moneyMax",
+    "numOpenPortsRequired",
+    "openPortCount",
+    "requiredHackingSkill",
+    "serverGrowth",
   ];
   OPTIONAL_PROPERTIES_TO_CHECK.forEach(prop => {
     if (server[prop] === undefined) {

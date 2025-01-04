@@ -4,7 +4,7 @@
  */
 export function compression1(input: string): string {
   if (!input || input.length === 0) {
-    throw new Error('Invalid input for RLE Compression');
+    throw new Error("Invalid input for RLE Compression");
   }
 
   // Get the first character
@@ -12,7 +12,7 @@ export function compression1(input: string): string {
   // If >9, subtract 9 and repeat
 
   let processing: string | null = input;
-  let result: string = '';
+  let result: string = "";
 
   let char: string;
   let count: number;
@@ -34,7 +34,7 @@ export function compression1(input: string): string {
 
     // RLE can have run lengths of at most 9
     while (count > 9) {
-      result += '9' + char;
+      result += "9" + char;
       count -= 9;
     }
     result += count.toString() + char;
@@ -71,7 +71,7 @@ export function compression2(input: string): string {
      5aaabb450723abb  ->  aaabbaaababababaabb
    */
 
-  let result = '';
+  let result = "";
   let index = 0;
   while (index < input.length) {
     const length1 = parseInt(input[index]);
