@@ -1,4 +1,5 @@
 import type {PlayerObject}         from "@/game_internal_types/PersonObjects/Player/PlayerObject";
+import {BuiltinServer}             from "@lib/enum_and_limiter_definitions";
 import {exposeGameInternalObjects} from "@lib/exploits";
 import {getAllServers}             from "@lib/scan_servers";
 import {ServerSelections}          from "@settings";
@@ -119,9 +120,13 @@ export function main(ns: NS): void {
     .filter(s => s.haveAdmin)
     .filter(s => s.canBackdoor)
     .filter(s => s.canHaveMoney)
-    // Aim for hosts ~1/2 your hacking level; will need adjusted for later-game
-    // Leave in our usual targets for easy reference
-    .filter(s => MINIMUM_LEVEL_REQUIRED <= s.levelRequired || ServerSelections.goodTargets.includes(s.hostname))
+    .filter(s => {
+      // Aim for hosts ~1/2 your hacking level; will need adjusted for later-game
+      return MINIMUM_LEVEL_REQUIRED <= s.levelRequired ||
+        // Leave in our usual targets for easy reference
+        // The hostname of any non-purchased server should always be a valid BuiltinServer
+        ServerSelections.goodTargets.includes(s.hostname as keyof typeof BuiltinServer);
+    })
     // eslint-disable-next-line @typescript-eslint/unbound-method
     .sort(ServerTargeting.compareServer)
     .forEach(s => {

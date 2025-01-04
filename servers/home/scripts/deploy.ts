@@ -164,6 +164,7 @@ function computeBackdoorScore(s: Server): number {
   // Smaller return value means more desirable
   // Internally, bigger is more desirable
   const name = s.hostname;
+  const typedName = s.hostname as keyof typeof BuiltinServer;
   const level = s.requiredHackingSkill ?? 0;
 
   // Using bit flags for easy comparison
@@ -186,15 +187,15 @@ function computeBackdoorScore(s: Server): number {
     //  Still going to check in the outer function to reduce overhead where practical.
     //  Yay, premature micro-optimizations!
     score += HGW_TARGET_FACTOR;
-  } else if (ServerSelections.alwaysBackdoor.includes(name)) {
+  } else if (ServerSelections.alwaysBackdoor.includes(typedName)) {
     score += ALWAYS_TARGET_FACTOR;
-  } else if (ServerSelections.goodTargets.includes(name)) {
+  } else if (ServerSelections.goodTargets.includes(typedName)) {
     score += GOOD_TARGET_FACTOR;
-  } else if (ServerSelections.factionsBackdoor.includes(name)) {
+  } else if (ServerSelections.factionsBackdoor.includes(typedName)) {
     score += FACTION_TARGET_FACTOR;
-  } else if (ServerSelections.classesBackdoor.includes(name)) {
+  } else if (ServerSelections.classesBackdoor.includes(typedName)) {
     score += CLASSES_TARGET_FACTOR;
-  } else if (ServerSelections.companyBackdoor.includes(name)) {
+  } else if (ServerSelections.companyBackdoor.includes(typedName)) {
     score += COMPANY_TARGET_FACTOR;
   }
 
@@ -235,7 +236,7 @@ function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServer | undefined]
     return [false, false, prevTarget];
   }
 
-  const TARGET_OPTIONS = <BuiltinServers[]>ServerSelections.goodTargets;
+  const TARGET_OPTIONS = ServerSelections.goodTargets;
 
   // At low levels, we want to hit Joe's Guns ASAP; usually level 11
   // Yes, if you try to evaluate EACH server, this may jump back down, but not with a proper list of good targets
@@ -253,7 +254,6 @@ function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServer | undefined]
   prevTarget = targetServer;
   prevHackingLevel = curHackingLevel;
 
-  // REFINE Store a pre-computed formatter for this
   if (changedTarget) {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     ns.printf(`[${getTimeStamp()}] Now targeting: ${targetServer}`);

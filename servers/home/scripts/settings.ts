@@ -118,10 +118,14 @@ export const Deploy: SettingsClasses.DeploySettings = {
   hackTheWorld: false,
 };
 
-// TODO Can we make this strongly-typed to the list of in-game servers
-//  WITHOUT it requiring the enum namespace?
 // noinspection SpellCheckingInspection - In-game servers have irregular names
-export const ServerSelections = {
+export const ServerSelections: {
+  alwaysBackdoor: (keyof typeof BuiltinServer)[];
+  factionsBackdoor: (keyof typeof BuiltinServer)[];
+  goodTargets: (keyof typeof BuiltinServer)[];
+  classesBackdoor: (keyof typeof BuiltinServer)[];
+  companyBackdoor: (keyof typeof BuiltinServer)[]
+} = {
   alwaysBackdoor: [
     "w0r1d_d43m0n", // Control via Deploy.hackTheWorld
   ],
