@@ -4,6 +4,7 @@ import type {CompanyWork}                 from '@/game_internal_types/Work/Compa
 import type {FactionWork}                 from '@/game_internal_types/Work/FactionWork';
 import type {WorkType}                    from '@/game_internal_types/Work/Work';
 import type {JobName}                     from '@enums';
+import {parseNsFlags}                     from '@lib/flags_util';
 import {formatSecondsShort, getTimeStamp} from '@lib/time_util';
 
 export async function main(ns: NS): Promise<void> {
@@ -14,7 +15,7 @@ export async function main(ns: NS): Promise<void> {
   ns.disableLog('disableLog');
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
-  const args = ns.flags([['help', false]]);
+  const args = parseNsFlags(ns, {'help': false});
   if (args.help) {
     ns.tprint('This script will enhance your HUD (Heads up Display) with custom statistics.');
     ns.tprint(`Usage: run ${ns.getScriptName()}`);
@@ -136,7 +137,7 @@ function companyWorkCountdown(work: CompanyWork): string {
   const faction = company.relatedFaction;
   const player = <PlayerObject>globalThis.Player;
   // If the company doesn't have a related faction, or the player is already in/invited to it
-  if (!faction || player.factions.includes(faction) || player.factionInvitations.includes(faction)) {
+  if (faction === undefined || player.factions.includes(faction) || player.factionInvitations.includes(faction)) {
     return 'DONE!';
   }
 

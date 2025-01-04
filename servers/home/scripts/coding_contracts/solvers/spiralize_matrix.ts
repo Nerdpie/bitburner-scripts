@@ -14,7 +14,7 @@ function spiralDown(matrix: number[][], result: number[]): void {
   }
   for (let i = 0; i < matrix.length; i++) {
     const temp = matrix[i].pop();
-    if (temp) {
+    if (temp !== undefined) {
       result.push(temp);
     }
   }
@@ -38,7 +38,7 @@ function spiralUp(matrix: number[][], result: number[]): void {
 
   for (let i = matrix.length - 1; i >= 0; i--) {
     const temp = matrix[i].shift();
-    if (temp) {
+    if (temp !== undefined) {
       result.push(temp);
     }
   }

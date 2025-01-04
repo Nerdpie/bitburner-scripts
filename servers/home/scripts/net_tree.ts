@@ -1,8 +1,9 @@
-import {ServerLink}             from '@lib/ui/server_link';
-import {NetTree, setTailWindow} from '@settings';
-import type {Server}            from 'NetscriptDefinitions';
-import type {ReactNode}         from 'react';
-import React                    from 'react';
+import {assertRequiredHackingSkill, tryBackdoorInstalled} from '@lib/server_util';
+import {ServerLink}                                       from '@lib/ui/server_link';
+import {NetTree, setTailWindow}                           from '@settings';
+import type {Server}                                      from 'NetscriptDefinitions';
+import type {ReactNode}                                   from 'react';
+import React                                              from 'react';
 
 /** @param {NS} ns */
 export function main(ns: NS): void {
@@ -28,7 +29,7 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
     children: Node[];
     decorator: string;
     branchDepth: number;
-    #server: Server;
+    readonly #server: Server;
 
     // I don't like this being a recursive constructor, but w/e...
     /**
@@ -56,10 +57,7 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
       if (this.#server.purchasedByPlayer) {
         return false;
       }
-      if (this.#server.requiredHackingSkill === undefined) {
-        throw new Error(`requiredHackingSkill not set on ${this.#server.hostname}`);
-      }
-      return this.#server.requiredHackingSkill <= PLAYER_HACK_LEVEL;
+      return assertRequiredHackingSkill(this.#server) <= PLAYER_HACK_LEVEL;
     }
 
     statusDecorator(): string {
@@ -68,7 +66,7 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
         decor = ' (+';
         // This line is a mixed bag; it's not TOO heinous, and the equivalent if-else is messy
         // noinspection NestedConditionalExpressionJS
-        decor += this.#server.backdoorInstalled ? '*' : this.#canBackdoor ? '!' : '';
+        decor += tryBackdoorInstalled(this.#server) ? '*' : this.#canBackdoor ? '!' : '';
         decor += ')';
       }
       return decor;

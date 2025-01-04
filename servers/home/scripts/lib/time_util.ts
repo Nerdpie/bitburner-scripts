@@ -31,16 +31,16 @@ export class TimeSpan {
     // Since the Interval interface does NOT guarantee the range of values,
     // start by combining the values
     let totalMilliseconds = 0;
-    if (interval.milliseconds) {
+    if (interval.milliseconds !== undefined) {
       totalMilliseconds += interval.milliseconds;
     }
-    if (interval.seconds) {
+    if (interval.seconds !== undefined) {
       totalMilliseconds += interval.seconds * MILLISECONDS_PER_SECOND;
     }
-    if (interval.minutes) {
+    if (interval.minutes !== undefined) {
       totalMilliseconds += interval.minutes * MILLISECONDS_PER_MINUTE;
     }
-    if (interval.hours) {
+    if (interval.hours !== undefined) {
       totalMilliseconds += interval.hours * MILLISECONDS_PER_HOUR;
     }
 

@@ -60,11 +60,6 @@ export enum GoFaction {
     'No AI' = 'No AI',
 }
 
-/**
- * The type definition expected by `ns.flags` and `AutocompleteData.flags`
- */
-export type FlagSchemaType = [string, string | number | boolean | string[]][];
-
 export enum BuiltinServers {
   // noinspection SpellCheckingInspection
   'home' = 'home',

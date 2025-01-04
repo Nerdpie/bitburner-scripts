@@ -39,7 +39,7 @@ export function compression1(input: string): string {
     }
     result += count.toString() + char;
 
-  } while (processing);
+  } while (processing !== null && processing.length > 0);
 
   return result;
 }

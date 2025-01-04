@@ -2,21 +2,21 @@
  * Script to iterate over hosts and list discovered files
  */
 
-import type {FlagSchemaType}   from '@lib/enum_and_limiter_definitions';
-import {getAllServers}         from '@lib/scan_servers';
-import type {AutocompleteData} from 'NetscriptDefinitions';
+import {parseAutocompleteFlags, parseNsFlags} from '@lib/flags_util';
+import {getAllServers}                        from '@lib/scan_servers';
+import type {AutocompleteData}                from 'NetscriptDefinitions';
 
 function isIgnored(file: string) {
   const IGNORE_PATTERNS = [
     'scripts/',
   ];
-  return IGNORE_PATTERNS.some(pat => file.match(pat));
+  return IGNORE_PATTERNS.some(pat => file.match(pat) !== null);
 }
 
-const FLAGS_SCHEMA: FlagSchemaType = [
-  ['includeHome', false],
-  ['scrape', false],
-];
+const FLAGS_SCHEMA = {
+  'includeHome': false,
+  'scrape': false,
+};
 
 export function main(ns: NS) {
   const DISABLED_LOGS = [
@@ -25,7 +25,7 @@ export function main(ns: NS) {
 
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
-  const flags = ns.flags(FLAGS_SCHEMA);
+  const flags = parseNsFlags(ns, FLAGS_SCHEMA);
 
   let servers = getAllServers(ns);
 
@@ -53,6 +53,6 @@ export function main(ns: NS) {
 }
 
 export function autocomplete(data: AutocompleteData): string[] {
-  data.flags(FLAGS_SCHEMA);
+  parseAutocompleteFlags(data, FLAGS_SCHEMA);
   return [];
 }

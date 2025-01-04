@@ -3,8 +3,8 @@
  *
  */
 
-import type {FlagSchemaType}                                            from '@lib/enum_and_limiter_definitions';
 import {exposeGameInternalObjects}                                      from '@lib/exploits';
+import {parseAutocompleteFlags, parseNsFlags}                           from '@lib/flags_util';
 import {closeTail, CollapseState, collapseTail, expandTail, isTailOpen} from '@lib/tail_helpers';
 import type {AutocompleteData, RunOptions}                              from 'NetscriptDefinitions';
 
@@ -137,9 +137,9 @@ function setCustomStyle() {
   `;
 }
 
-const FLAG_SCHEMA: FlagSchemaType = [
-  ['killall-scripts', false],
-];
+const FLAG_SCHEMA = {
+  'killall-scripts': false,
+};
 
 export async function main(ns: NS): Promise<void> {
   if (ns.getHostname() !== 'home') {
@@ -147,7 +147,7 @@ export async function main(ns: NS): Promise<void> {
     return;
   }
 
-  const flags = ns.flags(FLAG_SCHEMA);
+  const flags = parseNsFlags(ns, FLAG_SCHEMA);
 
   if (flags['killall-scripts']) {
     const self = ns.self();
@@ -185,6 +185,6 @@ export async function main(ns: NS): Promise<void> {
 }
 
 export function autocomplete(data: AutocompleteData): string[] {
-  data.flags(FLAG_SCHEMA);
+  parseAutocompleteFlags(data, FLAG_SCHEMA);
   return [];
 }

@@ -1,5 +1,6 @@
-// From https://github.com/bitburner-official/bitburner-scripts/blob/master/find_server.js
+// Derived from https://github.com/bitburner-official/bitburner-scripts/blob/master/find_server.js
 
+import {parseNsFlags}          from '@lib/flags_util';
 import type {AutocompleteData} from 'NetscriptDefinitions';
 
 function recursiveScan(ns: NS, parent: string, server: string, target: string, route: string[]) {
@@ -23,9 +24,9 @@ function recursiveScan(ns: NS, parent: string, server: string, target: string, r
 }
 
 export async function main(ns: NS): Promise<void> {
-  const args = ns.flags([['help', false]]);
+  const args = parseNsFlags(ns, {'help': false});
   const route: string[] = [];
-  const server: string = <string>args._[0];
+  const server: string = args._[0];
   if (!server || args.help) {
     ns.tprint('This script helps you find a server on the network and shows you the path to get to it.');
     ns.tprint(`Usage: run ${ns.getScriptName()} SERVER`);

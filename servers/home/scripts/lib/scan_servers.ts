@@ -12,7 +12,7 @@ export function getAllServers(ns: NS): string[] {
 
   while (stack.length > 0) {
     const CURRENT = stack.pop();
-    if (!CURRENT) {
+    if (CURRENT === undefined) {
       throw new Error('`pop` returned an undefined value for a non-empty stack!');
     }
 

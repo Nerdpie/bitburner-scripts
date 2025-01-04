@@ -188,7 +188,7 @@ export function setTailWindow(ns: NS, config: SettingsClasses.SettingsData, clea
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
-  if (config.tailTitle && config.tailTitle.length !== 0
+  if ((config.tailTitle !== undefined) && config.tailTitle.length !== 0
   ) {
     ns.setTitle(config.tailTitle);
   }

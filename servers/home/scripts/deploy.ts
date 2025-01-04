@@ -1,12 +1,13 @@
 // Based originally on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 
-import type {Terminal}                           from '@/game_internal_types/Terminal/Terminal';
-import {BuiltinServers, ValidRamCapacity}        from '@lib/enum_and_limiter_definitions';
-import {exposeGameInternalObjects}               from '@lib/exploits';
-import {getAllServers}                           from '@lib/scan_servers';
-import {getTimeStamp}                            from '@lib/time_util';
-import {Deploy, ServerSelections, setTailWindow} from '@settings';
-import type {Server}                             from 'NetscriptDefinitions';
+import type {Terminal}                                   from '@/game_internal_types/Terminal/Terminal';
+import {BuiltinServers, ValidRamCapacity}                from '@lib/enum_and_limiter_definitions';
+import {exposeGameInternalObjects}                       from '@lib/exploits';
+import {getAllServers}                                   from '@lib/scan_servers';
+import {assertBackdoorInstalled, assertServerProperties} from '@lib/server_util';
+import {getTimeStamp}                                    from '@lib/time_util';
+import {Deploy, ServerSelections, setTailWindow}         from '@settings';
+import type {Server}                                     from 'NetscriptDefinitions';
 
 const config = Deploy;
 let prevHackingLevel = 0;
@@ -37,7 +38,7 @@ function getAvailableTools(ns: NS): ((host: string) => void)[] {
   return availableTools;
 }
 
-function pwnServer(ns: NS, target: Server, tools: ((host: string) => void)[]) {
+function pwnServer(ns: NS, target: Required<Server>, tools: ((host: string) => void)[]) {
   // Don't waste cycles if we already own the box
   if (target.hasAdminRights) {
     tryBackdoor(ns, target);
@@ -50,9 +51,6 @@ function pwnServer(ns: NS, target: Server, tools: ((host: string) => void)[]) {
     openPorts++;
   });
 
-  if (!target.numOpenPortsRequired) {
-    throw new Error(`numOpenPortsRequired not defined on ${target.hostname}`);
-  }
   if (target.numOpenPortsRequired <= openPorts) {
     ns.nuke(target.hostname);
     //ns.printf('Target pwned: %s', target.hostname);
@@ -68,13 +66,9 @@ function pwnServer(ns: NS, target: Server, tools: ((host: string) => void)[]) {
  * @param {NS} ns
  * @param {Server} server
  */
-function tryBackdoor(ns: NS, server: Server) {
-  if (!server.requiredHackingSkill) {
-    throw new Error(`Server with no specified hacking level: ${server.hostname}`);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-  if (!config.hackTheWorld && server.hostname === BuiltinServers['w0r1d_d43m0n']) {
+function tryBackdoor(ns: NS, server: Required<Server>) {
+  // MEMO BuiltinServers is a string enum, and hostnames are always exposed as a string
+  if (!config.hackTheWorld && server.hostname === BuiltinServers['w0r1d_d43m0n'] as string) {
     if (server.requiredHackingSkill <= ns.getHackingLevel()) {
       ns.printf('Can backdoor: %s', BuiltinServers['w0r1d_d43m0n']);
     }
@@ -107,10 +101,10 @@ function execScript(ns: NS, server: Server, script: string, targetServer?: strin
 
   const numThreads = Math.floor(ramAvailable / ramCost);
   if (numThreads > 0) {
-    if (targetServer) {
-      ns.exec(script, server.hostname, numThreads, targetServer);
-    } else {
+    if (targetServer === undefined) {
       ns.exec(script, server.hostname, numThreads);
+    } else {
+      ns.exec(script, server.hostname, numThreads, targetServer);
     }
   }
 }
@@ -245,11 +239,9 @@ function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServers | undefined
   // At low levels, we want to hit Joe's Guns ASAP; usually level 11
   // Yes, if you try to evaluate EACH server, this may jump back down, but not with a proper list of good targets
   const targetLevel = curHackingLevel <= 30 ? curHackingLevel : Math.ceil(curHackingLevel / 2);
-  const targetServer = TARGET_OPTIONS.map(n => ns.getServer(n))
-    // @ts-expect-error Provided no mistakes in the config, all servers WILL have a `requiredHackingSkill`
+  const targetServer = TARGET_OPTIONS.map(n => assertServerProperties(ns.getServer(n)))
     .filter(s => s.requiredHackingSkill <= targetLevel && s.backdoorInstalled)
     .reduce((acc: [number, BuiltinServers], cur) => {
-      // @ts-expect-error Provided no mistakes in the config, all servers WILL have a `requiredHackingSkill`
       if (acc[0] < cur.requiredHackingSkill) {
         return [cur.requiredHackingSkill, <BuiltinServers>cur.hostname];
       }
@@ -318,7 +310,7 @@ export async function main(ns: NS): Promise<void> {
     '/scripts/share.js',
   ];
 
-  if (!config.dynamicTarget && !targetSelf && !ns.getServer(targetServer).backdoorInstalled) {
+  if (!config.dynamicTarget && !targetSelf && !assertBackdoorInstalled(ns.getServer(targetServer))) {
     ns.printf('Target server not yet pwned - %s', targetServer);
     targetSelf = true;
   }
@@ -349,6 +341,7 @@ export async function main(ns: NS): Promise<void> {
 
     const nonPurchasedServers = serverList
       .filter(s => !s.purchasedByPlayer)
+      .map(assertServerProperties)
       .sort(sortBackdoorPriority);
 
     const backdooredServers = nonPurchasedServers.filter(s => s.backdoorInstalled);
@@ -369,7 +362,7 @@ export async function main(ns: NS): Promise<void> {
         ns.scp(filesToCopy, server.hostname);
 
         if (targetSelf) {
-          if ((server.moneyMax ?? 0) > 0 && server.backdoorInstalled) {
+          if (server.moneyMax > 0 && server.backdoorInstalled) {
             execScript(ns, server, script, server.hostname);
           }
         } else {

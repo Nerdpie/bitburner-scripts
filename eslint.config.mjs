@@ -54,6 +54,13 @@ export default tseslint.config(
       '@typescript-eslint/no-use-before-define': 'off',
       '@typescript-eslint/no-var-requires': 'off',
       '@typescript-eslint/no-warning-comments': 'off',
+      '@typescript-eslint/strict-boolean-expressions': [
+        'error',
+        {
+          // If we don't do this, our checks for `exposeGameInternalObjects` will all be flagged
+          'allowAny': true,
+        },
+      ],
       'block-scoped-var': 'error',
       eqeqeq: 'error',
       'import-x/consistent-type-specifier-style': 'error',
