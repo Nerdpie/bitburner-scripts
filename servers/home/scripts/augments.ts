@@ -3,7 +3,6 @@ import type {Faction}                       from "@/game_internal_types/Faction/
 import type {PlayerObject}                  from "@/game_internal_types/PersonObjects/Player/PlayerObject";
 import type {AugmentationName, FactionName} from "@enums";
 import {arrayUnique}                        from "@lib/array_util";
-import {getAugRepMultiplier}                from "@lib/bitnode_util";
 import {exposeGameInternalObjects}          from "@lib/exploits";
 import type {AugmentationCosts}             from "@lib/game_internals/AugmentationHelpers";
 import {getAugCost}                         from "@lib/game_internals/AugmentationHelpers";
@@ -108,6 +107,8 @@ function showPurchasableAugs(ns: NS): void {
     return;
   }
 
+  // REFINE Only show those factions where we have enough rep for the purchase,
+  //  favoring the gang faction
   purchasableAugs.forEach(a => {
     ns.printf("%-25s - $%8s", truncateAugName(a.name), ns.formatNumber(a.costs.moneyCost));
     ns.print(a.factions.filter(f => playerFacs.includes(f)).map(truncateFacName));
@@ -116,8 +117,9 @@ function showPurchasableAugs(ns: NS): void {
 
 function factionRepNeeded(ns: NS): void {
   const playerFacs = player.factions;
-  const purchasableAugs = getPurchasableAugs();
+  const purchasableAugs = getPurchasableAugsWithGang(ns);
 
+  // TODO This does not account for SoA's scaling rep requirement
   ns.print("Add'l rep needed to buy augs:");
 
   if (purchasableAugs.length === 0) {
@@ -125,12 +127,20 @@ function factionRepNeeded(ns: NS): void {
     return;
   }
 
-  const repMultiplier = getAugRepMultiplier(ns);
+  if (player.inGang()) {
+    const gangFaction = player.getGangFaction().name;
+    // Once the gang is going, it will get rep much faster than any other faction
+    // Only list the gang for any augs where it is a supplying faction
+    for (const aug of purchasableAugs) {
+      if (aug.factions.includes(gangFaction)) {
+        aug.factions = [gangFaction];
+      }
+    }
+  }
 
   function maxRepRequirementForFaction(faction: FactionName): number {
     const maxRep = purchasableAugs.filter(a => a.factions.includes(faction))
-      .map(a => a.baseRepRequirement)
-      .reduce((acc, rep) => Math.max(acc, rep), 0) * repMultiplier;
+      .reduce((acc, aug) => Math.max(acc, aug.costs.repCost), 0);
 
     // If we have excess rep, clamp at zero
     return Math.max(maxRep - factions[faction].playerReputation, 0);
@@ -221,6 +231,8 @@ function isEndgameFactionUnlocked(ns: NS, faction: FactionName): boolean {
   throw new Error(`Faction not properly handled: ${faction}`);
 }
 
+// Keep for now
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getPurchasableAugs(): Augmentation[] {
   const ownedAugNames = player.augmentations.map(a => a.name);
   const queuedAugNames = player.queuedAugmentations.map(a => a.name);
