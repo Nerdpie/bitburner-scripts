@@ -30,7 +30,7 @@ export const GangLord: SettingsClasses.GangSettings = {
   height: 200,
   tailTitle: "Gang Lord",
   maxRep: 1e7, // 10 million
-  mode: "rep",
+  mode: "cash",
   wantedPenaltyThreshold: 0.90,
   territoryWarfareThreshold: 0.60,
   memberWarfareThreshold: 600,
@@ -38,6 +38,7 @@ export const GangLord: SettingsClasses.GangSettings = {
   targetFactionRep: 2.5e6, // Barring any multipliers, this SHOULD be the most required for augments
   targetGangRespect: 2e6, // Even this is probably more than enough; after that point, even focusing on cash still brings rep
   vigilanteRespectThreshold: 10,
+  purchaseThreshold: 10,
 };
 export const Run: SettingsClasses.RunSettings = {
   x: 1500,
@@ -107,11 +108,12 @@ export const Deploy: SettingsClasses.DeploySettings = {
   targetServer: BuiltinServers["joesguns"],
   loopDelay: 15 * 1000,
   ramCapacity: 2048,
+  purchaseThreshold: 100,
   // Adjust per-run; previously used 5, 3, 2, 3
-  shareCount: 0,
-  weakenCount: 0,
-  growCount: 0,
-  clusterCount: 0,
+  shareCount: 5,
+  weakenCount: 5,
+  growCount: 2,
+  clusterCount: 3,
   homeReservedRam: 64,
   hackTheWorld: false,
 };

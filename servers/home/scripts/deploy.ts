@@ -138,13 +138,14 @@ function buildCluster(ns: NS) {
  * @returns Whether all requested servers were bought/upgraded
  */
 function buyServers(ns: NS, prefix: string, count: number, ramCapacity: number): boolean {
-  const PRICE = ns.getPurchasedServerCost(ramCapacity);
+  const PRICE = ns.getPurchasedServerCost(ramCapacity) * config.purchaseThreshold;
   for (let i = 0; i < count; i++) {
     const serverName = prefix + i.toString();
     if (ns.serverExists(serverName)) {
       // Check if the server's RAM is at the current target
       if (ns.getServerMaxRam(serverName) < ramCapacity) {
-        if (ns.getServerMoneyAvailable("home") < ns.getPurchasedServerUpgradeCost(serverName, ramCapacity)) {
+        const upgradePrice = ns.getPurchasedServerUpgradeCost(serverName, ramCapacity) * config.purchaseThreshold;
+        if (ns.getServerMoneyAvailable("home") < upgradePrice) {
           return false;
         }
         ns.upgradePurchasedServer(serverName, ramCapacity);

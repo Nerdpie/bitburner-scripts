@@ -1,5 +1,4 @@
 import * as EnumsAndTypes from "@lib/enum_and_limiter_definitions";
-import {BuiltinServers}   from "@lib/enum_and_limiter_definitions";
 import {TailProperties}   from "NetscriptDefinitions";
 
 export interface SettingsData extends TailProperties {
@@ -31,6 +30,7 @@ export interface GangSettings extends SettingsData {
   targetFactionRep: number;
   targetGangRespect: number;
   vigilanteRespectThreshold: number;
+  purchaseThreshold: number;
 }
 
 export interface AugmentsSettings extends SettingsData {
@@ -49,9 +49,10 @@ export interface DeploySettings extends SettingsData {
   resetScripts: boolean;
   dynamicTarget: boolean;
   targetSelf: boolean;
-  targetServer: BuiltinServers;
+  targetServer: EnumsAndTypes.BuiltinServers;
   loopDelay: number;
   ramCapacity: EnumsAndTypes.ValidRamCapacity;
+  purchaseThreshold: number;
   shareCount: number;
   weakenCount: number;
   growCount: number;

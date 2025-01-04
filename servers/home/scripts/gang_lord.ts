@@ -155,7 +155,7 @@ type GangEquip =
 
 function equipAllOfType(ns: NS, members: GangMemberInfo[], type: GangEquip, slot: "augmentations" | "upgrades") {
   for (const equipment in type) {
-    const equipPrice = ns.gang.getEquipmentCost(equipment);
+    const equipPrice = ns.gang.getEquipmentCost(equipment) * config.purchaseThreshold;
     members.forEach(member => {
       if (!member[slot].includes(equipment) && equipPrice < ns.getServerMoneyAvailable("home")) {
         const success = ns.gang.purchaseEquipment(member.name, equipment);
