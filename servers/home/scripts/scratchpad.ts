@@ -52,15 +52,5 @@ export function main(ns: NS): void {
     const millisecondsNeeded = expDiff / gainPerMillisecond;
 
     ns.printf("Level %d requires class for %s", TARGET_LEVEL, ns.tFormat(millisecondsNeeded));
-  } else if (HUSH_IM_BUSY === 3) {
-    const doc = globalThis["document"];
-    // TODO Either unlock Singularity, or implement this to auto-buy the Tor router
-    // Find one of the 'technology' locations
-    const techStores = Array.from(doc.querySelectorAll<HTMLSpanElement>(`span[class$='location']`))
-      .filter(n => n.ariaLabel !== "Travel Agency" && n.innerText === "T");
-
-    if (techStores.length > 0) {
-      techStores[0].click();
-    }
   }
 }
