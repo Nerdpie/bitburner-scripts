@@ -125,6 +125,7 @@ function buildCluster(ns: NS) {
     ramCapacity = 2 ** targetCapacityExponent;
   } while (ramCapacity <= config.ramCapacity &&
   buyServers(ns, "cluster-", config.clusterCount, ramCapacity) &&
+  buyServers(ns, "prep-", config.prepCount, ramCapacity) &&
   buyServers(ns, "weaken-", config.weakenCount, ramCapacity) &&
   buyServers(ns, "grow-", config.growCount, ramCapacity) &&
   buyServers(ns, "share-", config.shareCount, ramCapacity));
@@ -499,7 +500,10 @@ export async function main(ns: NS): Promise<void> {
             execScript(ns, s, "/scripts/grow.js", targetServer);
             break;
           case "share":
-            // As small as the boost from `share` is, this may be more beneficial
+            execScript(ns, s, "/scripts/share.js");
+            break;
+          case "prep":
+            // If we don't have a prep target, do SOMETHING
             if (prepTarget === null) {
               execScript(ns, s, "/scripts/share.js");
             } else {

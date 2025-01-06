@@ -109,10 +109,12 @@ export const Deploy: SettingsClasses.DeploySettings = {
   loopDelay: 15 * 1000,
   ramCapacity: 2048,
   purchaseThreshold: 100,
-  // Adjust per-run; previously used 5, 3, 2, 3
+  // Adjust per-run; previously used 5, 3, 2, 0, 3
+  // Can be at most 25 total
   shareCount: 5,
   weakenCount: 5,
   growCount: 2,
+  prepCount: 5,
   clusterCount: 3,
   homeReservedRam: 64,
   hackTheWorld: false,
@@ -139,7 +141,6 @@ export const ServerSelections: {
     "The-Cave",     // Daedalus
   ],
   goodTargets: [
-    "n00dles",      // Stupid easy early-game target for basic cash
     "joesguns",     // Apparently can be `grow`-farmed for exp?
     "phantasy",
     "rho-construction",

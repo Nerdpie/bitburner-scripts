@@ -56,6 +56,7 @@ export interface DeploySettings extends SettingsData {
   shareCount: number;
   weakenCount: number;
   growCount: number;
+  prepCount: number;
   clusterCount: number;
   homeReservedRam: number;
   hackTheWorld: boolean;
