@@ -68,7 +68,7 @@ function pwnServer(ns: NS, target: Required<Server>, tools: ((host: string) => v
  */
 function tryBackdoor(ns: NS, server: Required<Server>) {
   // FIXME Ensure that this actually keeps it from auto-backdooring...
-  if (!config.hackTheWorld && server.hostname === "w0r1d_d43m0n") {
+  if (!config.hackTheWorld && server.hostname as BuiltinServer === BuiltinServer["w0r1d_d43m0n"]) {
     if (server.requiredHackingSkill <= ns.getHackingLevel()) {
       ns.printf("Can backdoor: %s", BuiltinServer["w0r1d_d43m0n"]);
     }
@@ -370,28 +370,32 @@ export async function main(ns: NS): Promise<void> {
       loopDelay = 5 * 60 * 1000;
     }
 
-    nonPurchasedServers.filter(s => pwnServer(ns, s, tools))
-      .forEach(server => {
-        if (resetScripts) {
-          ns.killall(server.hostname);
-        }
-        ns.scp(filesToCopy, server.hostname);
+    const pwnedServers = nonPurchasedServers.filter(s => pwnServer(ns, s, tools));
 
-        if (targetSelf) {
-          if (server.moneyMax > 0 && server.backdoorInstalled) {
-            execScript(ns, server, script, server.hostname);
-          } else if (server.hasAdminRights) {
-            // REFINE Won't change properly unless `resetScripts` is set for another reason...
-            if (server.minDifficulty < server.hackDifficulty || server.moneyAvailable < server.moneyMax) {
-              execScript(ns, server, "/scripts/prep.js", server.hostname);
-            } else {
-              execScript(ns, server, "/scripts/grow.js", server.hostname);
-            }
+    if (resetScripts) {
+      pwnedServers.forEach(server => ns.killall(server.hostname));
+      await ns.sleep(10);
+      await ns.sleep(0);
+    }
+
+    pwnedServers.forEach(server => {
+      ns.scp(filesToCopy, server.hostname);
+
+      if (targetSelf) {
+        if (server.moneyMax > 0 && server.backdoorInstalled) {
+          execScript(ns, server, script, server.hostname);
+        } else if (server.hasAdminRights) {
+          // REFINE Won't change properly unless `resetScripts` is set for another reason...
+          if (server.minDifficulty < server.hackDifficulty || server.moneyAvailable < server.moneyMax) {
+            execScript(ns, server, "/scripts/prep.js", server.hostname);
+          } else {
+            execScript(ns, server, "/scripts/grow.js", server.hostname);
           }
-        } else {
-          execScript(ns, server, script, targetServer);
         }
-      });
+      } else {
+        execScript(ns, server, script, targetServer);
+      }
+    });
 
     // FIXME Since we do not reset different types of scripts separately,
     //  handling this outside of `grow-farm` mode ruins the usability of purchased servers.
@@ -423,6 +427,8 @@ export async function main(ns: NS): Promise<void> {
       filesToCopy.forEach(f => {
         ns.scriptKill(f, "home");
       });
+      await ns.sleep(10);
+      await ns.sleep(0);
     }
     if (targetSelf) {
       if (prepTarget === null) {
@@ -435,48 +441,52 @@ export async function main(ns: NS): Promise<void> {
     }
 
     // Manage purchased servers
-    serverList.filter(s => s.purchasedByPlayer && s.hostname !== "home")
-      .forEach(s => {
-        // FIXME Scripts do not seem to start until the next pass after `resetScripts` is run?
-        // Or is it extreme UI lag?
-        if (resetScripts) {
-          ns.killall(s.hostname);
-        }
-        ns.scp(filesToCopy, s.hostname);
+    const purchasedServers = serverList.filter(s => s.purchasedByPlayer && s.hostname !== "home");
 
-        if (targetSelf) {
-          // TODO Optimize this prepper functionality
-          // Will want to use a proper port-based manager technique so
-          //  target can change w/o having to reset the scripts
-          if (prepTarget === null) {
-            execScript(ns, s, "/scripts/share.js");
-          } else {
-            execScript(ns, s, "/scripts/prep.js", prepTarget);
-          }
+    // FIXME Scripts do not seem to start until the next pass after `resetScripts` is run?
+    // Or is it extreme UI lag?
+    if (resetScripts) {
+      purchasedServers.forEach(s => ns.killall(s.hostname));
+      await ns.sleep(10);
+      await ns.sleep(0);
+    }
+
+    purchasedServers.forEach(s => {
+      ns.scp(filesToCopy, s.hostname);
+
+      if (targetSelf) {
+        // TODO Optimize this prepper functionality
+        // Will want to use a proper port-based manager technique so
+        //  target can change w/o having to reset the scripts
+        if (prepTarget === null) {
+          execScript(ns, s, "/scripts/share.js");
         } else {
-          switch (s.hostname.split("-")[0]) { // Check the hostname's prefix
-            case "weaken":
-              execScript(ns, s, "/scripts/weaken.js", targetServer);
-              break;
-            case "grow":
-              execScript(ns, s, "/scripts/grow.js", targetServer);
-              break;
-            case "share":
-              // As small as the boost from `share` is, this may be more beneficial
-              if (prepTarget === null) {
-                execScript(ns, s, "/scripts/share.js");
-              } else {
-                execScript(ns, s, "/scripts/prep.js", prepTarget);
-              }
-              break;
-            case "cluster":
-              execScript(ns, s, script, targetServer);
-              break;
-            default:
-            // Leave it be, special use systems
-          }
+          execScript(ns, s, "/scripts/prep.js", prepTarget);
         }
-      });
+      } else {
+        switch (s.hostname.split("-")[0]) { // Check the hostname's prefix
+          case "weaken":
+            execScript(ns, s, "/scripts/weaken.js", targetServer);
+            break;
+          case "grow":
+            execScript(ns, s, "/scripts/grow.js", targetServer);
+            break;
+          case "share":
+            // As small as the boost from `share` is, this may be more beneficial
+            if (prepTarget === null) {
+              execScript(ns, s, "/scripts/share.js");
+            } else {
+              execScript(ns, s, "/scripts/prep.js", prepTarget);
+            }
+            break;
+          case "cluster":
+            execScript(ns, s, script, targetServer);
+            break;
+          default:
+          // Leave it be, special use systems
+        }
+      }
+    });
 
     // We only need to kill scripts when restarting/changing target
     // Otherwise, we will interrupt HGW calls
