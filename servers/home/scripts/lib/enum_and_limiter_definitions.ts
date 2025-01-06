@@ -32,7 +32,7 @@ export type ValidRamCapacity =
 
 export type AugmentsMode = "purchasable" | "uniques" | "rep";
 
-export type DeployMode = "hgw" | "share";
+export type DeployMode = "hgw" | "share" | "grow-farm";
 
 export type GangMode = "rep" | "cash";
 

@@ -67,8 +67,8 @@ function pwnServer(ns: NS, target: Required<Server>, tools: ((host: string) => v
  * @param {Server} server
  */
 function tryBackdoor(ns: NS, server: Required<Server>) {
-  // MEMO BuiltinServer is a string enum, and hostnames are always exposed as a string
-  if (!config.hackTheWorld && server.hostname === BuiltinServer["w0r1d_d43m0n"] as string) {
+  // FIXME Ensure that this actually keeps it from auto-backdooring...
+  if (!config.hackTheWorld && server.hostname === "w0r1d_d43m0n") {
     if (server.requiredHackingSkill <= ns.getHackingLevel()) {
       ns.printf("Can backdoor: %s", BuiltinServer["w0r1d_d43m0n"]);
     }
@@ -280,7 +280,9 @@ export async function main(ns: NS): Promise<void> {
 
   let tools: ((host: string) => void)[];
   let script: string;
+  let prepTarget: string | null = null;
 
+  // FIXME A number of the settings are mutually exclusive, such as `dynamicTarget` and `grow-farm`...
   // REFINE Is this setting needed going forward?
   //  Do most of the others need to be pulled from the config, or just computed?
   let targetSelf = config.targetSelf;
@@ -296,6 +298,9 @@ export async function main(ns: NS): Promise<void> {
     case "hgw":
       script = "/scripts/zac_hack.js";
       break;
+    case "grow-farm":
+      script = "/scripts/prep.js";
+      break;
     default:
       // `config.mode` is highlighted due to value narrowing
       // Leave it here in case we add a new option and don't fully implement it
@@ -309,6 +314,7 @@ export async function main(ns: NS): Promise<void> {
     "/scripts/weaken.js",
     "/scripts/grow.js",
     "/scripts/share.js",
+    "/scripts/prep.js",
   ];
 
   if (!config.dynamicTarget && !targetSelf && !assertBackdoorInstalled(ns.getServer(targetServer))) {
@@ -335,6 +341,15 @@ export async function main(ns: NS): Promise<void> {
 
     if (!targetSelf && targetServer === undefined) {
       throw new Error("Trying to target an undefined server!");
+    }
+
+    if (config.mode === "grow-farm" && script === "/scripts/prep.js") {
+      const growTarget = ns.getServer(targetServer);
+      if (growTarget.moneyAvailable === growTarget.moneyMax && growTarget.hackDifficulty === growTarget.minDifficulty) {
+        // We have fully prepped the target; switch to JUST grow
+        resetScripts = true;
+        script = "/scripts/grow.js";
+      }
     }
 
     const serverList = getAllServers(ns)
@@ -365,20 +380,56 @@ export async function main(ns: NS): Promise<void> {
         if (targetSelf) {
           if (server.moneyMax > 0 && server.backdoorInstalled) {
             execScript(ns, server, script, server.hostname);
+          } else if (server.hasAdminRights) {
+            // REFINE Won't change properly unless `resetScripts` is set for another reason...
+            if (server.minDifficulty < server.hackDifficulty || server.moneyAvailable < server.moneyMax) {
+              execScript(ns, server, "/scripts/prep.js", server.hostname);
+            } else {
+              execScript(ns, server, "/scripts/grow.js", server.hostname);
+            }
           }
         } else {
           execScript(ns, server, script, targetServer);
         }
       });
 
+    // FIXME Since we do not reset different types of scripts separately,
+    //  handling this outside of `grow-farm` mode ruins the usability of purchased servers.
+    if (config.mode === "grow-farm") {
+      // Determine any servers that need to be prepped
+      // While this runs even if it isn't used, that is somewhat preferable to being re-run for each purchased server
+      const toBePrepped = nonPurchasedServers.filter(s => s.hasAdminRights)
+        .filter(s => s.moneyAvailable < s.moneyMax || s.minDifficulty < s.hackDifficulty)
+        .sort(sortBackdoorPriority);
+      if (toBePrepped.length > 0 && toBePrepped[0].hostname as BuiltinServer === targetServer) {
+        // FIXME Determine how to ignore `targetServer` once it has been prepped
+      }
+      if (toBePrepped.length > 0) {
+        if (toBePrepped[0].hostname !== prepTarget) {
+          resetScripts = true;
+          prepTarget = toBePrepped[0].hostname;
+          ns.printf(`[${getTimeStamp()}] Now prepping: ${prepTarget}`);
+        }
+      } else if (prepTarget !== null) {
+        prepTarget = null;
+        resetScripts = true;
+        ns.printf(`[${getTimeStamp()}] No target to prep`);
+      }
+    }
+
     // Manage scripts on `home`
     const home = ns.getServer("home");
     if (resetScripts) {
-      ns.scriptKill("/scripts/zac_hack.js", "home");
-      ns.scriptKill("/scripts/share.js", "home");
+      filesToCopy.forEach(f => {
+        ns.scriptKill(f, "home");
+      });
     }
     if (targetSelf) {
-      execScript(ns, home, "/scripts/share.js");
+      if (prepTarget === null) {
+        execScript(ns, home, "/scripts/share.js");
+      } else {
+        execScript(ns, home, "/scripts/prep.js", prepTarget);
+      }
     } else {
       execScript(ns, home, script, targetServer);
     }
@@ -386,17 +437,22 @@ export async function main(ns: NS): Promise<void> {
     // Manage purchased servers
     serverList.filter(s => s.purchasedByPlayer && s.hostname !== "home")
       .forEach(s => {
+        // FIXME Scripts do not seem to start until the next pass after `resetScripts` is run?
+        // Or is it extreme UI lag?
         if (resetScripts) {
           ns.killall(s.hostname);
         }
         ns.scp(filesToCopy, s.hostname);
 
         if (targetSelf) {
-          // TODO Modify this to function as a 'prepper'
-          //  Iterating servers and min-maxing grow-weaken
+          // TODO Optimize this prepper functionality
           // Will want to use a proper port-based manager technique so
           //  target can change w/o having to reset the scripts
-          execScript(ns, s, "/scripts/share.js");
+          if (prepTarget === null) {
+            execScript(ns, s, "/scripts/share.js");
+          } else {
+            execScript(ns, s, "/scripts/prep.js", prepTarget);
+          }
         } else {
           switch (s.hostname.split("-")[0]) { // Check the hostname's prefix
             case "weaken":
@@ -406,7 +462,12 @@ export async function main(ns: NS): Promise<void> {
               execScript(ns, s, "/scripts/grow.js", targetServer);
               break;
             case "share":
-              execScript(ns, s, "/scripts/share.js");
+              // As small as the boost from `share` is, this may be more beneficial
+              if (prepTarget === null) {
+                execScript(ns, s, "/scripts/share.js");
+              } else {
+                execScript(ns, s, "/scripts/prep.js", prepTarget);
+              }
               break;
             case "cluster":
               execScript(ns, s, script, targetServer);
