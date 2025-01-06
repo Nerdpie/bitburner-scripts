@@ -7,7 +7,7 @@ import {getGangUniqueAug}          from "../bitnode_util";
 import {exposeGameInternalObjects} from "../exploits";
 import {SFC32RNG}                  from "./RNG";
 
-export function getFactionAugmentationsFiltered(ns: NS, faction: Faction): AugmentationName[] {
+export function getFactionAugmentationsFiltered(ns: NS, faction: Faction, fakeGang: boolean = false): AugmentationName[] {
   if (!globalThis.Player) {
     exposeGameInternalObjects();
   }
@@ -16,7 +16,7 @@ export function getFactionAugmentationsFiltered(ns: NS, faction: Faction): Augme
   const Augmentations = <Record<AugmentationName, Augmentation>>globalThis.Augmentations;
 
   // If player has a gang with this faction, return (almost) all augmentations
-  if (player.hasGangWith(faction.name)) {
+  if (player.hasGangWith(faction.name) || fakeGang) {
     let augs = Object.values(Augmentations);
 
     const VIOLET_CONGRUITY = <AugmentationName>"violet Congruity Implant";

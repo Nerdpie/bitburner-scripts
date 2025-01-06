@@ -208,6 +208,10 @@ function getGangAugs(ns: NS): AugmentationName[] {
   return [];
 }
 
+function getPossibleGangAugs(ns: NS, faction: FactionName): AugmentationName[] {
+  return getFactionAugmentationsFiltered(ns, factions[faction], true);
+}
+
 function isEndgameFactionUnlocked(ns: NS, faction: FactionName): boolean {
   // @ts-expect-error - It's a string enum...
   const endgameFactions: FactionName[] = ["Bladeburners", "Church of the Machine God"];
