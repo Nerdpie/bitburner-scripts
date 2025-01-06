@@ -72,11 +72,11 @@ export const ContractSolver: Record<CodingContractType, Required<SolverInfo>> = 
   },
   "Array Jumping Game II": {
     function: arrayJumpingGame2,
-    finished: false,
+    finished: true,
   },
   "Array Jumping Game": {
     function: arrayJumpingGame,
-    finished: false,
+    finished: true,
   },
   "Compression I: RLE Compression": {
     function: compression1,
