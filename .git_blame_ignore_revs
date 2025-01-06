@@ -1,0 +1,14 @@
+## What is this?
+##   Some git commits contain mostly prettier/lint changes and aren't as valuable when
+##   using `git blame`.  This file contains a list of hashes that identify such commits
+##   in a way that git can use.
+
+## Tell git to use this file with:
+##   git config --local blame.ignoreRevsFile .git_blame_ignore_revs
+
+## To get the format used for the file, you can use:
+##   git log --grep "{search term}"
+
+5fe3a41c05f28ffbfaeed84f4ce840f290060d1e
+# Author: Nerdpie <Nerdpie@users.noreply.github.com>
+# Date:   Sat Jan 4 09:51:46 2025 -0500
