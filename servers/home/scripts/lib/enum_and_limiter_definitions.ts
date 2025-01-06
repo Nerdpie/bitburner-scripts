@@ -133,5 +133,5 @@ export enum BuiltinServer {
   "foodnstuff" = "foodnstuff",
   "nectar-net" = "nectar-net",
   "n00dles" = "n00dles",
-  "w0r1d_d43m0n" = "wr1d_d43m0n",
+  "w0r1d_d43m0n" = "w0r1d_d43m0n",
 }
