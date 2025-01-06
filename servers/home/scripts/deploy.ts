@@ -94,7 +94,8 @@ function tryBackdoor(ns: NS, server: Required<Server>) {
 function execScript(ns: NS, server: Server, script: string, targetServer?: string): void {
   const ramCost = ns.getScriptRam(script, server.hostname);
 
-  let ramAvailable = server.maxRam - server.ramUsed;
+  const freshServer = ns.getServer(server.hostname);
+  let ramAvailable = freshServer.maxRam - freshServer.ramUsed;
   if ("home" === server.hostname) {
     ramAvailable -= config.homeReservedRam;
   }
@@ -276,7 +277,35 @@ export async function main(ns: NS): Promise<void> {
   setTailWindow(ns, config);
 
   ns.disableLog("disableLog"); // Ironic, no?
-  ns.disableLog("ALL");
+  const DEBUGGING = false;
+  // Keeping for easy use in case of future headaches
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (DEBUGGING) {
+    const DISABLED_LOGS = [
+      "scan",
+      "brutessh",
+      "ftpcrack",
+      "relaysmtp",
+      "httpworm",
+      "sqlinject",
+      "nuke",
+      "getHackingLevel",
+      "getScriptRam",
+      "getPurchasedServerCost",
+      "getServerMaxRam",
+      "getPurchasedServerUpgradeCost",
+      "getServerMoneyAvailable",
+      "upgradePurchasedServer",
+      "getServer",
+      "killall",
+      "sleep",
+      "scp",
+      "exec",
+    ];
+    DISABLED_LOGS.forEach(log => ns.disableLog(log));
+  } else {
+    ns.disableLog("ALL");
+  }
 
   let tools: ((host: string) => void)[];
   let script: string;
@@ -290,6 +319,7 @@ export async function main(ns: NS): Promise<void> {
   let targetServer: BuiltinServer | undefined = config.targetServer;
   let resetScripts = config.resetScripts;
   let loopDelay = config.loopDelay;
+  const killDelay = 0;
 
   switch (config.mode) {
     case "share":
@@ -374,8 +404,7 @@ export async function main(ns: NS): Promise<void> {
 
     if (resetScripts) {
       pwnedServers.forEach(server => ns.killall(server.hostname));
-      await ns.sleep(10);
-      await ns.sleep(0);
+      await ns.sleep(killDelay);
     }
 
     pwnedServers.forEach(server => {
@@ -427,8 +456,7 @@ export async function main(ns: NS): Promise<void> {
       filesToCopy.forEach(f => {
         ns.scriptKill(f, "home");
       });
-      await ns.sleep(10);
-      await ns.sleep(0);
+      await ns.sleep(killDelay);
     }
     if (targetSelf) {
       if (prepTarget === null) {
@@ -447,8 +475,7 @@ export async function main(ns: NS): Promise<void> {
     // Or is it extreme UI lag?
     if (resetScripts) {
       purchasedServers.forEach(s => ns.killall(s.hostname));
-      await ns.sleep(10);
-      await ns.sleep(0);
+      await ns.sleep(killDelay);
     }
 
     purchasedServers.forEach(s => {
