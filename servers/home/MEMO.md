@@ -18,6 +18,7 @@ alias tf=home; cd /scripts; run /scripts/target_finder.js
 alias tfa=home; cd /scripts; run /scripts/target_finder.js --all
 alias casino=run /z_from_others/insight/casino.js --kill-all-scripts
 alias pc=run /pretend-casino.js
+alias dw=run /scripts/darkweb.js
 alias sf=run /scripts/scan_files.js
 alias zhack=run /scripts/zac_hack.js
 ```

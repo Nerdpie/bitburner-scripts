@@ -36,8 +36,9 @@ tmux new -d -s bbsrc 'cd ../bitburner-src/ && npm run start:dev'
   Basically, make it so that I can change settings on the fly, without relaunching programs.
 - Look into implementing API hooks for arbitrary language runtime support, e.g. being able to use Blazor,
   JSPython/Brython, etc.
-  Starting
+  - Starting
   point: [CatLover's commit adding TS/TSX scripts](https://github.com/Nerdpie/bitburner-src/commit/864613c61632947be6ba0215253194c0a56d6259)
+  - Possible endpoint name: babelfish
 - Implement logic to determine which augments to buy, and in what order
   - Will need to include the price increase factor
   - Priorities may shift per BitNode, but for the most part, we will want to focus on:

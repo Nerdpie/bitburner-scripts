@@ -1,9 +1,10 @@
-import type {PlayerObject}         from "@/game_internal_types/PersonObjects/Player/PlayerObject";
-import {BuiltinServer}             from "@lib/enum_and_limiter_definitions";
-import {exposeGameInternalObjects} from "@lib/exploits";
-import {getAllServers}             from "@lib/scan_servers";
-import {ServerSelections}          from "@settings";
-import type {Server}               from "NetscriptDefinitions";
+import type {PlayerObject}                    from "@/game_internal_types/PersonObjects/Player/PlayerObject";
+import {BuiltinServer}                        from "@lib/enum_and_limiter_definitions";
+import {exposeGameInternalObjects}            from "@lib/exploits";
+import {parseAutocompleteFlags, parseNsFlags} from "@lib/flags_util";
+import {getAllServers}                        from "@lib/scan_servers";
+import {ServerSelections}                     from "@settings";
+import type {AutocompleteData, Server}        from "NetscriptDefinitions";
 
 if (!globalThis.NSNumbers) {
   exposeGameInternalObjects();
@@ -88,9 +89,13 @@ class ServerTargeting {
   }
 }
 
+const FLAGS_SCHEMA = {
+  all: false,
+};
+
 export function main(ns: NS): void {
 
-  const flags = ns.flags([["all", false]]);
+  const flags = parseNsFlags(ns, FLAGS_SCHEMA);
 
   const DISABLED_LOGS = [
     "getServerRequiredHackingLevel",
@@ -106,12 +111,13 @@ export function main(ns: NS): void {
     "exec",
   ];
 
-  const LEVEL_THRESHOLD = <boolean>flags.all ? 0 : 950;
+  const LEVEL_THRESHOLD = flags.all ? 0 : 950;
   const MINIMUM_LEVEL_REQUIRED = Math.min(LEVEL_THRESHOLD, player.skills.hacking * 0.4);
 
   ns.disableLog("disableLog");
   DISABLED_LOGS.forEach(log => ns.disableLog(log));
 
+  ns.tprintf("Target Finder");
 
   const servers = getAllServers(ns);
 
@@ -132,4 +138,9 @@ export function main(ns: NS): void {
     .forEach(s => {
       ns.tprintf("%s", s.toString());
     });
+}
+
+export function autocomplete(data: AutocompleteData): string[] {
+  parseAutocompleteFlags(data, FLAGS_SCHEMA);
+  return [];
 }
