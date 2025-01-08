@@ -3,6 +3,7 @@
 import type {Company}              from "@/game_internal_types/Company/Company";
 import type {CompanyName}          from "@/game_internal_types/Enums";
 import {exposeGameInternalObjects} from "@lib/exploits";
+import {getAllServers}             from "@lib/scan_servers";
 import {Scratchpad, setTailWindow} from "@settings";
 import type {Player}               from "NetscriptDefinitions";
 
@@ -52,5 +53,12 @@ export function main(ns: NS): void {
     const millisecondsNeeded = expDiff / gainPerMillisecond;
 
     ns.printf("Level %d requires class for %s", TARGET_LEVEL, ns.tFormat(millisecondsNeeded));
+  } else if (HUSH_IM_BUSY === 3) {
+    const servers = getAllServers(ns);
+
+    servers.map((s) => {return {org: ns.getServer(s).organizationName, hostname: s};})
+      .sort((a, b) => a.hostname.localeCompare(b.hostname))
+      .sort((a, b) => a.org.localeCompare(b.org))
+      .forEach(n => ns.printf(`Org: ${n.org}\n  Host: ${n.hostname}`));
   }
 }

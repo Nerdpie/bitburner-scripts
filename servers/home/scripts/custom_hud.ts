@@ -1,11 +1,13 @@
-import type {Augmentation}                from "@/game_internal_types/Augmentation/Augmentation";
-import type {PlayerObject}                from "@/game_internal_types/PersonObjects/Player/PlayerObject";
-import type {CompanyWork}                 from "@/game_internal_types/Work/CompanyWork";
-import type {FactionWork}                 from "@/game_internal_types/Work/FactionWork";
-import type {WorkType}                    from "@/game_internal_types/Work/Work";
-import type {JobName}                     from "@enums";
-import {parseNsFlags}                     from "@lib/flags_util";
-import {formatSecondsShort, getTimeStamp} from "@lib/time_util";
+import type {Augmentation}                        from "@/game_internal_types/Augmentation/Augmentation";
+import type {PlayerObject}                        from "@/game_internal_types/PersonObjects/Player/PlayerObject";
+import type {CompanyWork}                         from "@/game_internal_types/Work/CompanyWork";
+import type {FactionWork}                         from "@/game_internal_types/Work/FactionWork";
+import type {WorkType}                            from "@/game_internal_types/Work/Work";
+import {AugmentationName, CompanyName, JobName}   from "@enums";
+import {exposeGameInternalObjects}                from "@lib/exploits";
+import {parseNsFlags}                             from "@lib/flags_util";
+import {assertBackdoorInstalled, COMPANY_SERVERS} from "@lib/server_util";
+import {formatSecondsShort, getTimeStamp}         from "@lib/time_util";
 
 export async function main(ns: NS): Promise<void> {
 
@@ -22,6 +24,10 @@ export async function main(ns: NS): Promise<void> {
     ns.tprint("Example:");
     ns.tprint(`> run ${ns.getScriptName()}`);
     return;
+  }
+
+  if (!globalThis.Player) {
+    exposeGameInternalObjects();
   }
 
   await ns.sleep(0);
@@ -45,7 +51,7 @@ export async function main(ns: NS): Promise<void> {
       headers.push("Time");
       values.push(getTimeStamp());
 
-      headers.push("SharePower");
+      headers.push("Share");
       values.push(ns.formatNumber(ns.getSharePower()));
 
       headers.push("Karma");
@@ -69,7 +75,7 @@ export async function main(ns: NS): Promise<void> {
             break;
           case COMPANY:
             headers.push("Company");
-            values.push(companyWorkCountdown(<CompanyWork>currentWork));
+            values.push(companyWorkCountdown(ns, <CompanyWork>currentWork));
             break;
           default:
           // Not displaying anything specific
@@ -79,13 +85,13 @@ export async function main(ns: NS): Promise<void> {
       if (ns.gang.inGang()) {
         const gangInfo = ns.gang.getGangInformation();
 
-        headers.push("=== Gang ===");
+        headers.push("== Gang ==");
         values.push(gangInfo.territory === 1 ? "💰#1💰" : " ");
 
         headers.push("Respect");
         values.push(ns.formatNumber(gangInfo.respect));
 
-        headers.push("Wanted Penalty");
+        headers.push("Wanted");
         values.push(ns.formatPercent(1 - gangInfo.wantedPenalty));
 
         headers.push("Power");
@@ -95,7 +101,7 @@ export async function main(ns: NS): Promise<void> {
           headers.push("Territory");
           values.push(ns.formatPercent(gangInfo.territory));
 
-          headers.push("Clash Chance");
+          headers.push("Clash");
           values.push(ns.formatPercent(gangInfo.territoryClashChance));
         }
       }
@@ -110,40 +116,58 @@ export async function main(ns: NS): Promise<void> {
   }
 }
 
+// REFINE Convert this to a generator so that the augment costs aren't being re-evaluated each time
 function factionWorkCountdown(work: FactionWork): string {
   const faction = work.getFaction();
-  const player = <PlayerObject>globalThis.Player;
+  const player = globalThis.Player as PlayerObject;
   const ownedAugNames = player.augmentations.map(a => a.name);
   const queuedAugNames = player.queuedAugmentations.map(a => a.name);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  const maxRepNeeded = Object.values<Augmentation>(globalThis.Augmentations)
+  const augments = globalThis.Augmentations as Record<AugmentationName, Augmentation>;
+  const maxRepNeeded = Object.values(augments)
     .filter(a => faction.augmentations.includes(a.name))
     .filter(a => !ownedAugNames.includes(a.name))
     .filter(a => !queuedAugNames.includes(a.name))
     .reduce((acc, val) => Math.max(acc, val.baseRepRequirement), 0);
   const playerRep = faction.playerReputation;
 
+  let suffix = "";
+
+  // MEMO Computed using the Formulas API; not expected to change
+  // Once you have this much rep, after install, you will have 150 favor
+  const REP_TO_150_FAVOR = 462490.07;
+  if (playerRep >= REP_TO_150_FAVOR) {
+    suffix = "|I";
+  }
+
+  // At 150 favor, you can just buy rep
+  const FAVOR_TO_BUY = 150;
+  if (faction.favor >= FAVOR_TO_BUY) {
+    suffix = "|B";
+  }
+
   if (playerRep < maxRepNeeded) {
     const secondsNeeded = (maxRepNeeded - playerRep) / (work.getReputationRate() * 5);
-    return formatSecondsShort({seconds: secondsNeeded});
+    return formatSecondsShort({seconds: secondsNeeded}) + suffix;
   }
   return "DONE!";
 }
 
-function companyWorkCountdown(work: CompanyWork): string {
+function companyWorkCountdown(ns: NS, work: CompanyWork): string {
   // TODO Check if there are any mults that impact these calculations...
   const company = work.getCompany();
   const faction = company.relatedFaction;
-  const player = <PlayerObject>globalThis.Player;
+  const player = globalThis.Player as PlayerObject;
   // If the company doesn't have a related faction, or the player is already in/invited to it
   if (faction === undefined || player.factions.includes(faction) || player.factionInvitations.includes(faction)) {
     return "DONE!";
   }
 
-  // TODO Decide on a clean-ish way to check if we've backdoored the company's server
-  //  Would need to either expose more game internals, or hard-code the mappings
-  const TARGET_REP = 400000;
+  // Seriously, why is the `company.name` property NOT typed as `CompanyName`?
+  const serversBackdoored = COMPANY_SERVERS[company.name as CompanyName]
+    .every(s => assertBackdoorInstalled(ns.getServer(s)));
+
+  const TARGET_REP = serversBackdoored ? 300_000 : 400_000;
   const playerRep = company.playerReputation;
   // Barring race conditions, this WILL be a valid member and assignment
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
