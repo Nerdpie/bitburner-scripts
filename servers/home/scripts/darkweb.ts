@@ -34,9 +34,9 @@ function buyTor(ns: NS): boolean {
 
   // Find one of the 'technology' locations
   // language=CSS
-  const TECH_STORE_SELECTOR = "span[class$='location']:not(span[aria-label='Travel-Agency'])";
+  const TECH_STORE_SELECTOR = "span[class$='location']";
   const techStores = Array.from(doc.querySelectorAll<HTMLSpanElement>(TECH_STORE_SELECTOR))
-    .filter(n => n.innerText === "T");
+    .filter(n => n.ariaLabel !== "Travel Agency" && n.innerText === "T");
 
   if (techStores.length === 0) {
     ns.tprintf("ERROR: Unable to find a tech store in current city");
