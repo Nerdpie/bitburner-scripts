@@ -1,7 +1,7 @@
 import * as EnumsAndTypes from "@lib/enum_and_limiter_definitions";
-import {TailProperties}   from "NetscriptDefinitions";
 
-export interface SettingsData extends TailProperties {
+// TODO Reevaluate extending TailProperties once we have tested the fontSize property
+export interface SettingsData {
   x: number;
   y: number;
   width: number;

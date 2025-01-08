@@ -1,13 +1,13 @@
-import type {Faction}                                    from "@/game_internal_types/Faction/Faction";
-import type {FactionName}                                from "@enums";
-import {exposeGameInternalObjects}                       from "@lib/exploits";
-import {GangLord, setTailWindow}                         from "@settings";
-import type {GangGenInfo, GangMemberInfo, GangOtherInfo} from "NetscriptDefinitions";
-import {ascendMembers}                                   from "./gangs/ascension";
-import * as GEnums                                       from "./gangs/gang_enums";
+import type {Faction}                                          from "@/game_internal_types/Faction/Faction";
+import type {FactionName}                                      from "@enums";
+import {exposeGameInternalObjects}                             from "@lib/exploits";
+import {GangLord, setTailWindow}                               from "@settings";
+import type {GangGenInfo, GangMemberInfo, GangOtherInfoObject} from "NetscriptDefinitions";
+import {ascendMembers}                                         from "./gangs/ascension";
+import * as GEnums                                             from "./gangs/gang_enums";
 
 const config = GangLord;
-let previousOtherGangInfo: GangOtherInfo | undefined;
+let previousOtherGangInfo: Record<string, GangOtherInfoObject> | undefined;
 let tickToNextTerritoryUpdate: number;
 
 if (!globalThis.Factions) {
@@ -63,6 +63,7 @@ function syncTerritoryCycle(ns: NS) {
     return;
   }
 
+  // TODO Extend this to check if we are processing bonus time
   if (isOtherGangInfoEqual(previousOtherGangInfo, otherGangInfo)) {
     // Effectively, subtracts one and wraps around
     tickToNextTerritoryUpdate = (tickToNextTerritoryUpdate + 9) % 10;
@@ -72,7 +73,7 @@ function syncTerritoryCycle(ns: NS) {
   }
 }
 
-function isOtherGangInfoEqual(previous: GangOtherInfo | undefined, current: GangOtherInfo): boolean {
+function isOtherGangInfoEqual(previous: Record<string, GangOtherInfoObject> | undefined, current: Record<string, GangOtherInfoObject>): boolean {
   if (!previous) {
     return false;
   }
@@ -136,7 +137,7 @@ function generateMemberName(ns: NS): string {
 
 function equipMembers(ns: NS) {
   const members = ns.gang.getMemberNames().map(member => ns.gang.getMemberInformation(member));
-  // TODO Extend this to prioritize more carefully and leave a buffer of on-hand cash
+  // TODO Extend this to prioritize more carefully
 
   // Get the augments first
   equipAllOfType(ns, members, GEnums.GangAugment, "augmentations");
@@ -204,8 +205,7 @@ function bestTaskForMember(ns: NS, gangInfo: GangGenInfo, member: string): GEnum
   }
 
   const focusRep = config.mode === "rep"
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    && (factions[gangInfo.faction].playerReputation < config.targetFactionRep || gangInfo.respect < config.targetGangRespect);
+    && (factions[gangInfo.faction as FactionName].playerReputation < config.targetFactionRep || gangInfo.respect < config.targetGangRespect);
 
   // REFINE May want to switch per-member, to keep them at a threshold of respect (helps with discounts)
   // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -218,9 +218,7 @@ function bestTaskForMember(ns: NS, gangInfo: GangGenInfo, member: string): GEnum
       const taskStats = ns.gang.getTaskStats(task);
       const gain = gainFunction(gangInfo, memberInfo, taskStats);
       if (gain > bestTask[1]) {
-        // This shouldn't be unsafe, as `task` should always be a valid key for the enum...
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        bestTask = [GEnums.GangEarning[task], gain];
+        bestTask = [GEnums.GangEarning[task] as GEnums.GangTask, gain];
       }
     }
   } else {
@@ -237,7 +235,7 @@ function isClashPossible(gangInfo: GangGenInfo): boolean {
 
 function mortalCombat(ns: NS) {
   const gangInfo = ns.gang.getGangInformation();
-  const otherGangs: GangOtherInfo | undefined = previousOtherGangInfo;
+  const otherGangs: Record<string, GangOtherInfoObject> | undefined = previousOtherGangInfo;
 
   // If we have all territory, no point for further clashes to process
   if (gangInfo.territory === 1) {
