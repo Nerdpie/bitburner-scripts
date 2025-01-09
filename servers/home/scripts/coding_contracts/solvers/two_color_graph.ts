@@ -79,8 +79,14 @@ export function twoColorGraph(input: [number, [[number, number]]]): (number | nu
 
   // Populate the list of neighbors
   edges.forEach(edge => {
-    const vertA = vertices.get(edge[0]) as Vertex;
-    const vertB = vertices.get(edge[1]) as Vertex;
+    const vertA = vertices.get(edge[0]);
+    const vertB = vertices.get(edge[1]);
+    if (vertA === undefined) {
+      throw new Error("vertA is undefined");
+    }
+    if (vertB === undefined) {
+      throw new Error("vertB is undefined");
+    }
     vertA.neighbors.add(vertB);
     vertB.neighbors.add(vertA);
   });

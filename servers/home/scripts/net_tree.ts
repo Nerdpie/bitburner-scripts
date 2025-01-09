@@ -94,8 +94,10 @@ function scanAnalyzeInternals(ns: NS, depth: number = 1, all: boolean = false): 
     ns.printRaw(element);
 
     // Sort display by branch depth (shallowest first), then by hostname
-    node.children.sort((a, b) => a.hostname.localeCompare(b.hostname))
-      .sort((a, b) => a.branchDepth - b.branchDepth)
+    node.children.sort((a, b) => {
+        if (a.branchDepth !== b.branchDepth) { return a.branchDepth - b.branchDepth; }
+        return a.hostname.localeCompare(b.hostname);
+      })
       .forEach((n, i) =>
         printOutput(n, [...prefix, i === node.children.length - 1 ? "  " : "┃ "], i === node.children.length - 1),
       );

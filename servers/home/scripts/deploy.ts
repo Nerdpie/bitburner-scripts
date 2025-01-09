@@ -432,8 +432,8 @@ export async function main(ns: NS): Promise<void> {
     if (config.mode === "grow-farm") {
       // Determine any servers that need to be prepped
       // While this runs even if it isn't used, that is somewhat preferable to being re-run for each purchased server
-      const toBePrepped = nonPurchasedServers.filter(s => s.hasAdminRights)
-        .filter(s => s.moneyAvailable < s.moneyMax || s.minDifficulty < s.hackDifficulty)
+      const toBePrepped = nonPurchasedServers.filter(s => s.hasAdminRights
+          && (s.moneyAvailable < s.moneyMax || s.minDifficulty < s.hackDifficulty))
         .sort(sortBackdoorPriority);
       if (toBePrepped.length > 0 && toBePrepped[0].hostname as BuiltinServer === targetServer) {
         // FIXME Determine how to ignore `targetServer` once it has been prepped

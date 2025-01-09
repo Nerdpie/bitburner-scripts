@@ -55,23 +55,11 @@ class ServerTargeting {
 
   static compareServer(a: ServerTargeting, b: ServerTargeting): number {
     // Sort by security, then money
-    if (a.levelRequired === b.levelRequired) {
-      if (a.securityMin === b.securityMin) {
-        if (a.securityLevel === b.securityLevel) {
-          if (a.moneyMax === b.moneyMax) {
-            return b.moneyAvailable - a.moneyAvailable;
-          } else {
-            return b.moneyMax - a.moneyMax;
-          }
-        } else {
-          return a.securityLevel - b.securityLevel;
-        }
-      } else {
-        return a.securityMin - b.securityMin;
-      }
-    } else {
-      return a.levelRequired - b.levelRequired;
-    }
+    if (a.levelRequired !== b.levelRequired) { return a.levelRequired - b.levelRequired; }
+    if (a.securityMin !== b.securityMin) { return a.securityMin - b.securityMin; }
+    if (a.securityLevel !== b.securityLevel) { return a.securityLevel - b.securityLevel; }
+    if (a.moneyMax !== b.moneyMax) { return b.moneyMax - a.moneyMax; }
+    return b.moneyAvailable - a.moneyAvailable;
   }
 
   toString(): string {
@@ -121,18 +109,18 @@ export function main(ns: NS): void {
 
   const servers = getAllServers(ns);
 
+  // noinspection OverlyComplexBooleanExpressionJS
   servers.map(s => new ServerTargeting(ns.getServer(s)))
-    .filter(s => !s.isPurchased)
-    .filter(s => s.haveAdmin)
-    .filter(s => s.canBackdoor)
-    .filter(s => s.canHaveMoney)
-    .filter(s => {
+    .filter(s => !s.isPurchased
+      && s.haveAdmin
+      && s.canBackdoor
+      && s.canHaveMoney
       // Aim for hosts ~1/2 your hacking level; will need adjusted for later-game
-      return MINIMUM_LEVEL_REQUIRED <= s.levelRequired ||
+      && (MINIMUM_LEVEL_REQUIRED <= s.levelRequired ||
         // Leave in our usual targets for easy reference
         // The hostname of any non-purchased server should always be a valid BuiltinServer
-        ServerSelections.goodTargets.includes(s.hostname as keyof typeof BuiltinServer);
-    })
+        ServerSelections.goodTargets.includes(s.hostname as keyof typeof BuiltinServer)
+      ))
     // eslint-disable-next-line @typescript-eslint/unbound-method
     .sort(ServerTargeting.compareServer)
     .forEach(s => {

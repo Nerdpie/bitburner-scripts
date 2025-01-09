@@ -3,7 +3,7 @@ import type {PlayerObject}                        from "@/game_internal_types/Pe
 import type {CompanyWork}                         from "@/game_internal_types/Work/CompanyWork";
 import type {FactionWork}                         from "@/game_internal_types/Work/FactionWork";
 import type {WorkType}                            from "@/game_internal_types/Work/Work";
-import {AugmentationName, CompanyName, JobName}   from "@enums";
+import {AugmentationName, JobName}                from "@enums";
 import {exposeGameInternalObjects}                from "@lib/exploits";
 import {parseNsFlags}                             from "@lib/flags_util";
 import {assertBackdoorInstalled, COMPANY_SERVERS} from "@lib/server_util";
@@ -125,9 +125,9 @@ function factionWorkCountdown(work: FactionWork): string {
 
   const augments = globalThis.Augmentations as Record<AugmentationName, Augmentation>;
   const maxRepNeeded = Object.values(augments)
-    .filter(a => faction.augmentations.includes(a.name))
-    .filter(a => !ownedAugNames.includes(a.name))
-    .filter(a => !queuedAugNames.includes(a.name))
+    .filter(a => faction.augmentations.includes(a.name)
+      && !ownedAugNames.includes(a.name)
+      && !queuedAugNames.includes(a.name))
     .reduce((acc, val) => Math.max(acc, val.baseRepRequirement), 0);
   const playerRep = faction.playerReputation;
 
@@ -163,8 +163,7 @@ function companyWorkCountdown(ns: NS, work: CompanyWork): string {
     return "DONE!";
   }
 
-  // Seriously, why is the `company.name` property NOT typed as `CompanyName`?
-  const serversBackdoored = COMPANY_SERVERS[company.name as CompanyName]
+  const serversBackdoored = COMPANY_SERVERS[work.companyName]
     .every(s => assertBackdoorInstalled(ns.getServer(s)));
 
   const TARGET_REP = serversBackdoored ? 300_000 : 400_000;

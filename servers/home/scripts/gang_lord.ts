@@ -218,7 +218,7 @@ function bestTaskForMember(ns: NS, gangInfo: GangGenInfo, member: string): GEnum
       const taskStats = ns.gang.getTaskStats(task);
       const gain = gainFunction(gangInfo, memberInfo, taskStats);
       if (gain > bestTask[1]) {
-        bestTask = [GEnums.GangEarning[task] as GEnums.GangTask, gain];
+        bestTask = [GEnums.GangEarning[task] as GEnums.GangEarning, gain];
       }
     }
   } else {

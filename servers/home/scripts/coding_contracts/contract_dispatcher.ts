@@ -62,8 +62,8 @@ export async function main(ns: NS): Promise<void> {
   // noinspection InfiniteLoopJS - Intended design
   while (true) {
     const contractsToAttempt = getAllContracts(ns)
-      .filter(c => c.solver.finished)
-      .filter(c => !failedEntries.some(f => f.Hostname === c.host && f.ContractName === c.filename));
+      .filter(c => c.solver.finished
+        && !failedEntries.some(f => f.Hostname === c.host && f.ContractName === c.filename));
 
     for (const c1 of contractsToAttempt) {
       await attemptAndLog(ns, c1);

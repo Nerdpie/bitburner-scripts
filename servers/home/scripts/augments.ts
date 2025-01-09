@@ -59,12 +59,13 @@ function factionsWithUnboughtUniques(ns: NS, includeSoA: boolean = false) {
   // but it becomes a giant, hard-to-read mess
   const ownedAugNames = player.augmentations.map(a => a.name);
   const queuedAugNames = player.queuedAugmentations.map(a => a.name);
+  // noinspection OverlyComplexBooleanExpressionJS
   let filteredAugs = Object.values(augs)
-    .filter(aug => aug.factions.length === 1)
-    .filter(aug => !ownedAugNames.includes(aug.name))
-    .filter(aug => !queuedAugNames.includes(aug.name))
-    .filter(aug => includeSoA || aug.factions[0] !== SOA) // Ignore infiltration
-    .filter(aug => isEndgameFactionUnlocked(ns, aug.factions[0]));
+    .filter(aug => aug.factions.length === 1
+      && !ownedAugNames.includes(aug.name)
+      && !queuedAugNames.includes(aug.name)
+      && (includeSoA || aug.factions[0] !== SOA) // Ignore infiltration
+      && isEndgameFactionUnlocked(ns, aug.factions[0]));
 
   // If a gang has augs that would otherwise be uniques, focus the gang instead of the others;
   // will earn gang rep ANYWAY, so trim the list
@@ -241,11 +242,12 @@ function getPurchasableAugs(): Augmentation[] {
   const ownedAugNames = player.augmentations.map(a => a.name);
   const queuedAugNames = player.queuedAugmentations.map(a => a.name);
   const playerFacs = player.factions;
+  // noinspection OverlyComplexBooleanExpressionJS
   return Object.values<Augmentation>(augs)
-    .filter(a => a.factions.some(f => playerFacs.includes(f)))
-    .filter(a => !ownedAugNames.includes(a.name))
-    .filter(a => !queuedAugNames.includes(a.name))
-    .filter(a => NFG !== a.name);
+    .filter(a => a.factions.some(f => playerFacs.includes(f))
+      && !ownedAugNames.includes(a.name)
+      && !queuedAugNames.includes(a.name)
+      && NFG !== a.name);
 }
 
 type AugWrapper = { name: AugmentationName; factions: FactionName[]; costs: AugmentationCosts };
@@ -255,10 +257,11 @@ function getPurchasableAugsWithGang(ns: NS): AugWrapper[] {
   const queuedAugNames = player.queuedAugmentations.map(a => a.name);
   const augNames = player.factions.flatMap(faction => getFactionAugmentationsFiltered(ns, factions[faction]));
 
+  // TODO Why do I have this sorted TWICE?
   const filteredNames = arrayUnique(augNames).sort()
-    .filter(a => !ownedAugNames.includes(a))
-    .filter(a => !queuedAugNames.includes(a))
-    .filter(a => NFG !== a)
+    .filter(a => !ownedAugNames.includes(a)
+      && !queuedAugNames.includes(a)
+      && NFG !== a)
     .sort();
 
   const augments = filteredNames.map(name => augs[name]);
@@ -269,6 +272,7 @@ function getPurchasableAugsWithGang(ns: NS): AugWrapper[] {
     costs: getAugCost(ns, aug),
   }));
 
+  // TODO There should be a cleaner way of doing this than querying gang augs twice
   if (player.inGang()) {
     const gangAugs = getGangAugs(ns);
     const gangFaction = player.getGangFaction().name;
