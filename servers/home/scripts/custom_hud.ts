@@ -33,34 +33,40 @@ export async function main(ns: NS): Promise<void> {
   await ns.sleep(0);
 
   const doc = globalThis["document"];
-  const hook0 = doc.getElementById("overview-extra-hook-0");
-  const hook1 = doc.getElementById("overview-extra-hook-1");
+  const hook0 = doc.getElementById("overview-extra-hook-0") as HTMLParagraphElement | null;
+  const hook1 = doc.getElementById("overview-extra-hook-1") as HTMLParagraphElement | null;
+  const hook2 = doc.getElementById("overview-extra-hook-2") as HTMLParagraphElement | null;
 
-  if (!hook0 || !hook1) {
+  if (!hook0 || !hook1 || !hook2) {
     return;
   }
 
   // noinspection InfiniteLoopJS - Intended design for this script
   while (true) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const headers: any[] = [];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const values: any[] = [];
+      const headers: (number | string)[] = [];
+      const values: (number | string)[] = [];
+      // TODO Convert some of these values to generators, so that we can track the change over time
+      //  E.g. have 󰔵, 󰔳 and 󰔴 indicators, possibly colored
+      const decor: string[] = [];
 
       headers.push("Time");
       values.push(getTimeStamp());
+      decor.push("");
 
       headers.push("Share");
       values.push(ns.formatNumber(ns.getSharePower()));
+      decor.push("");
 
       headers.push("Karma");
       values.push(ns.formatNumber(ns.heart.break()));
+      decor.push("");
 
       const playerInfo = ns.getPlayer();
       if (playerInfo.numPeopleKilled > 0) {
         headers.push("Kills");
         values.push(ns.getPlayer().numPeopleKilled);
+        decor.push("");
       }
 
       const player = globalThis.Player as PlayerObject | null;
@@ -72,10 +78,12 @@ export async function main(ns: NS): Promise<void> {
           case FACTION:
             headers.push("Faction");
             values.push(factionWorkCountdown(<FactionWork>currentWork));
+            decor.push("");
             break;
           case COMPANY:
             headers.push("Company");
             values.push(companyWorkCountdown(ns, <CompanyWork>currentWork));
+            decor.push("");
             break;
           default:
           // Not displaying anything specific
@@ -87,28 +95,35 @@ export async function main(ns: NS): Promise<void> {
 
         headers.push("== Gang ==");
         values.push(gangInfo.territory === 1 ? "💰#1💰" : " ");
+        decor.push("");
 
         headers.push("Respect");
         values.push(ns.formatNumber(gangInfo.respect));
+        decor.push("");
 
         headers.push("Wanted");
         values.push(ns.formatPercent(1 - gangInfo.wantedPenalty));
+        decor.push("");
 
         headers.push("Power");
         values.push(ns.formatNumber(gangInfo.power));
+        decor.push("");
 
         if (gangInfo.territory < 1) {
           headers.push("Territory");
           values.push(ns.formatPercent(gangInfo.territory));
+          decor.push("");
 
           headers.push("Clash");
           values.push(ns.formatPercent(gangInfo.territoryClashChance));
+          decor.push("");
         }
       }
 
       // Now drop it into the placeholder elements
       hook0.innerText = headers.join("\n");
       hook1.innerText = values.join("\n");
+      hook2.innerText = decor.join("\n");
     } catch (err) { // This might come in handy later
       ns.print("ERROR: Update Skipped: " + String(err));
     }
