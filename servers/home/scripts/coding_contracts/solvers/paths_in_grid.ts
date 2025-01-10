@@ -5,7 +5,8 @@ import type {ZeroOrOne}           from "@lib/enum_and_limiter_definitions";
 //  Possible approach: multidimensional array, start in bottom right,
 //  set each cell to be the path & distance from there to the end.
 //  That way, we only compute each possible path ONCE...
-export function shortestPath(input: ZeroOrOne[][]) {
+// TODO Since the grid will be square, unwrap into a single-dimensional array and use offsets
+export async function shortestPath(input: ZeroOrOne[][], ns: NS) {
   /* Sample description
   Contract type: Shortest Path in a Grid
 Contract description:
@@ -52,7 +53,7 @@ You are located in the top-left corner of the following grid:
   // Calculate the 'no path' upper bound
   const invalidPathLength = input.length * input[0].length;
 
-  const result = findPath(input, visited, 0, 0, invalidPathLength);
+  const result = await findPath(input, visited, 0, 0, invalidPathLength, ns);
 
   if (result[1] >= invalidPathLength) {
     return "";
@@ -61,7 +62,7 @@ You are located in the top-left corner of the following grid:
   return result[0];
 }
 
-function findPath(grid: ZeroOrOne[][], visited: boolean[][], row: number, col: number, invalidPathLength: number): [string, number] {
+async function findPath(grid: ZeroOrOne[][], visited: boolean[][], row: number, col: number, invalidPathLength: number, ns: NS): Promise<[string, number]> {
   // Re-use some of the logic from countBranches
   // However, this time, we are concatenating the path, based on which branch has a shorter distance
 
@@ -90,6 +91,9 @@ function findPath(grid: ZeroOrOne[][], visited: boolean[][], row: number, col: n
     return ["", invalidPathLength];
   }
 
+  // REFINE Temporary workaround to prevent this from completely hanging the game...
+  await ns.sleep(0);
+
   // Yes, this can result in a lot of objects being created and discarded
   // However, if we DON'T do this, e.g. if we just use `slice`, the nested arrays are passed by ref,
   //  so different paths confuse each other's status
@@ -104,10 +108,10 @@ function findPath(grid: ZeroOrOne[][], visited: boolean[][], row: number, col: n
   // MEMO Tried writing a version that was iterable using `map` and `reduce`; it wasn't any cleaner to read
   // Get the path and path length for each direction; the recursive call handles the bounds checks
   const subPaths: Record<"U" | "D" | "L" | "R", [string, number]> = {
-    U: findPath(grid, newVisited, row - 1, col, invalidPathLength),
-    D: findPath(grid, newVisited, row + 1, col, invalidPathLength),
-    L: findPath(grid, newVisited, row, col - 1, invalidPathLength),
-    R: findPath(grid, newVisited, row, col + 1, invalidPathLength),
+    U: await findPath(grid, newVisited, row - 1, col, invalidPathLength, ns),
+    D: await findPath(grid, newVisited, row + 1, col, invalidPathLength, ns),
+    L: await findPath(grid, newVisited, row, col - 1, invalidPathLength, ns),
+    R: await findPath(grid, newVisited, row, col + 1, invalidPathLength, ns),
   };
 
   let shortestPath: [string, number] = ["", invalidPathLength];
