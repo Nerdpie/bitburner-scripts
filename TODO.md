@@ -6,11 +6,14 @@
   - Prefer named functions over arrow functions assigned to variables
   - Prefer explicit `type` imports
   - Migrate from Jetbrains-native inspections to ESLint (will help with suppression comment conflicts too)
+  - Prefer `as` type assertion syntax
+  - Warn of deeply nested structures (loops, conditionals, etc.)
 - Review the rest of the settings/definition files, e.g. `package.json`
 - Determine why some inspections get stuck so badly
 - Determine the code style, such as the order of class members (fields, constructors, etc.)
 - Define an inspection with the pattern `import (?!type).* from "@/?game_internal_types` to ensure we only use the TYPES
   from game internal classes; avoids build errors
+- Define an inspection for chained `filter` or `sort` calls
 - Configure proper handlers for `tmux`
 
 # `tmux` notes
