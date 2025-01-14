@@ -20,6 +20,8 @@ export default tseslint.config(
   tseslint.configs.strictTypeChecked,
   n.configs["flat/recommended"],
   {
+    // While these may be included implicitly from their configs,
+    // prefer depending upon them explicitly
     plugins: {
       "@typescript-eslint": tseslint.plugin,
       n: n,
