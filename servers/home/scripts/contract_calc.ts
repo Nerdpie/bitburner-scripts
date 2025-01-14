@@ -8,6 +8,12 @@ import {ContractWrapper}             from "./coding_contracts/contract_util";
 export async function main(ns: NS): Promise<void> {
   setTailWindow(ns, ContractCalc);
 
+  ns.disableLog("disableLog");
+  const DISABLED_LOGS = [
+    "sleep",
+  ];
+  DISABLED_LOGS.forEach(log => ns.disableLog(log));
+
   if (!globalThis.Player) {
     exposeGameInternalObjects();
   }

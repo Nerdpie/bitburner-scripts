@@ -2,25 +2,44 @@ import type {Terminal}             from "@/game_internal_types/Terminal/Terminal
 import {exposeGameInternalObjects} from "@lib/exploits";
 
 export function main(ns: NS): void {
-  if (!buyTor(ns)) {
+  if (!buyTor(ns, "dom")) {
     return;
   }
 
   buyPrograms(ns);
 }
 
-function buyTor(ns: NS): boolean {
+function buyTor(ns: NS, mode: "exploit" | "dom" | "singularity" = "exploit"): boolean {
   if (ns.hasTorRouter()) {
     return true;
   }
-
-  const doc = globalThis["document"];
 
   const TOR_COST = 200000;
   if (ns.getServerMoneyAvailable("home") < TOR_COST) {
     ns.tprintf("ERROR: Insufficient funds to buy TOR router");
     return false;
   }
+
+  switch (mode) {
+    case "singularity":
+      return buyTorSingularity(ns);
+    case "dom":
+      return buyTorDom(ns);
+    case "exploit":
+      return buyTorExploit();
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function buyTorSingularity(ns: NS): boolean {
+  // This is how you WOULD do it; commented out due to cost of the Singularity API
+  //return ns.singularity.purchaseTor();
+
+  return false;
+}
+
+function buyTorDom(ns: NS): boolean {
+  const doc = globalThis["document"];
 
   // Go to the `City` view
   const CITY_DIV_SELECTOR = "div[role='button']:has(svg[aria-label='City'])";
@@ -67,6 +86,13 @@ function buyTor(ns: NS): boolean {
   torButton[0].click();
 
   return ns.hasTorRouter();
+}
+
+function buyTorExploit(): boolean {
+  // While I CAN replicate the game internal code for this, as I already have exposed the `Player` object,
+  // I have decided that, for whatever reason, I don't really want to...
+
+  return false;
 }
 
 function buyPrograms(ns: NS) {

@@ -14,6 +14,7 @@
 - Define an inspection with the pattern `import (?!type).* from "@/?game_internal_types` to ensure we only use the TYPES
   from game internal classes; avoids build errors
 - Define an inspection for chained `filter` or `sort` calls
+- Move from the Jetbrains-specific formatting to `dprint`
 - Configure proper handlers for `tmux`
 
 # `tmux` notes
