@@ -4,7 +4,9 @@
   "description": "scripts for the open source hacking game, Bitburner",
   "main": "index.js",
   "scripts": {
-    "start": "node ./config.mjs"
+    "start": "node ./config.mjs",
+    "lint": "eslint --fix --max-warnings 0 servers",
+    "lint:report": "eslint --max-warnings 0 servers"
   },
   "repository": {
     "type": "git",

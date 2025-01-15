@@ -5,10 +5,10 @@ export function main(ns: NS): void {
     return;
   }
 
-  buyPrograms(ns);
+  buyPrograms(ns, "singularity");
 }
 
-function buyTor(ns: NS, mode: "exploit" | "dom" | "singularity" = "exploit"): boolean {
+function buyTor(ns: NS, mode: "exploit" | "dom" | "singularity"): boolean {
   if (ns.hasTorRouter()) {
     return true;
   }
@@ -26,6 +26,8 @@ function buyTor(ns: NS, mode: "exploit" | "dom" | "singularity" = "exploit"): bo
       return buyTorDom(ns);
     case "exploit":
       return buyTorExploit();
+    default:
+      return false;
   }
 }
 
@@ -90,17 +92,7 @@ function buyTorExploit(): boolean {
   return false;
 }
 
-function buyPrograms(ns: NS) {
-  if (!globalThis.Terminal) {
-    exposeGameInternalObjects();
-  }
-
-  if (!globalThis.Terminal) {
-    throw new Error("Failed to expose Terminal");
-  }
-
-  const terminal = globalThis.Terminal;
-
+function buyPrograms(ns: NS, mode: "singularity" | "exploit") {
   const DARKWEB_PROGRAMS = [
     "BruteSSH.exe",
     "FTPCrack.exe",
@@ -113,7 +105,31 @@ function buyPrograms(ns: NS) {
     "AutoLink.exe",
     "Formulas.exe",
   ];
+  switch (mode) {
+    case "exploit":
+      buyProgramsExploit(DARKWEB_PROGRAMS, ns);
+      break;
+    case "singularity":
+      buyProgramsSingularity(DARKWEB_PROGRAMS, ns);
+      break;
+  }
+}
+
+function buyProgramsExploit(DARKWEB_PROGRAMS: string[], ns: NS): void {
+  if (!globalThis.Terminal) {
+    exposeGameInternalObjects();
+  }
+
+  if (!globalThis.Terminal) {
+    throw new Error("Failed to expose Terminal");
+  }
+
+  const terminal = globalThis.Terminal;
 
   DARKWEB_PROGRAMS.filter(program => !ns.fileExists(program, "home"))
     .forEach(program => terminal.executeCommands(`buy ${program}`));
+}
+
+function buyProgramsSingularity(DARKWEB_PROGRAMS: string[], ns: NS): void {
+  DARKWEB_PROGRAMS.forEach(program => ns.singularity.purchaseProgram(program));
 }
