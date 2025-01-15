@@ -18,7 +18,7 @@ export async function main(ns: NS): Promise<void> {
     exposeGameInternalObjects();
   }
 
-  const player = <PlayerObject>globalThis.Player;
+  const player = globalThis.Player as PlayerObject;
   const currentServer = player.getCurrentServer().hostname;
   const availableContracts = ns.ls(currentServer, ".cct");
 
@@ -31,7 +31,7 @@ export async function main(ns: NS): Promise<void> {
   if (availableContracts.length === 1) {
     chosenContract = availableContracts[0];
   } else {
-    chosenContract = <string>await ns.prompt("Which contract?", {type: "select", choices: availableContracts});
+    chosenContract = await ns.prompt("Which contract?", {type: "select", choices: availableContracts}) as string;
   }
 
   // No contract was selected
@@ -39,7 +39,7 @@ export async function main(ns: NS): Promise<void> {
 
   const contractData = new ContractWrapper(ns, currentServer, chosenContract);
   if (contractData.solver.finished) {
-    const autoSolve = <boolean>await ns.prompt("Solver finished; complete automatically?", {type: "boolean"});
+    const autoSolve = await ns.prompt("Solver finished; complete automatically?", {type: "boolean"}) as boolean;
     if (autoSolve) {
       await contractData.attemptToSolve(ns);
     }

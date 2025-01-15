@@ -60,7 +60,7 @@ export async function main(ns: NS): Promise<void> {
       // Keep looping as long as the opponent is playing moves
     } while (result.type !== "gameOver");
 
-    ns.go.resetBoardState(<GoOpponent>config.faction, config.boardSize);
+    ns.go.resetBoardState((config.faction as GoOpponent), config.boardSize);
   } while (config.keepPlaying);
 }
 

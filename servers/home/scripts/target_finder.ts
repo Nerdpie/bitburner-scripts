@@ -16,7 +16,7 @@ const formatNumber = globalThis.NSNumbers.formatNumber as (n: number, fractional
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 const formatPercent = globalThis.NSNumbers.formatPercent as (n: number, fractionalDigits?: number, suffixStart?: number) => string;
 
-const player = <PlayerObject>globalThis.Player;
+const player = globalThis.Player as PlayerObject;
 
 // TODO If we keep using this script, evaluate converting this from a class to just functions that act on `Server` objects
 // I would have preferred being able to just take a `Server` object

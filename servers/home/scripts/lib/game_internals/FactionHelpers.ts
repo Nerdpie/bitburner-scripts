@@ -12,14 +12,14 @@ export function getFactionAugmentationsFiltered(ns: NS, faction: Faction, fakeGa
     exposeGameInternalObjects();
   }
 
-  const player = <PlayerObject>globalThis.Player;
-  const Augmentations = <Record<AugmentationName, Augmentation>>globalThis.Augmentations;
+  const player = globalThis.Player as PlayerObject;
+  const Augmentations = globalThis.Augmentations as Record<AugmentationName, Augmentation>;
 
   // If player has a gang with this faction, return (almost) all augmentations
   if (player.hasGangWith(faction.name) || fakeGang) {
     let augs = Object.values(Augmentations);
 
-    const VIOLET_CONGRUITY = <AugmentationName>"violet Congruity Implant";
+    const VIOLET_CONGRUITY = "violet Congruity Implant" as AugmentationName;
 
     // Remove special augs
     augs = augs.filter((a) => !a.isSpecial && a.name !== VIOLET_CONGRUITY);

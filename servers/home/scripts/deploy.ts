@@ -247,10 +247,10 @@ function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServer | undefined]
     .filter(s => s.requiredHackingSkill <= targetLevel && s.backdoorInstalled)
     .reduce((acc: [number, BuiltinServer], cur) => {
       if (acc[0] < cur.requiredHackingSkill) {
-        return [cur.requiredHackingSkill, <BuiltinServer>cur.hostname];
+        return [cur.requiredHackingSkill, (cur.hostname as BuiltinServer)];
       }
       return acc;
-    }, [0, <BuiltinServer | undefined>undefined])[1] as BuiltinServer | undefined;
+    }, [0, (undefined as BuiltinServer | undefined)])[1] as BuiltinServer | undefined;
 
   const changedTarget = targetServer !== prevTarget;
   prevTarget = targetServer;

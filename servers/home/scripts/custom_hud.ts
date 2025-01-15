@@ -72,17 +72,17 @@ export async function main(ns: NS): Promise<void> {
       const player = globalThis.Player as PlayerObject | null;
       const currentWork = player?.currentWork;
       if (currentWork) {
-        const FACTION = <WorkType>"FACTION";
-        const COMPANY = <WorkType>"COMPANY";
+        const FACTION = "FACTION" as WorkType;
+        const COMPANY = "COMPANY" as WorkType;
         switch (currentWork.type) {
           case FACTION:
             headers.push("Faction");
-            values.push(factionWorkCountdown(<FactionWork>currentWork));
+            values.push(factionWorkCountdown((currentWork as FactionWork)));
             decor.push("");
             break;
           case COMPANY:
             headers.push("Company");
-            values.push(companyWorkCountdown(ns, <CompanyWork>currentWork));
+            values.push(companyWorkCountdown(ns, (currentWork as CompanyWork)));
             decor.push("");
             break;
           default:

@@ -16,11 +16,11 @@ if (!globalThis.Player) {
   exposeGameInternalObjects();
 }
 
-const factions = <Record<string, Faction>>globalThis.Factions;
-const player = <PlayerObject>globalThis.Player;
-const augs = <Record<AugmentationName, Augmentation>>globalThis.Augmentations;
+const factions = globalThis.Factions as Record<string, Faction>;
+const player = globalThis.Player as PlayerObject;
+const augs = globalThis.Augmentations as Record<AugmentationName, Augmentation>;
 
-const NFG = <AugmentationName>"NeuroFlux Governor";
+const NFG = "NeuroFlux Governor" as AugmentationName;
 
 const config = Augments;
 
@@ -49,7 +49,7 @@ export function main(ns: NS): void {
 Output functions
  */
 function factionsWithUnboughtUniques(ns: NS, includeSoA: boolean = false) {
-  const SOA = <FactionName>"Shadows of Anarchy";
+  const SOA = "Shadows of Anarchy" as FactionName;
 
   ns.print("Facs w/unique augs to buy:");
 
@@ -75,7 +75,7 @@ function factionsWithUnboughtUniques(ns: NS, includeSoA: boolean = false) {
     filteredAugs = filteredAugs.filter(aug => !gangAugs.includes(aug.name));
   }
 
-  const augFactions = filteredAugs.map(a => <string>a.factions[0]);
+  const augFactions = filteredAugs.map(a => (a.factions[0] as string));
 
   if (gangHasUniques) {
     augFactions.push(player.getGangFaction().name);
@@ -216,8 +216,8 @@ function getPossibleGangAugs(ns: NS, faction: FactionName): AugmentationName[] {
 function isEndgameFactionUnlocked(ns: NS, faction: FactionName): boolean {
   // @ts-expect-error - It's a string enum...
   const endgameFactions: FactionName[] = ["Bladeburners", "Church of the Machine God"];
-  const CHURCH_MACHINE_GOD = <FactionName>"Church of the Machine God";
-  const BLADEBURNERS = <FactionName>"Bladeburners";
+  const CHURCH_MACHINE_GOD = "Church of the Machine God" as FactionName;
+  const BLADEBURNERS = "Bladeburners" as FactionName;
   const MACHINE_GOD_NODE = 13;
   const BLADEBURNER_NODES = [6, 7];
   if (!endgameFactions.includes(faction)) {

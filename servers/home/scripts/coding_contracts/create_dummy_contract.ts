@@ -7,10 +7,10 @@ export async function main(ns: NS): Promise<void> {
   }
 
   if (ns.self().tailProperties) {
-    const contractType = <string>await ns.prompt("Contract type:", {
+    const contractType = await ns.prompt("Contract type:", {
       type: "select",
       choices: Object.keys(CodingContractType).toSorted(),
-    });
+    }) as string;
     if (contractType) {
       ns.codingcontract.createDummyContract(contractType);
     }

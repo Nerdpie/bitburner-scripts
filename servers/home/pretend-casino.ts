@@ -7,7 +7,7 @@ export function main(ns: NS) {
     exposeGameInternalObjects();
   }
 
-  const player = <PlayerObject>globalThis.Player;
+  const player = globalThis.Player as PlayerObject;
 
   // noinspection ConfusingFloatingPointLiteralJS - 10 billion
   const MAX_CASINO_MONEY = 10e9;
@@ -20,7 +20,7 @@ export function main(ns: NS) {
     return;
   }
 
-  const cityAevum = <CityName>"Aevum";
+  const cityAevum = "Aevum" as CityName;
 
   if (player.city !== cityAevum) {
     if (player.money < TRAVEL_COST) {

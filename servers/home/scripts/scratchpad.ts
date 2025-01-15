@@ -23,7 +23,7 @@ export function main(ns: NS): void {
       exposeGameInternalObjects();
     }
 
-    const companies = <Record<CompanyName, Company>>globalThis.Companies;
+    const companies = globalThis.Companies as Record<CompanyName, Company>;
 
     if (ns.fileExists("Formulas.exe", "home")) {
       function calcFavorAfterReset(favor: number, rep: number): number {

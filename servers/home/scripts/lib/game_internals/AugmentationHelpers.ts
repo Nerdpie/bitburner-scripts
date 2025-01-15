@@ -12,7 +12,7 @@ if (!globalThis.Player) {
   exposeGameInternalObjects();
 }
 
-const player = <PlayerObject>globalThis.Player;
+const player = globalThis.Player as PlayerObject;
 
 const soaAugmentationNames = [
   "SoA - Beauty of Aphrodite",
@@ -54,7 +54,7 @@ export function getAugCost(ns: NS, aug: Augmentation): AugmentationCosts {
   let moneyCost: number;
   let repCost: number;
 
-  const NFG = <AugmentationName>"NeuroFlux Governor";
+  const NFG = "NeuroFlux Governor" as AugmentationName;
 
   if (aug.name === NFG) {
     const multiplier = Math.pow(CONSTANTS.NeuroFluxGovernorLevelMult, aug.getLevel());

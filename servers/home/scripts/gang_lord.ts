@@ -14,7 +14,7 @@ if (!globalThis.Factions) {
   exposeGameInternalObjects();
 }
 
-const factions = <Record<FactionName, Faction>>globalThis.Factions;
+const factions = globalThis.Factions as Record<FactionName, Faction>;
 
 export async function main(ns: NS): Promise<void> {
   const DISABLED_LOGS = [
