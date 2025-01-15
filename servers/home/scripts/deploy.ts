@@ -1,6 +1,5 @@
 // Based originally on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 
-import type {Terminal}                                   from "@/game_internal_types/Terminal/Terminal";
 import {BuiltinServer, ValidRamCapacity}                 from "@lib/enum_and_limiter_definitions";
 import {exposeGameInternalObjects}                       from "@lib/exploits";
 import {getAllServers}                                   from "@lib/scan_servers";
@@ -74,12 +73,18 @@ function tryBackdoor(ns: NS, server: Required<Server>) {
     }
     return;
   }
+
+  if (!globalThis.Terminal) {
+    throw new Error("Failed to expose Terminal");
+  }
+
+  const terminal = globalThis.Terminal;
+
   // Revisit when we have Singularity access ... or not
   if (!server.backdoorInstalled
     && !server.purchasedByPlayer
     && server.requiredHackingSkill <= ns.getHackingLevel()) {
     try {
-      const terminal = globalThis.Terminal as Terminal;
       // Make sure the Terminal isn't busy with another action
       if (terminal.action === null) {
         terminal.connectToServer(server.hostname);

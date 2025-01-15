@@ -2,7 +2,6 @@
 // noinspection MagicNumberJS
 
 import type {Augmentation}                         from "@/game_internal_types/Augmentation/Augmentation";
-import type {PlayerObject}                         from "@/game_internal_types/PersonObjects/Player/PlayerObject";
 import type {AugmentationName}                     from "@enums";
 import {getAugCostMultiplier, getAugRepMultiplier} from "../bitnode_util";
 import {exposeGameInternalObjects}                 from "../exploits";
@@ -12,7 +11,11 @@ if (!globalThis.Player) {
   exposeGameInternalObjects();
 }
 
-const player = globalThis.Player as PlayerObject;
+if (!globalThis.Player) {
+  throw new Error("Failed to expose Player");
+}
+
+const player = globalThis.Player;
 
 const soaAugmentationNames = [
   "SoA - Beauty of Aphrodite",

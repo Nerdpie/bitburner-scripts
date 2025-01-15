@@ -1,4 +1,3 @@
-import {PlayerObject}              from "@/game_internal_types/PersonObjects/Player/PlayerObject";
 import {CityName}                  from "@enums";
 import {exposeGameInternalObjects} from "@lib/exploits";
 
@@ -7,7 +6,11 @@ export function main(ns: NS) {
     exposeGameInternalObjects();
   }
 
-  const player = globalThis.Player as PlayerObject;
+  if (!globalThis.Player) {
+    throw new Error("Failed to expose Player");
+  }
+
+  const player = globalThis.Player;
 
   // noinspection ConfusingFloatingPointLiteralJS - 10 billion
   const MAX_CASINO_MONEY = 10e9;

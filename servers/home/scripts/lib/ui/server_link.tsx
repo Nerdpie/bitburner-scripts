@@ -1,6 +1,5 @@
-import type {Terminal}             from '@/game_internal_types/Terminal/Terminal';
-import React                       from 'react';
-import {exposeGameInternalObjects} from '../exploits';
+import React                       from "react";
+import {exposeGameInternalObjects} from "../exploits";
 
 export function ServerLink({dashes = '', hostname, decorator = ''}: {
   dashes?: string | undefined,
@@ -11,7 +10,11 @@ export function ServerLink({dashes = '', hostname, decorator = ''}: {
     exposeGameInternalObjects();
   }
 
-  const terminal = globalThis.Terminal as Terminal;
+  if (!globalThis.Terminal) {
+    throw new Error("Failed to expose Terminal");
+  }
+
+  const terminal = globalThis.Terminal;
   // TODO We want this to have `cursor:pointer` and `text-decoration-line:underline`
   // However, apparently this generates a new CSS class for EACH use, if the style
   // is not defined outside of the 'render' call?

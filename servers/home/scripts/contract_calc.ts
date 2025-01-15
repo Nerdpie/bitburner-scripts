@@ -1,4 +1,3 @@
-import type {PlayerObject}           from "@/game_internal_types/PersonObjects/Player/PlayerObject";
 import {exposeGameInternalObjects}   from "@lib/exploits";
 import {jsonReplacer}                from "@lib/insight_json";
 import {ContractCalc, setTailWindow} from "@settings";
@@ -18,7 +17,11 @@ export async function main(ns: NS): Promise<void> {
     exposeGameInternalObjects();
   }
 
-  const player = globalThis.Player as PlayerObject;
+  if (!globalThis.Player) {
+    throw new Error("Failed to expose Player");
+  }
+
+  const player = globalThis.Player;
   const currentServer = player.getCurrentServer().hostname;
   const availableContracts = ns.ls(currentServer, ".cct");
 

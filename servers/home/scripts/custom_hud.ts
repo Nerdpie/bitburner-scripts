@@ -1,9 +1,7 @@
-import type {Augmentation}                        from "@/game_internal_types/Augmentation/Augmentation";
 import type {PlayerObject}                        from "@/game_internal_types/PersonObjects/Player/PlayerObject";
 import type {CompanyWork}                         from "@/game_internal_types/Work/CompanyWork";
 import type {FactionWork}                         from "@/game_internal_types/Work/FactionWork";
 import type {WorkType}                            from "@/game_internal_types/Work/Work";
-import {AugmentationName}                         from "@enums";
 import {exposeGameInternalObjects}                from "@lib/exploits";
 import {parseNsFlags}                             from "@lib/flags_util";
 import {assertBackdoorInstalled, COMPANY_SERVERS} from "@lib/server_util";
@@ -69,20 +67,20 @@ export async function main(ns: NS): Promise<void> {
         decor.push("");
       }
 
-      const player = globalThis.Player as PlayerObject | null;
+      const player = globalThis.Player;
       const currentWork = player?.currentWork;
-      if (currentWork) {
+      if (player && currentWork) {
         const FACTION = "FACTION" as WorkType;
         const COMPANY = "COMPANY" as WorkType;
         switch (currentWork.type) {
           case FACTION:
             headers.push("Faction");
-            values.push(factionWorkCountdown((currentWork as FactionWork)));
+            values.push(factionWorkCountdown(ns, (currentWork as FactionWork), player));
             decor.push("");
             break;
           case COMPANY:
             headers.push("Company");
-            values.push(companyWorkCountdown(ns, (currentWork as CompanyWork)));
+            values.push(companyWorkCountdown(ns, (currentWork as CompanyWork), player));
             decor.push("");
             break;
           default:
@@ -132,13 +130,16 @@ export async function main(ns: NS): Promise<void> {
 }
 
 // REFINE Convert this to a generator so that the augment costs aren't being re-evaluated each time
-function factionWorkCountdown(work: FactionWork): string {
+function factionWorkCountdown(ns: NS, work: FactionWork, player: PlayerObject): string {
   const faction = work.getFaction();
-  const player = globalThis.Player as PlayerObject;
   const ownedAugNames = player.augmentations.map(a => a.name);
   const queuedAugNames = player.queuedAugmentations.map(a => a.name);
 
-  const augments = globalThis.Augmentations as Record<AugmentationName, Augmentation>;
+  const augments = globalThis.Augmentations;
+  if (!augments) {
+    ns.print("ERROR: Augmentations not exposed");
+    return "ERR";
+  }
   const maxRepNeeded = Object.values(augments)
     .filter(a => faction.augmentations.includes(a.name)
       && !ownedAugNames.includes(a.name)
@@ -168,11 +169,10 @@ function factionWorkCountdown(work: FactionWork): string {
   return "DONE!";
 }
 
-function companyWorkCountdown(ns: NS, work: CompanyWork): string {
+function companyWorkCountdown(ns: NS, work: CompanyWork, player: PlayerObject): string {
   // TODO Check if there are any mults that impact these calculations...
   const company = work.getCompany();
   const faction = company.relatedFaction;
-  const player = globalThis.Player as PlayerObject;
   // If the company doesn't have a related faction, or the player is already in/invited to it
   if (faction === undefined || player.factions.includes(faction) || player.factionInvitations.includes(faction)) {
     return "DONE!";

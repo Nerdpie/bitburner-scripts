@@ -1,7 +1,5 @@
 // noinspection IfStatementWithTooManyBranchesJS
 
-import type {Company}              from "@/game_internal_types/Company/Company";
-import type {CompanyName}          from "@/game_internal_types/Enums";
 import {exposeGameInternalObjects} from "@lib/exploits";
 import {getAllServers}             from "@lib/scan_servers";
 import {Scratchpad, setTailWindow} from "@settings";
@@ -20,7 +18,11 @@ export function main(ns: NS): void {
       exposeGameInternalObjects();
     }
 
-    const companies = globalThis.Companies as Record<CompanyName, Company>;
+    if (!globalThis.Companies) {
+      throw new Error("Failed to expose Companies");
+    }
+
+    const companies = globalThis.Companies;
 
     if (ns.fileExists("Formulas.exe", "home")) {
       function calcFavorAfterReset(favor: number, rep: number): number {

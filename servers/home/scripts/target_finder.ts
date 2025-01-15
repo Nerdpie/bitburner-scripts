@@ -1,4 +1,3 @@
-import type {PlayerObject}                    from "@/game_internal_types/PersonObjects/Player/PlayerObject";
 import {BuiltinServer}                        from "@lib/enum_and_limiter_definitions";
 import {exposeGameInternalObjects}            from "@lib/exploits";
 import {parseAutocompleteFlags, parseNsFlags} from "@lib/flags_util";
@@ -10,11 +9,15 @@ if (!globalThis.NSNumbers.formatNumber || !globalThis.NSNumbers.formatPercent) {
   exposeGameInternalObjects();
 }
 
-// TODO Just reimplement the format functions in our own code...
-const formatNumber = globalThis.NSNumbers.formatNumber as (n: number, fractionalDigits?: number, suffixStart?: number, isInteger?: boolean) => string;
-const formatPercent = globalThis.NSNumbers.formatPercent as (n: number, fractionalDigits?: number, suffixStart?: number) => string;
+if (!globalThis.NSNumbers.formatNumber || !globalThis.NSNumbers.formatPercent || !globalThis.Player) {
+  throw new Error("Failed to expose game internal objects");
+}
 
-const player = globalThis.Player as PlayerObject;
+// TODO Just reimplement the format functions in our own code...
+const formatNumber = globalThis.NSNumbers.formatNumber;
+const formatPercent = globalThis.NSNumbers.formatPercent;
+
+const player = globalThis.Player;
 
 // TODO If we keep using this script, evaluate converting this from a class to just functions that act on `Server` objects
 // I would have preferred being able to just take a `Server` object
@@ -61,8 +64,7 @@ class ServerTargeting {
   }
 
   toString(): string {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sprintf = globalThis.sprintf as (format: string, ...args: any[]) => string;
+    const sprintf = globalThis.sprintf;
     return sprintf("%-18s HackLvl %4d BD %s MinSec %2s CurSec %6.3f  Value %8s / %8s ( %6s )",
       this.#server.hostname,
       this.levelRequired,

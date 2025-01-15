@@ -1,6 +1,4 @@
 import type {Augmentation}                  from "@/game_internal_types/Augmentation/Augmentation";
-import type {Faction}                       from "@/game_internal_types/Faction/Faction";
-import type {PlayerObject}                  from "@/game_internal_types/PersonObjects/Player/PlayerObject";
 import type {AugmentationName, FactionName} from "@enums";
 import {arrayUnique}                        from "@lib/array_util";
 import {exposeGameInternalObjects}          from "@lib/exploits";
@@ -16,9 +14,13 @@ if (!globalThis.Player) {
   exposeGameInternalObjects();
 }
 
-const factions = globalThis.Factions as Record<string, Faction>;
-const player = globalThis.Player as PlayerObject;
-const augs = globalThis.Augmentations as Record<AugmentationName, Augmentation>;
+if (!globalThis.Factions || !globalThis.Player || !globalThis.Augmentations) {
+  throw new Error("Failed to expose game internal objects");
+}
+
+const factions = globalThis.Factions;
+const player = globalThis.Player;
+const augs = globalThis.Augmentations;
 
 const NFG = "NeuroFlux Governor" as AugmentationName;
 
@@ -84,7 +86,7 @@ function factionsWithUnboughtUniques(ns: NS, includeSoA: boolean = false) {
   const uniqueFactions = arrayUnique(augFactions).sort();
 
   if (uniqueFactions.length > 0) {
-    uniqueFactions.forEach(fac => ns.printf("%-27s - F%6s", fac, ns.formatNumber(factions[fac].favor, 1)));
+    uniqueFactions.forEach(fac => ns.printf("%-27s - F%6s", fac, ns.formatNumber(factions[fac as FactionName].favor, 1)));
   } else {
     ns.print("All bought!");
   }

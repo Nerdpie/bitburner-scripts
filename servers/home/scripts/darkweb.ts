@@ -1,4 +1,3 @@
-import type {Terminal}             from "@/game_internal_types/Terminal/Terminal";
 import {exposeGameInternalObjects} from "@lib/exploits";
 
 export function main(ns: NS): void {
@@ -95,7 +94,12 @@ function buyPrograms(ns: NS) {
   if (!globalThis.Terminal) {
     exposeGameInternalObjects();
   }
-  const terminal = globalThis.Terminal as Terminal;
+
+  if (!globalThis.Terminal) {
+    throw new Error("Failed to expose Terminal");
+  }
+
+  const terminal = globalThis.Terminal;
 
   const DARKWEB_PROGRAMS = [
     "BruteSSH.exe",

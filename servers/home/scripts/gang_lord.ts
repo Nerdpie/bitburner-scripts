@@ -1,4 +1,3 @@
-import type {Faction}                                          from "@/game_internal_types/Faction/Faction";
 import type {FactionName}                                      from "@enums";
 import {exposeGameInternalObjects}                             from "@lib/exploits";
 import {GangLord, setTailWindow}                               from "@settings";
@@ -14,7 +13,11 @@ if (!globalThis.Factions) {
   exposeGameInternalObjects();
 }
 
-const factions = globalThis.Factions as Record<FactionName, Faction>;
+if (!globalThis.Factions) {
+  throw new Error("Failed to expose Factions");
+}
+
+const factions = globalThis.Factions;
 
 export async function main(ns: NS): Promise<void> {
   const DISABLED_LOGS = [
@@ -218,7 +221,7 @@ function bestTaskForMember(ns: NS, gangInfo: GangGenInfo, member: string): GEnum
       const taskStats = ns.gang.getTaskStats(task);
       const gain = gainFunction(gangInfo, memberInfo, taskStats);
       if (gain > bestTask[1]) {
-        bestTask = [GEnums.GangEarning[task] as GEnums.GangEarning, gain];
+        bestTask = [GEnums.GangEarning[task as GEnums.GangEarning], gain];
       }
     }
   } else {

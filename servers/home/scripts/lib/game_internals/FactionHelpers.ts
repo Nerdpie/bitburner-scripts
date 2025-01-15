@@ -1,7 +1,6 @@
 // Derived from bitburner-src/src/Faction/FactionHelpers.tsx
 import type {Augmentation}         from "@/game_internal_types/Augmentation/Augmentation";
 import type {Faction}              from "@/game_internal_types/Faction/Faction";
-import type {PlayerObject}         from "@/game_internal_types/PersonObjects/Player/PlayerObject";
 import type {AugmentationName}     from "@enums";
 import {getGangUniqueAug}          from "../bitnode_util";
 import {exposeGameInternalObjects} from "../exploits";
@@ -12,12 +11,16 @@ export function getFactionAugmentationsFiltered(ns: NS, faction: Faction, fakeGa
     exposeGameInternalObjects();
   }
 
-  const player = globalThis.Player as PlayerObject;
-  const Augmentations = globalThis.Augmentations as Record<AugmentationName, Augmentation>;
+  if (!globalThis.Player || !globalThis.Augmentations) {
+    throw new Error("Failed to expose game internal objects");
+  }
+
+  const player = globalThis.Player;
+  const augmentations = globalThis.Augmentations;
 
   // If player has a gang with this faction, return (almost) all augmentations
   if (player.hasGangWith(faction.name) || fakeGang) {
-    let augs = Object.values(Augmentations);
+    let augs = Object.values(augmentations);
 
     const VIOLET_CONGRUITY = "violet Congruity Implant" as AugmentationName;
 
@@ -26,7 +29,7 @@ export function getFactionAugmentationsFiltered(ns: NS, faction: Faction, fakeGa
 
     if (player.bitNodeN === 2) {
       // TRP is not available outside BN2 for Gangs
-      augs.push(Augmentations["The Red Pill"]);
+      augs.push(augmentations["The Red Pill"]);
     }
 
     // Yes, it's an implicit cast; that's how it's implemented in the game itself
