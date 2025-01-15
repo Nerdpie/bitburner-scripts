@@ -209,6 +209,7 @@ function getGangAugs(ns: NS): AugmentationName[] {
   return [];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getPossibleGangAugs(ns: NS, faction: FactionName): AugmentationName[] {
   return getFactionAugmentationsFiltered(ns, factions[faction], true);
 }

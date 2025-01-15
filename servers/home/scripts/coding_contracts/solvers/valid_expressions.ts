@@ -1,4 +1,5 @@
 // TODO Write the 'valid math expression' and 'IP address' solvers
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function findValidMathExpression(input: [string, number], ns: NS): string[] {
   /* Sample description:
   You are given the following string which contains only digits between 0 and 9:
@@ -29,7 +30,9 @@ export function findValidMathExpression(input: [string, number], ns: NS): string
  Input: digits = "105", target = 5
  Output: ["1*0+5", "10-5"]
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const digits: string = input[0];
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const target: number = input[1];
 
   /*
@@ -45,6 +48,7 @@ export function findValidMathExpression(input: [string, number], ns: NS): string
 }
 
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function generateIPAddresses(input: string, ns: NS) {
   /* Sample description:
   Given the following string containing only digits,

@@ -1,5 +1,8 @@
 // noinspection GrazieInspection - TODO File a bug report; 'least significant bits' doesn't need a preceding `the`
+
 // TODO Write the Hamming code solvers
+// @ts-expect-error Not yet implemented
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function decodeHammingBinary(input, ns: NS) {
   /* Sample description:
   You are given the following encoded binary string:
@@ -28,6 +31,7 @@ export function decodeHammingBinary(input, ns: NS) {
    */
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function encodeIntegerHamming(input: number, ns: NS) {
   /* Sample description:
   You are given the following decimal value:

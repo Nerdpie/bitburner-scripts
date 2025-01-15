@@ -171,7 +171,7 @@ export const ContractSolver: Record<CodingContractType, Required<SolverInfo>> = 
 export class ContractWrapper {
   host: string;
   filename: string;
-  type: string;
+  type: CodingContractType;
   description: string;
   data: any;
   solver: SolverInfo;
@@ -180,12 +180,12 @@ export class ContractWrapper {
     this.host = host;
     this.filename = filename;
 
-    this.type = ns.codingcontract.getContractType(filename, host);
+    // This SHOULD always be valid, unless we haven't updated for a new type
+    this.type = ns.codingcontract.getContractType(filename, host) as CodingContractType;
     this.description = ns.codingcontract.getDescription(filename, host);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.data = ns.codingcontract.getData(filename, host);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.solver = ContractSolver[this.type];
   }
 

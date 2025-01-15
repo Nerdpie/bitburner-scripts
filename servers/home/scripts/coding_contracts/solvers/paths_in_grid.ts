@@ -117,10 +117,11 @@ async function findPath(grid: ZeroOrOne[][], visited: boolean[][], row: number, 
   let shortestPath: [string, number] = ["", invalidPathLength];
   let direction: string = "";
   for (const path in subPaths) {
-    // TODO Check why this error occurs; these should be bounded to valid values...
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    // noinspection OverlyComplexBooleanExpressionJS
+    if (path !== "U" && path !== "D" && path !== "L" && path !== "R") {
+      continue;
+    }
     if (subPaths[path][1] < shortestPath[1]) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       shortestPath = subPaths[path];
       direction = path;
     }

@@ -6,14 +6,12 @@ import {getAllServers}                        from "@lib/scan_servers";
 import {ServerSelections}                     from "@settings";
 import type {AutocompleteData, Server}        from "NetscriptDefinitions";
 
-if (!globalThis.NSNumbers) {
+if (!globalThis.NSNumbers.formatNumber || !globalThis.NSNumbers.formatPercent) {
   exposeGameInternalObjects();
 }
 
 // TODO Just reimplement the format functions in our own code...
-// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 const formatNumber = globalThis.NSNumbers.formatNumber as (n: number, fractionalDigits?: number, suffixStart?: number, isInteger?: boolean) => string;
-// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 const formatPercent = globalThis.NSNumbers.formatPercent as (n: number, fractionalDigits?: number, suffixStart?: number) => string;
 
 const player = globalThis.Player as PlayerObject;

@@ -240,17 +240,20 @@ function getDynamicTarget(ns: NS): [boolean, boolean, BuiltinServer | undefined]
 
   const TARGET_OPTIONS = ServerSelections.goodTargets;
 
+  // This worked inline before, but apparently it confuses the snot out of the TS compiler's `strict` mode?
+  function reduceTargetServer(acc: [number, BuiltinServer | undefined], current: Required<Server>): [number, BuiltinServer | undefined] {
+    if (acc[0] < current.requiredHackingSkill) {
+      return [current.requiredHackingSkill, (current.hostname as BuiltinServer)];
+    }
+    return acc;
+  }
+
   // At low levels, we want to hit Joe's Guns ASAP; usually level 11
   // Yes, if you try to evaluate EACH server, this may jump back down, but not with a proper list of good targets
   const targetLevel = curHackingLevel <= 30 ? curHackingLevel : Math.ceil(curHackingLevel / 2);
   const targetServer = TARGET_OPTIONS.map(n => assertServerProperties(ns.getServer(n)))
     .filter(s => s.requiredHackingSkill <= targetLevel && s.backdoorInstalled)
-    .reduce((acc: [number, BuiltinServer], cur) => {
-      if (acc[0] < cur.requiredHackingSkill) {
-        return [cur.requiredHackingSkill, (cur.hostname as BuiltinServer)];
-      }
-      return acc;
-    }, [0, (undefined as BuiltinServer | undefined)])[1] as BuiltinServer | undefined;
+    .reduce(reduceTargetServer, [0, (undefined as BuiltinServer | undefined)])[1];
 
   const changedTarget = targetServer !== prevTarget;
   prevTarget = targetServer;

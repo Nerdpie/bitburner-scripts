@@ -3,7 +3,7 @@ import type {PlayerObject}                        from "@/game_internal_types/Pe
 import type {CompanyWork}                         from "@/game_internal_types/Work/CompanyWork";
 import type {FactionWork}                         from "@/game_internal_types/Work/FactionWork";
 import type {WorkType}                            from "@/game_internal_types/Work/Work";
-import {AugmentationName, JobName}                from "@enums";
+import {AugmentationName}                         from "@enums";
 import {exposeGameInternalObjects}                from "@lib/exploits";
 import {parseNsFlags}                             from "@lib/flags_util";
 import {assertBackdoorInstalled, COMPANY_SERVERS} from "@lib/server_util";
@@ -184,8 +184,11 @@ function companyWorkCountdown(ns: NS, work: CompanyWork): string {
   const TARGET_REP = serversBackdoored ? 300_000 : 400_000;
   const playerRep = company.playerReputation;
   // Barring race conditions, this WILL be a valid member and assignment
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
-  const jobName: JobName = player.jobs[company.name];
+  const jobName = player.jobs[work.companyName];
+  if (jobName === undefined) {
+    ns.print("ERROR: Undefined JobName");
+    return "ERR";
+  }
   const totalSecondsNeeded = (TARGET_REP - playerRep) / (work.getGainRates(jobName).reputation * 5);
   return formatSecondsShort({seconds: totalSecondsNeeded});
 }

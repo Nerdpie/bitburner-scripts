@@ -5,7 +5,7 @@
 
 /** Allows us to serialize types not normally supported by JSON.serialize */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function jsonReplacer(_key: never, val: any): any {
+export function jsonReplacer(_key: string, val: any): any {
   if (val === Infinity) {
     return {$type: "number", $value: "Infinity"};
   }
@@ -32,7 +32,7 @@ export function jsonReplacer(_key: never, val: any): any {
 
 /** Allows us to deserialize special values created by the above jsonReplacer */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function jsonReviver(_key: never, val: any): any {
+export function jsonReviver(_key: string, val: any): any {
   if (val === null || typeof val !== "object" || val.$type === null) {
     return val;
   }

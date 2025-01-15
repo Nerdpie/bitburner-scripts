@@ -2,7 +2,7 @@ import type {Terminal}             from "@/game_internal_types/Terminal/Terminal
 import {exposeGameInternalObjects} from "@lib/exploits";
 
 export function main(ns: NS): void {
-  if (!buyTor(ns, "dom")) {
+  if (!buyTor(ns, "singularity")) {
     return;
   }
 
@@ -30,12 +30,8 @@ function buyTor(ns: NS, mode: "exploit" | "dom" | "singularity" = "exploit"): bo
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function buyTorSingularity(ns: NS): boolean {
-  // This is how you WOULD do it; commented out due to cost of the Singularity API
-  //return ns.singularity.purchaseTor();
-
-  return false;
+  return ns.singularity.purchaseTor();
 }
 
 function buyTorDom(ns: NS): boolean {

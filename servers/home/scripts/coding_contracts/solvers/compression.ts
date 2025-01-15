@@ -105,6 +105,7 @@ export function compression2(input: string): string {
  * @param {string} input
  * @param {NS} ns
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function compression3(input: string, ns: NS): void {
   /* Sample description:
   Lempel-Ziv (LZ) compression is a data compression technique which encodes data using references to earlier parts of the data. In this variant of LZ, data is encoded in two types of chunk. Each chunk begins with a length L, encoded as a single ASCII digit from 1 to 9, followed by the chunk data, which is either:

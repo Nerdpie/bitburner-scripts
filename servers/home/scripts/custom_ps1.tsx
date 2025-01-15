@@ -12,9 +12,10 @@
  * or a new command, is open to discussion.
  */
 
-import {trimChars}      from '@lib/string_util';
-import type {ReactNode} from 'react';
-import React            from 'react';
+import {exposeGameInternalObjects} from "@lib/exploits";
+import {trimChars}                 from "@lib/string_util";
+import type {ReactNode}            from "react";
+import React                       from "react";
 
 // Property names are, of course, open to discussion
 // The hostname and current directory are critical to provide;
@@ -58,9 +59,15 @@ function ps1_alternate(data: PS1Data): string {
 }
 
 export function main(ns: NS): void {
+  if (!globalThis.Terminal) {
+    exposeGameInternalObjects();
+  }
+  if (globalThis.Terminal === undefined) {
+    throw new Error("Failed to expose Terminal");
+  }
+
   const data: PS1Data = {
     hostname: ns.getHostname(),
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
     cwd: globalThis.Terminal.cwd(), // Webpack exploit
   };
   // @ts-expect-error Difference between the actual React type, and the NetscriptDefinitions type

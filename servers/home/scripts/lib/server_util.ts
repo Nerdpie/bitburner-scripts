@@ -28,11 +28,11 @@ export function assertServerProperties(server: Server): Required<Server> {
     "serverGrowth",
   ];
   OPTIONAL_PROPERTIES_TO_CHECK.forEach(prop => {
+    // @ts-expect-error Indexing properties by name
     if (server[prop] === undefined) {
       throw new Error(`Server with '${prop}' not specified: ${server.hostname}`);
     }
   });
-  // ... TypeScript can't logic that the above loop guarantees that all the properties are present.
   return server as Required<Server>;
 }
 

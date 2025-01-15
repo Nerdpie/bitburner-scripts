@@ -105,7 +105,8 @@
     /* Ensure that casing is correct in imports. */
     "forceConsistentCasingInFileNames": true,
     /* ==Type Checking== */
-    // "strict": true, /* Enable all strict type-checking options. */
+    /* Enable all strict type-checking options. */
+    "strict": true,
     // "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied `any` type. */
     /* When type checking, take into account `null` and `undefined`. */
     "strictNullChecks": true

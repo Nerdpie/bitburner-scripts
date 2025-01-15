@@ -97,9 +97,6 @@ export class TimeSpan {
 // REFINE I do NOT like this using `undefined` for the Locale, but...
 //  don't have easy access to the Settings class...
 const TWO_DIGIT_FORMATTER = new Intl.NumberFormat(undefined, {minimumIntegerDigits: 2});
-// Used if we want to output the milliseconds as well
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const THREE_DIGIT_FORMATTER = new Intl.NumberFormat(undefined, {minimumIntegerDigits: 3});
 const TIMESTAMP_FORMATTER = new Intl.DateTimeFormat(undefined, {
   hour: "2-digit",
   minute: "2-digit",

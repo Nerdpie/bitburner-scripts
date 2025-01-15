@@ -1,12 +1,10 @@
 # Repo general
 
-- Convert files to TypeScript
 - Refine the tsconfig.json
 - Refine the code style (`.editorconfig`, `eslint.config.mjs`)
   - Prefer named functions over arrow functions assigned to variables
   - Prefer explicit `type` imports
   - Migrate from Jetbrains-native inspections to ESLint (will help with suppression comment conflicts too)
-  - Prefer `as` type assertion syntax
   - Warn of deeply nested structures (loops, conditionals, etc.)
 - Review the rest of the settings/definition files, e.g. `package.json`
 - Determine why some inspections get stuck so badly
@@ -15,6 +13,9 @@
   from game internal classes; avoids build errors
 - Define an inspection for chained `filter` or `sort` calls
 - Move from the Jetbrains-specific formatting to `dprint`
+  - Or maybe not; seems like it may be still in early days?
+- Remove type assertions for global objects, now that we have them properly documented
+  - This will force us to then check that they are in fact defined after calling `exposeGameInternalObjects`
 - Configure proper handlers for `tmux`
 
 # `tmux` notes
