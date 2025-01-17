@@ -4,7 +4,10 @@ export function ascendMembers(ns: NS) {
   const members = ns.gang.getMemberNames();
   members.forEach((member) => {
     if (shouldAscendGangster(ns, member)) {
-      ns.gang.ascendMember(member);
+      const results = ns.gang.ascendMember(member);
+      if (results !== undefined) {
+        ns.printf(`Ascended ${member}`);
+      }
     }
   });
 }

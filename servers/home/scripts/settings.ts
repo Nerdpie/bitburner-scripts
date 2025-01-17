@@ -1,32 +1,50 @@
 import {BuiltinServer, GoFaction} from "@lib/enum_and_limiter_definitions";
 import * as SettingsClasses       from "@lib/settings_classes";
 
-export const ContractCalc: SettingsClasses.SettingsData = {
-  x: 1250,
-  y: 50,
-  width: 450,
-  height: 300,
-  tailTitle: "Contract Calc",
-};
-export const Scratchpad: SettingsClasses.SettingsData = {
-  x: 1250,
-  y: 85,
-  width: 450,
+export const Run: SettingsClasses.RunSettings = {
+  x: 1500,
+  y: 15,
+  width: 200,
   height: 200,
-  tailTitle: "Scratchpad",
+  tailTitle: "Run Menu",
+  // Negated lookahead match, so we can still invoke `exploits` to reload the objects
+  exclusionPattern: /solvers\/|lib\/(?!exploits)|Temp\/|gangs\/|logs\//,
 };
 export const ContractDispatcher: SettingsClasses.SettingsData = {
-  x: 1250,
-  y: 120,
-  width: 450,
+  x: 1300,
+  y: 50,
+  width: 400,
   height: 200,
   tailTitle: "Contract Dispatcher",
 };
+export const Contracts: SettingsClasses.SettingsData = {
+  x: 1300,
+  y: 85,
+  width: 400,
+  height: 200,
+  tailTitle: "Contract Scanner",
+};
+export const ContractCalc: SettingsClasses.SettingsData = {
+  x: 1300,
+  y: 120,
+  width: 400,
+  height: 300,
+  tailTitle: "Contract Calc",
+};
+export const Augments: SettingsClasses.AugmentsSettings = {
+  x: 1300,
+  y: 155,
+  width: 400,
+  height: 200,
+  tailTitle: "Augments",
+  repMargin: 0.9,
+  mode: "uniques",
+};
 // noinspection ConfusingFloatingPointLiteralJS
 export const GangLord: SettingsClasses.GangSettings = {
-  x: 1250,
-  y: 155,
-  width: 450,
+  x: 1300,
+  y: 190,
+  width: 400,
   height: 200,
   tailTitle: "Gang Lord",
   maxRep: 1e7, // 10 million
@@ -40,14 +58,12 @@ export const GangLord: SettingsClasses.GangSettings = {
   vigilanteRespectThreshold: 10,
   purchaseThreshold: 10,
 };
-export const Run: SettingsClasses.RunSettings = {
-  x: 1500,
-  y: 190,
-  width: 200,
+export const Scratchpad: SettingsClasses.SettingsData = {
+  x: 1300,
+  y: 225,
+  width: 400,
   height: 200,
-  tailTitle: "Run Menu",
-  // Negated lookahead match, so we can still invoke `exploits` to reload the objects
-  exclusionPattern: /solvers\/|lib\/(?!exploits)|Temp\/|gangs\/|logs\//,
+  tailTitle: "Scratchpad",
 };
 export const Go: SettingsClasses.GoSettings = {
   x: 1500,
@@ -62,26 +78,10 @@ export const Go: SettingsClasses.GoSettings = {
 };
 export const NetTree: SettingsClasses.SettingsData = {
   x: 1375,
-  y: 575,
-  width: 525,
-  height: 400,
-  tailTitle: "Net Tree",
-};
-export const Contracts: SettingsClasses.SettingsData = {
-  x: 1500,
   y: 610,
-  width: 400,
-  height: 200,
-  tailTitle: "Contract Scanner",
-};
-export const Augments: SettingsClasses.AugmentsSettings = {
-  x: 1500,
-  y: 645,
-  width: 400,
-  height: 200,
-  tailTitle: "Augments",
-  repMargin: 0.9,
-  mode: "uniques",
+  width: 525,
+  height: 365,
+  tailTitle: "Net Tree",
 };
 // noinspection ConfusingFloatingPointLiteralJS
 export const HacknetManager: SettingsClasses.HacknetSettings = {

@@ -26,6 +26,7 @@ export async function main(ns: NS): Promise<void> {
     "getServerMoneyAvailable",
     "gang.purchaseEquipment",
     "gang.setTerritoryWarfare",
+    "gang.ascendMember",
   ];
   ns.disableLog("disableLog");
   DISABLED_LOGS.forEach(log => {
