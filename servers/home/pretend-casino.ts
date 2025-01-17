@@ -30,7 +30,8 @@ export function main(ns: NS) {
       ns.tprint("ERROR: Insufficient funds to travel!");
       return;
     }
-    player.travel(cityAevum);
+    //player.travel(cityAevum);
+    ns.singularity.travelToCity(cityAevum);
   }
   player.gainMoney(MAX_CASINO_MONEY - casinoMoney, "casino");
 }
