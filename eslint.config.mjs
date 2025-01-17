@@ -14,7 +14,7 @@ import tseslint            from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["**/build/**", "**/dist/**", "**/node_modules/**", "game_internal_types/**"],
+    ignores: ["**/build/**", "**/dist/**", "**/node_modules/**", "game_internal_types/**", "**/z_from_others/**"],
   },
   eslint.configs.recommended,
   tseslint.configs.strictTypeChecked,
@@ -62,13 +62,7 @@ export default tseslint.config(
       "@typescript-eslint/no-use-before-define": "off",
       "@typescript-eslint/no-var-requires": "off",
       "@typescript-eslint/no-warning-comments": "off",
-      "@typescript-eslint/strict-boolean-expressions": [
-        "error",
-        {
-          // If we don't do this, our checks for `exposeGameInternalObjects` will all be flagged
-          "allowAny": true,
-        },
-      ],
+      "@typescript-eslint/strict-boolean-expressions": "error",
       "block-scoped-var": "error",
       eqeqeq: "error",
       "import-x/consistent-type-specifier-style": "error",
