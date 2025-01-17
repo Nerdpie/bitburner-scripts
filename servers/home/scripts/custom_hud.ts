@@ -129,6 +129,10 @@ export async function main(ns: NS): Promise<void> {
   }
 }
 
+function calcFavorAfterReset(ns: NS, favor: number, rep: number): number {
+  return ns.formulas.reputation.calculateRepToFavor(ns.formulas.reputation.calculateFavorToRep(favor) + rep);
+}
+
 // REFINE Convert this to a generator so that the augment costs aren't being re-evaluated each time
 function factionWorkCountdown(ns: NS, work: FactionWork, player: PlayerObject): string {
   const faction = work.getFaction();
@@ -145,20 +149,20 @@ function factionWorkCountdown(ns: NS, work: FactionWork, player: PlayerObject): 
       && !ownedAugNames.includes(a.name)
       && !queuedAugNames.includes(a.name))
     .reduce((acc, val) => Math.max(acc, val.baseRepRequirement), 0);
+
   const playerRep = faction.playerReputation;
+  const playerFavor = faction.favor;
 
   let suffix = "";
 
-  // MEMO Computed using the Formulas API; not expected to change
-  // Once you have this much rep, after install, you will have 150 favor
-  const REP_TO_150_FAVOR = 462490.07;
-  if (playerRep >= REP_TO_150_FAVOR) {
-    suffix = "|I";
-  }
 
   // At 150 favor, you can just buy rep
   const FAVOR_TO_BUY = 150;
-  if (faction.favor >= FAVOR_TO_BUY) {
+  if (calcFavorAfterReset(ns, playerFavor, playerRep) >= FAVOR_TO_BUY) {
+    suffix = "|I";
+  }
+
+  if (playerFavor >= FAVOR_TO_BUY) {
     suffix = "|B";
   }
 
