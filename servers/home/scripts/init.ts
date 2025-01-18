@@ -126,13 +126,21 @@ function setCustomStyle() {
   customStyle.textContent = `
     @import "https://www.nerdfonts.com/assets/css/webfont.css";
     /* Tweak the CSS for the view so it doesn't hide behind core info as much */
+    /*noinspection CssUnusedSymbol*/
     #root > div.MuiBox-root > div.MuiBox-root {
       margin-right: 400px;
     }
 
     /* Hide the NiteSec ASCII art; it's cool, but it disrupts the flow from other menus */
+    /*noinspection CssUnusedSymbol*/
     #root > div.MuiBox-root > div.MuiBox-root > p.MuiTypography-root.MuiTypography-body1[class$='noformat']:not(:has(div,p)) {
-      display: none;
+      /*display: none;*/
+    }
+
+    /* Force a space in the Overview table */
+    /*noinspection CssUnusedSymbol*/
+    #overview-extra-hook-0 {
+      padding-right: 10px;
     }
   `;
 }
