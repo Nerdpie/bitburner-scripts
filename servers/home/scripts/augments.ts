@@ -10,7 +10,7 @@ import {Augments, setTailWindow}            from "@settings";
 // Run on import, so these are visible regardless
 // Yes, this means side effects, if we have multiple instances etc.,
 // but they should all point to the same instances ANYWAY...
-if (!globalThis.Player) {
+if (!globalThis.Factions || !globalThis.Player || !globalThis.Augmentations) {
   exposeGameInternalObjects();
 }
 

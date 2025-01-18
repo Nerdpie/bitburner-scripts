@@ -5,7 +5,7 @@ import {getAllServers}                        from "@lib/scan_servers";
 import {ServerSelections}                     from "@settings";
 import type {AutocompleteData, Server}        from "NetscriptDefinitions";
 
-if (!globalThis.NSNumbers.formatNumber || !globalThis.NSNumbers.formatPercent) {
+if (!globalThis.NSNumbers.formatNumber || !globalThis.NSNumbers.formatPercent || !globalThis.Player) {
   exposeGameInternalObjects();
 }
 

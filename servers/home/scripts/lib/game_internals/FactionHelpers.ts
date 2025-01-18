@@ -7,7 +7,7 @@ import {exposeGameInternalObjects} from "../exploits";
 import {SFC32RNG}                  from "./RNG";
 
 export function getFactionAugmentationsFiltered(ns: NS, faction: Faction, fakeGang: boolean = false): AugmentationName[] {
-  if (!globalThis.Player) {
+  if (!globalThis.Player || !globalThis.Augmentations) {
     exposeGameInternalObjects();
   }
 
