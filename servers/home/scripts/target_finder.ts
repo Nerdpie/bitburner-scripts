@@ -1,4 +1,4 @@
-import {BuiltinServer}                        from "@lib/enum_and_limiter_definitions";
+import type {BuiltinServer}                   from "@lib/enum_and_limiter_definitions";
 import {exposeGameInternalObjects}            from "@lib/exploits";
 import {parseAutocompleteFlags, parseNsFlags} from "@lib/flags_util";
 import {getAllServers}                        from "@lib/scan_servers";

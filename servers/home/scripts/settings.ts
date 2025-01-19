@@ -1,5 +1,5 @@
 import {BuiltinServer, GoFaction} from "@lib/enum_and_limiter_definitions";
-import * as SettingsClasses       from "@lib/settings_classes";
+import type * as SettingsClasses  from "@lib/settings_classes";
 
 export const Run: SettingsClasses.RunSettings = {
   x: 1500,
@@ -195,8 +195,7 @@ export function setTailWindow(ns: NS, config: SettingsClasses.SettingsData, clea
   ns.moveTail(config.x, config.y);
   ns.resizeTail(config.width, config.height);
 
-  if ((config.tailTitle !== undefined) && config.tailTitle.length !== 0
-  ) {
+  if (config.tailTitle !== undefined && config.tailTitle.length !== 0) {
     ns.setTitle(config.tailTitle);
   }
 }

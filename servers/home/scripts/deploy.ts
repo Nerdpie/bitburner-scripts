@@ -1,6 +1,7 @@
 // Based originally on the guide at https://steamcommunity.com/sharedfiles/filedetails/?id=3241603650
 
-import {BuiltinServer, ValidRamCapacity}                 from "@lib/enum_and_limiter_definitions";
+import type {ValidRamCapacity}                           from "@lib/enum_and_limiter_definitions";
+import {BuiltinServer}                                   from "@lib/enum_and_limiter_definitions";
 import {exposeGameInternalObjects}                       from "@lib/exploits";
 import {getAllServers}                                   from "@lib/scan_servers";
 import {assertBackdoorInstalled, assertServerProperties} from "@lib/server_util";
@@ -66,7 +67,6 @@ function pwnServer(ns: NS, target: Required<Server>, tools: ((host: string) => v
  * @param {Server} server
  */
 function tryBackdoor(ns: NS, server: Required<Server>) {
-  // FIXME Ensure that this actually keeps it from auto-backdooring...
   if (!config.hackTheWorld && server.hostname as BuiltinServer === BuiltinServer["w0r1d_d43m0n"]) {
     if (server.requiredHackingSkill <= ns.getHackingLevel()) {
       ns.printf("Can backdoor: %s", BuiltinServer["w0r1d_d43m0n"]);
@@ -480,8 +480,6 @@ export async function main(ns: NS): Promise<void> {
     // Manage purchased servers
     const purchasedServers = serverList.filter(s => s.purchasedByPlayer && s.hostname !== "home");
 
-    // FIXME Scripts do not seem to start until the next pass after `resetScripts` is run?
-    // Or is it extreme UI lag?
     if (resetScripts) {
       purchasedServers.forEach(s => ns.killall(s.hostname));
       await ns.sleep(killDelay);

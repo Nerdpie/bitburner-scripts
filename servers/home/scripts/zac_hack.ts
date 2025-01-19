@@ -7,7 +7,7 @@
  * Added customized logging
  */
 
-import {AutocompleteData} from "NetscriptDefinitions";
+import type {AutocompleteData} from "NetscriptDefinitions";
 
 /** Helper function to write the money values */
 function logMoney(ns: NS, target: string, moneyCurrent: number, moneyMax: number): void {

@@ -1,4 +1,4 @@
-import {CityName}                  from "@enums";
+import type {CityName}             from "@enums";
 import {exposeGameInternalObjects} from "@lib/exploits";
 
 export function main(ns: NS) {
