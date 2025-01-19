@@ -220,53 +220,6 @@
     "n/prefer-promises/dns": "error",
     "n/prefer-promises/fs": "error"
   },
-  // Rules from `eslint-plugin-import-x` that aren't used
-  "availableImportX": {
-    "import-x/default": "error",
-    "import-x/dynamic-import-chunkname": "error",
-    "import-x/export": "error",
-    "import-x/exports-last": "error",
-    "import-x/extensions": "error",
-    "import-x/group-exports": "error",
-    "import-x/imports-first": "error",
-    "import-x/max-dependencies": "error",
-    "import-x/named": "error",
-    "import-x/namespace": "error",
-    "import-x/newline-after-import": "error",
-    "import-x/no-absolute-path": "error",
-    "import-x/no-amd": "error",
-    "import-x/no-anonymous-default-export": "error",
-    "import-x/no-commonjs": "error",
-    "import-x/no-cycle": "error",
-    "import-x/no-default-export": "error",
-    "import-x/no-deprecated": "error",
-    "import-x/no-duplicates": "error",
-    "import-x/no-dynamic-require": "error",
-    "import-x/no-empty-named-blocks": "error",
-    "import-x/no-extraneous-dependencies": "error",
-    "import-x/no-import-module-exports": "error",
-    "import-x/no-internal-modules": "error",
-    "import-x/no-mutable-exports": "error",
-    "import-x/no-named-as-default": "error",
-    "import-x/no-named-as-default-member": "error",
-    "import-x/no-named-default": "error",
-    "import-x/no-named-export": "error",
-    "import-x/no-namespace": "error",
-    "import-x/no-nodejs-modules": "error",
-    "import-x/no-relative-packages": "error",
-    "import-x/no-relative-parent-imports": "error",
-    "import-x/no-rename-default": "error",
-    "import-x/no-restricted-paths": "error",
-    "import-x/no-self-import": "error",
-    "import-x/no-unassigned-import": "error",
-    "import-x/no-unresolved": "error",
-    "import-x/no-unused-modules": "error",
-    "import-x/no-useless-path-segments": "error",
-    "import-x/no-webpack-loader-syntax": "error",
-    "import-x/order": "error",
-    "import-x/prefer-default-export": "error",
-    "import-x/unambiguous": "error"
-  },
   // MEMO The `react` and `react-hooks` plugins are ALSO available
   "rules": {
     "constructor-super": ["error"],
@@ -575,8 +528,6 @@
     "@typescript-eslint/strict-boolean-expressions": ["error"],
     "block-scoped-var": ["error"],
     "eqeqeq": ["error"],
-    "import-x/consistent-type-specifier-style": ["error"],
-    "import-x/first": ["error"],
     "n/no-empty-function": ["off"],
     "n/shebang": ["off"],
     "no-restricted-properties": [
@@ -624,13 +575,13 @@
       {
         "assertionStyle": "as"
       }
-    ]
+    ],
+    "@typescript-eslint/consistent-type-imports": "error"
   },
   "plugins": [
     "@",
     "@typescript-eslint:@typescript-eslint/eslint-plugin@8.19.0",
-    "n:eslint-plugin-n@17.15.1",
-    "import-x"
+    "n:eslint-plugin-n@17.15.1"
   ],
   "language": "@/js",
   "languageOptions": {

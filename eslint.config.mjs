@@ -5,12 +5,10 @@
 // Converted to ESLint flat config format
 
 // eslint-disable-next-line n/no-unpublished-import
-import eslint              from "@eslint/js";
-// eslint-disable-next-line n/no-unpublished-import
-import eslintPluginImportX from "eslint-plugin-import-x";
-import n                   from "eslint-plugin-n";
+import eslint   from "@eslint/js";
+import n        from "eslint-plugin-n";
 // noinspection SpellCheckingInspection
-import tseslint            from "typescript-eslint";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
@@ -25,7 +23,6 @@ export default tseslint.config(
     plugins: {
       "@typescript-eslint": tseslint.plugin,
       n: n,
-      "import-x": eslintPluginImportX,
     },
     languageOptions: {
       parser: tseslint.parser,
@@ -43,6 +40,7 @@ export default tseslint.config(
           "assertionStyle": "as",
         },
       ],
+      "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/no-confusing-void-expression": [
@@ -65,8 +63,6 @@ export default tseslint.config(
       "@typescript-eslint/strict-boolean-expressions": "error",
       "block-scoped-var": "error",
       eqeqeq: "error",
-      "import-x/consistent-type-specifier-style": "error",
-      "import-x/first": "error",
       "n/no-empty-function": "off",
       "n/no-extraneous-import": [
         "error",
